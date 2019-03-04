@@ -25,7 +25,7 @@ contract Component {
 
     function addChild(address _childComponentAddress) external {
         indexToComponentAddress[componentNumber] = _childComponentAddress;
-        // emit ComponentAdded(componentNumber, _childComponentAddress);
+        // mit ComponentAdded(componentNumber, _childComponentAddress);
     }
 
     function removeChild(address _childComponentAddress) external returns(address) {
