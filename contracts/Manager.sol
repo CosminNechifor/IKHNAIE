@@ -12,11 +12,8 @@ contract Manager {
     uint256 componentIndex;
     mapping(uint256 => address) public registredComponents;
 
-    // event ComponentCreated(address componentAddress);
-
-    // event ComponentAdded(uint256 index, address componentAddress);
-    // event ComponentRemoved(uint256 index, address componentAddress);
-    // event ComponentUpdated(uint256 index, address componentAddress);
+    event ComponentCreated(uint256 index, address componentAddress);
+    event ComponentUpdated(uint256 index, address componentAddress);
 
     IComponentFactory componentFactory;
 
@@ -27,18 +24,19 @@ contract Manager {
 
     function createComponent(string memory _data) public returns(address) {
         address componentAddress = componentFactory.createComponent(_data, msg.sender);
-        registredComponents[componentIndex++] = componentAddress;
+        registredComponents[componentIndex] = componentAddress;
+        emit ComponentCreated(componentIndex, componentAddress);
         return componentAddress;
     }
 
-    function addChildToComponent(address _parentComponentAddress, address _childComponentAddress) public {
+    function addChildComponentToComponent(address _parentComponentAddress, address _childComponentAddress) public {
         IComponent parentComponent = IComponent(_parentComponentAddress);
         parentComponent.addChild(_childComponentAddress);
         IComponent childComponent = IComponent(_childComponentAddress);
         childComponent.updateParentAddress(_parentComponentAddress);
     }
 
-    function removeChildFromComponent(address _parentComponentAddress, address _childComponentAddress) public {
+    function removeChildComponentFromComponent(address _parentComponentAddress, address _childComponentAddress) public {
         IComponent parentComponent = IComponent(_parentComponentAddress);
         parentComponent.removeChild(_childComponentAddress);
         IComponent childComponent = IComponent(_childComponentAddress);

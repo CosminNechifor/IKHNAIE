@@ -10,6 +10,7 @@ contract Component {
 
     event ChildComponentAdded(uint256 index, address componentAddress);
     event ChildComponentRemoved(uint256 index, address componentAddress);
+
     event UpdateParentAddress(address componentAddress);
     event DataWasUpdated(string _previousData, string _newData);
 
@@ -36,9 +37,9 @@ contract Component {
         emit ChildComponentRemoved(componentNumber, _childComponentAddress);
     }
 
-    function updateParentAddress(address _parrentComponentAddress) external {
-        parentComponentAddress = _parrentComponentAddress;    
-        emit UpdateParentAddress(_parrentComponentAddress);
+    function updateParentAddress(address _parentComponentAddress) external {
+        parentComponentAddress = _parentComponentAddress;    
+        emit UpdateParentAddress(_parentComponentAddress);
     }
 
     function updateData(string calldata _data) external { 
