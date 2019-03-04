@@ -1,0 +1,107 @@
+{
+  "contractName": "Registry",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3fe6080604052600080fdfea165627a7a7230582097b0f0ce250ad29f929670add4a2b1aa6511d04e3a72f152f9a8027908607b450029",
+  "deployedBytecode": "0x6080604052600080fdfea165627a7a7230582097b0f0ce250ad29f929670add4a2b1aa6511d04e3a72f152f9a8027908607b450029",
+  "sourceMap": "35:22:7:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;35:22:7;;;;;;;",
+  "deployedSourceMap": "35:22:7:-;;;;;",
+  "source": "pragma solidity >=0.4 <0.6.0; \n\n\n\n\ncontract Registry {\n\n}",
+  "sourcePath": "/home/cosmin/Documents/github/learning/licenta/IKHNAIE/contracts/Registry.sol",
+  "ast": {
+    "absolutePath": "/home/cosmin/Documents/github/learning/licenta/IKHNAIE/contracts/Registry.sol",
+    "exportedSymbols": {
+      "Registry": [
+        636
+      ]
+    },
+    "id": 637,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 635,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.4",
+          "<",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:29:7"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 636,
+        "linearizedBaseContracts": [
+          636
+        ],
+        "name": "Registry",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 637,
+        "src": "35:22:7"
+      }
+    ],
+    "src": "0:57:7"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/cosmin/Documents/github/learning/licenta/IKHNAIE/contracts/Registry.sol",
+    "exportedSymbols": {
+      "Registry": [
+        636
+      ]
+    },
+    "id": 637,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 635,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.4",
+          "<",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:29:7"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 636,
+        "linearizedBaseContracts": [
+          636
+        ],
+        "name": "Registry",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 637,
+        "src": "35:22:7"
+      }
+    ],
+    "src": "0:57:7"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.0+commit.1d4f565a.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.1",
+  "updatedAt": "2019-03-04T20:32:13.004Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
