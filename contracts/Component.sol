@@ -32,9 +32,9 @@ contract Component {
     }
 
     function removeChild(address _childComponentAddress) external {
-        uint256 componentNumber = componentAddressToIndex[_childComponentAddress]; 
-        delete indexToComponentAddress[componentNumber];
-        emit ChildComponentRemoved(componentNumber, _childComponentAddress);
+        uint256 componentIndex = componentAddressToIndex[_childComponentAddress]; 
+        delete indexToComponentAddress[componentIndex];
+        emit ChildComponentRemoved(componentIndex, _childComponentAddress);
     }
 
     function updateParentAddress(address _parentComponentAddress) external {

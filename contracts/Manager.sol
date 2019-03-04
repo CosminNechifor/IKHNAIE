@@ -9,7 +9,7 @@ contract Manager {
     address owner;
 
     // replace this with another contract called Database.sol
-    uint256 componentIndex;
+    uint256 componentNumber;
     mapping(uint256 => address) public registredComponents;
 
     event ComponentCreated(uint256 index, address componentAddress);
@@ -18,14 +18,15 @@ contract Manager {
     IComponentFactory componentFactory;
 
     constructor(address _componentFactoryAddress) public {
-        componentIndex = 0;
+        componentNumber = 0;
         componentFactory = IComponentFactory(_componentFactoryAddress);
     }
 
     function createComponent(string memory _data) public returns(address) {
         address componentAddress = componentFactory.createComponent(_data, msg.sender);
-        registredComponents[componentIndex] = componentAddress;
-        emit ComponentCreated(componentIndex, componentAddress);
+        registredComponents[componentNumber] = componentAddress;
+        emit ComponentCreated(componentNumber, componentAddress);
+        componentNumber++;
         return componentAddress;
     }
 
@@ -58,5 +59,9 @@ contract Manager {
         IComponent component = IComponent(_parentComponentAddress);
         uint256 childComponentIndex = component.getChildComponentIndexByAddress(_childComponentAddress);
         return childComponentIndex;
+    }
+
+    function getComponentNumber() public view returns(uint) {
+        return componentNumber;
     }
 }
