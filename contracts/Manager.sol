@@ -8,6 +8,10 @@ contract Manager {
 
     address owner;
 
+    // replace this with another contract called Database.sol
+    uint256 componentIndex;
+    mapping(uint256 => address) public registredComponents;
+
     // event ComponentCreated(address componentAddress);
 
     // event ComponentAdded(uint256 index, address componentAddress);
@@ -17,11 +21,13 @@ contract Manager {
     IComponentFactory componentFactory;
 
     constructor(address _componentFactoryAddress) public {
+        componentIndex = 0;
         componentFactory = IComponentFactory(_componentFactoryAddress);
     }
 
     function createComponent(string memory _data) public returns(address) {
         address componentAddress = componentFactory.createComponent(_data, msg.sender);
+        registredComponents[componentIndex++] = componentAddress;
         return componentAddress;
     }
 

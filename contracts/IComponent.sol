@@ -8,4 +8,5 @@ interface IComponent {
     function getChildComponentIndexByAddress(address _childComponentAddress) external view returns(uint256); 
     function getChildComponentAddressById(uint256 _childComponentAddress) external view returns(address);
     function getData() external view returns (string memory);
+    function getComponentNumber() external view returns(uint256);
 }
