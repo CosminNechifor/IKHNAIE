@@ -75,8 +75,8 @@ contract Manager {
         return component.getData();
     }
 
-    fuction getComponentOwner(address _componentAddress) public view returns(address) {
+    function getComponentOwner(address _componentAddress) public view returns(address) {
         IComponent component = IComponent(_componentAddress);
-        return componen.getOwner();
+        return component.getOwner();
     }
 }
