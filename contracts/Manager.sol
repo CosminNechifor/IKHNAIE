@@ -3,12 +3,11 @@ pragma solidity >=0.4 <0.6.0;
 import "./IComponentFactory.sol";
 import "./IComponent.sol";
 
-
 contract Manager {
 
     address owner;
 
-    // replace this with another contract called Database.sol
+    // replace this with another contract called Database.sol or Registry.sol
     uint256 componentNumber;
     mapping(uint256 => address) public registredComponents;
 
@@ -61,7 +60,7 @@ contract Manager {
         return childComponentIndex;
     }
 
-    // TODO: move to registry contract
+    // TODO: move to registry/database contract
     function getComponentNumber() public view returns(uint) {
         return componentNumber;
     }
