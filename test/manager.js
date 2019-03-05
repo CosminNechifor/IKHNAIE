@@ -1,11 +1,16 @@
 const ComponentFactory = artifacts.require("ComponentFactory");
 const Manager = artifacts.require("Manager");
+const Component = artifacts.require("Component");
 
 contract('Manager - testing deployment and creation of components [happy case]', function (accounts) {
     
     let managerContract;
     let factoryAddress;
 
+
+    /**
+     * TESTING DEPLOYMENT OF ComponentFactory CONTRACT
+     *  */    
     it("Deploy ComponentFactory contract", () => {
         return ComponentFactory.new().then((instance) => {
             factoryAddress = instance.address;
@@ -14,6 +19,9 @@ contract('Manager - testing deployment and creation of components [happy case]',
         });
     });
 
+    /**
+     * TESTING DEPLOYMENT OF ManagerContract USING ALREADY DEPLOYED ComponentFactory
+     */
     it("Deploy ManagerContract contract", () => {
         return Manager.new(factoryAddress).then((instance) => {
             managerContract = instance;
@@ -22,6 +30,9 @@ contract('Manager - testing deployment and creation of components [happy case]',
         });
     });
 
+    /**
+     * TESTING THE CREATION OF SIMPLE COMPONENT
+     */
     it("Create components", () => {
         return managerContract.createComponent("Component0").then(() => {
             //check if componentRegistred has the rigth number of components
@@ -31,8 +42,11 @@ contract('Manager - testing deployment and creation of components [happy case]',
         })
     });
 
-    it("Get content of registry", () => {
-        return managerContract.createComponent("component2").then(() => {
+    /**
+     * TESTING DEPLOYED COMPONENTS DATA 
+     */
+    it("Get content of registry and access the components", () => {
+        return managerContract.createComponent("Component1").then(() => {
             //check if componentRegistred has the rigth number of components
             return managerContract.getComponentNumber();
         }).then((componentNumber) => {
@@ -50,9 +64,27 @@ contract('Manager - testing deployment and creation of components [happy case]',
             assert.notEqual(component1Address, undefined, "GetComponentAddressREgistredByIndex failed!");
             return Promise.all(
                 [
-                    
+                    Component.at(component0Address),
+                    Component.at(component1Address)
                 ]
             );
+        }).then((values) => {
+            const [component0Contract, component1Contract] = values; 
+            return Promise.all(
+                [
+                    component0Contract.getData(),
+                    component1Contract.getData(),
+                    component0Contract.getParentComponentAddress(),
+                    component1Contract.getParentComponentAddress()
+                ]
+            );
+        }).then((values) => {
+            const [dataComponent0, dataComponent1, ,] = values;
+            const [ , , parentComponentAddress0, parentComponentAddress1] = values;
+            assert.equal(dataComponent0, "Component0", "Data was tampered");
+            assert.equal(dataComponent1, "Component1", "Data was tampered");
+            assert.equal(parentComponentAddress0, "0x0000000000000000000000000000000000000000", "Data was tampered");
+            assert.equal(parentComponentAddress1, "0x0000000000000000000000000000000000000000", "Data was tampered");
         });
     });
 });

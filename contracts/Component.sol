@@ -55,6 +55,10 @@ contract Component {
         return owner;
     }
 
+    function getParentComponentAddress() external view returns (address) {
+        return parentComponentAddress;
+    }
+
     function getChildComponentNumber() external view returns(uint256) {
         return childComponentNumber;
     }
