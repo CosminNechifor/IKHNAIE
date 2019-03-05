@@ -14,7 +14,7 @@ contract Component {
     event UpdateParentAddress(address componentAddress);
     event DataWasUpdated(string _previousData, string _newData);
 
-    mapping (uint256 => address) indexToComponentAddress;
+    mapping (uint256 => address) indexToChildComponentAddress;
     mapping (address => uint256) childComponentAddressToIndex;
 
     constructor(string memory _data, address _owner) public {
@@ -35,7 +35,7 @@ contract Component {
     }
 
     function addChild(address _childComponentAddress) external {
-        indexToComponentAddress[childComponentNumber] = _childComponentAddress;
+        indexToChildComponentAddress[childComponentNumber] = _childComponentAddress;
         childComponentAddressToIndex[_childComponentAddress] = childComponentNumber;
         childComponentNumber++; 
         emit ChildComponentAdded(childComponentNumber, _childComponentAddress);
@@ -43,7 +43,7 @@ contract Component {
 
     function removeChild(address _childComponentAddress) external {
         uint256 childComponentIndex = childComponentAddressToIndex[_childComponentAddress]; 
-        delete indexToComponentAddress[childComponentIndex];
+        delete indexToChildComponentAddress[childComponentIndex];
         emit ChildComponentRemoved(childComponentIndex, _childComponentAddress);
     }
 
@@ -68,6 +68,6 @@ contract Component {
     }
 
     function getChildComponentAddressById(uint256 _childComponentAddress) external view returns(address) {
-        return indexToComponentAddress[_childComponentAddress];
+        return indexToChildComponentAddress[_childComponentAddress];
     }
 }
