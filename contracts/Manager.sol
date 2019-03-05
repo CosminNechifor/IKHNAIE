@@ -61,7 +61,22 @@ contract Manager {
         return childComponentIndex;
     }
 
+    // TODO: move to registry contract
     function getComponentNumber() public view returns(uint) {
         return componentNumber;
+    }
+
+    function getComponentAddressRegistredByIndex(uint256 _index) public view returns(address) {
+        return registredComponents[_index];
+    } 
+
+    function getComponentData(uint256 _componentAddress) public view returns(string memory){
+        IComponent component = IComponent(_componentAddress);
+        return component.getData();
+    }
+
+    fuction getComponentOwner(address _componentAddress) public view returns(address) {
+        IComponent component = IComponent(_componentAddress);
+        return componen.getOwner();
     }
 }
