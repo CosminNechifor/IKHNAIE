@@ -168,6 +168,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
             return Promise.all(promiseList);
         }).then((values) => {
             const [componentData, parrentComponentAddress] = values;
+            console.log(componentData);
             assert.equal(componentData, "Component3", "Not the right component!");
             return Component.at(parrentComponentAddress);
         }).then(componentContract => {
@@ -178,6 +179,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
             return Promise.all(promiseList);
         }).then((values) => {
             const [componentData, parrentComponentAddress] = values;
+            console.log(componentData);
             assert.equal(componentData, "Component1", "Not the right component!");
             return Component.at(parrentComponentAddress);
         }).then(componentContract => {
@@ -188,6 +190,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
             return Promise.all(promiseList);
         }).then((values) => {
             const [componentData, parentComponentAddress, component2Address] = values;
+            console.log(componentData);
             assert.equal(parentComponentAddress, "0x0000000000000000000000000000000000000000", "Data was tampered");
             assert.equal(componentData, "Component0", "Not the right component!");
             return Component.at(component2Address); 
@@ -195,6 +198,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
             let promiseList = [];
             return componentContract.getData();
         }).then(componentData => {
+            console.log(componentData);
             assert.equal(componentData, "Component2", "Not the right component!");
         });
     });
