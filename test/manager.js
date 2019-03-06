@@ -33,9 +33,9 @@ contract('Manager - testing deployment and creation of components [happy case]',
     it("Create components", () => {
         return managerContract.createComponent("Component0").then(() => {
             //check if componentRegistred has the rigth number of components
-            return managerContract.getComponentNumber();
-        }).then((componentNumber) => {
-            assert.equal(componentNumber.toNumber(), 1, "Creation of the Component0 failed!"); 
+            return managerContract.getDatabaseSize();
+        }).then((databaseSize) => {
+            assert.equal(databaseSize.toNumber(), 1, "Creation of the Component0 failed!"); 
         })
     });
 
@@ -45,16 +45,11 @@ contract('Manager - testing deployment and creation of components [happy case]',
     it("Get content of registry and access the components", () => {
         return managerContract.createComponent("Component1").then(() => {
             //check if componentRegistred has the rigth number of components
-            return managerContract.getComponentNumber();
-        }).then((componentNumber) => {
-            numberOfComponents = componentNumber.toNumber();
+            return managerContract.getDatabaseSize();
+        }).then((databaseSize) => {
+            numberOfComponents = databaseSize.toNumber();
             assert.equal(numberOfComponents, 2, "Creation of the Component1 failed!");
-            return Promise.all(
-                [
-                    managerContract.getComponentAddressRegistredByIndex(0),
-                    managerContract.getComponentAddressRegistredByIndex(1)
-                ]
-            );
+            return managerContract.getDatabase();
         }).then((values) => {
             const [component0Address, component1Address] = values;
             assert.notEqual(component0Address, undefined, "GetComponentAddressREgistredByIndex failed!");
@@ -72,20 +67,28 @@ contract('Manager - testing deployment and creation of components [happy case]',
                     component0Contract.getData(),
                     component1Contract.getData(),
                     component0Contract.getParentComponentAddress(),
-                    component1Contract.getParentComponentAddress()
+                    component1Contract.getParentComponentAddress(),
+                    component0Contract.getNumberOfChildComponents(),
+                    component1Contract.getNumberOfChildComponents(),
+                    component0Contract.getChildComponentList(),
+                    component1Contract.getChildComponentList(),
+                    component0Contract.owner(),
+                    component1Contract.owner()
                 ]
             );
         }).then((values) => {
-            const [dataComponent0, dataComponent1, ,] = values;
-            const [ , , parentComponentAddress0, parentComponentAddress1] = values;
-            assert.equal(dataComponent0, "Component0", "Data was tampered!");
-            assert.equal(dataComponent1, "Component1", "Data was tampered!");
-            // assert address equals 0x0 means that the component has no parent
-            assert.equal(parentComponentAddress0, "0x0000000000000000000000000000000000000000", "Data was tampered");
-            assert.equal(parentComponentAddress1, "0x0000000000000000000000000000000000000000", "Data was tampered");
+            assert.equal(values[0], "Component0", "Data was tampered!");
+            assert.equal(values[1], "Component1", "Data was tampered!");
+            assert.equal(values[2], "0x0000000000000000000000000000000000000000", "Data was tampered");
+            assert.equal(values[3], "0x0000000000000000000000000000000000000000", "Data was tampered");
+            assert.equal(values[4].toNumber(), 0, "Wrong number child components!!"); 
+            assert.equal(values[5].toNumber(), 0, "Wrong number child components!!"); 
+            assert.equal(values[6], 0, "Wrong number of child components!!"); 
+            assert.equal(values[7], 0, "Wrong number of child components!!"); 
+            assert.equal(values[8], accounts[0], "Wrong number of child components!!"); 
+            assert.equal(values[9], accounts[0], "Wrong number of child components!!"); 
         });
     });
-
 
     /**
      * THIS IS TESTING FOR THE CEATION OF NESTED COMPONENTS 
@@ -101,22 +104,20 @@ contract('Manager - testing deployment and creation of components [happy case]',
      * 
      * And ensure that it can be traveled from Component3 to Component2
      */
-
     it("Stage 1: Create a tree of components", () => {
         return Promise.all(
             [
                 managerContract.createComponent("Component2"),
                 managerContract.createComponent("Component3")
             ]
-        ).then((transactions) => {
-            let promiseList = [];
-
-            for(const tx of transactions) {
-                promiseList.push(Component.at(tx.logs[0].args[1]));
+        ).then(() => {
+            return managerContract.getDatabase();
+        }).then((values) => {
+            promiseList = [];
+            for (let i = 2; i < values.length; i++) {
+                promiseList.push(Component.at(values[i]));
             }
-
             return Promise.all(promiseList);
-
         }).then((values) => {
             const [component2Contract, component3Contract] = values;
             return Promise.all(
@@ -129,25 +130,17 @@ contract('Manager - testing deployment and creation of components [happy case]',
             assert.equal(values[0], "Component2", "Data was tampered!");
             assert.equal(values[1], "Component3", "Data was tampered!");
         }).then(() => {
-            return managerContract.getComponentNumber(); 
-        }).then((componentNumber) => {
-            let promiseArray = [];
-            for(let i = 0; i < componentNumber; i++){
-                promiseArray.push(managerContract.getComponentAddressRegistredByIndex(i));
-            }
-            return Promise.all(promiseArray);
-        }).then(values => {
-            let promiseList = [];            
-
-            const [comp0Adr, comp1Adr, comp2Adr, comp3Adr] = values;
-
-            // creating the binary tree
-            promiseList.push(Component.at(comp0Adr));
-            promiseList.push(managerContract.addChildComponentToComponent(comp0Adr, comp1Adr));
-            promiseList.push(managerContract.addChildComponentToComponent(comp0Adr, comp2Adr));
-            promiseList.push(managerContract.addChildComponentToComponent(comp1Adr, comp3Adr));
-
-            return Promise.all(promiseList);
+            return managerContract.getDatabase(); 
+        }).then((database) => {
+            assert.equal(database.length, 4, "Creation of components failed failed!");
+            return Promise.all(
+                [
+                    Component.at(database[0]),
+                    managerContract.addChildComponentToComponent(database[0], database[1]),
+                    managerContract.addChildComponentToComponent(database[0], database[2]),
+                    managerContract.addChildComponentToComponent(database[1], database[3])
+                ]
+            );
         }).then((values) => {
             const [component0Contract, , , ] = values;
             return component0Contract.getParentComponentAddress();
@@ -157,8 +150,8 @@ contract('Manager - testing deployment and creation of components [happy case]',
     });
 
     it("Stage 2: Travel from component 3 to component 2", () => {
-        // We already know where component3 is
-        return managerContract.getComponentAddressRegistredByIndex(3).then(componentAddress => {
+        // We already know where component3 is at index 3
+        return managerContract.getComponentAtIndex(3).then(componentAddress => {
             return Component.at(componentAddress);
         }).then(componentContract => {
             // getting the data and asserting for the content
@@ -167,38 +160,30 @@ contract('Manager - testing deployment and creation of components [happy case]',
             promiseList.push(componentContract.getParentComponentAddress());
             return Promise.all(promiseList);
         }).then((values) => {
-            const [componentData, parrentComponentAddress] = values;
-            console.log(componentData);
-            assert.equal(componentData, "Component3", "Not the right component!");
-            return Component.at(parrentComponentAddress);
+            assert.equal(values[0], "Component3", "Not the right component!");
+            return Component.at(values[1]);
         }).then(componentContract => {
-            // getting the data and asserting for the content
             let promiseList = [];
             promiseList.push(componentContract.getData());
             promiseList.push(componentContract.getParentComponentAddress());
             return Promise.all(promiseList);
         }).then((values) => {
-            const [componentData, parrentComponentAddress] = values;
-            console.log(componentData);
-            assert.equal(componentData, "Component1", "Not the right component!");
-            return Component.at(parrentComponentAddress);
+            assert.equal(values[0], "Component1", "Not the right component!");
+            return Component.at(values[1]);
         }).then(componentContract => {
             let promiseList = [];
             promiseList.push(componentContract.getData());
             promiseList.push(componentContract.getParentComponentAddress());
-            promiseList.push(componentContract.getChildComponentAddressById(1));// we already know that comppnent 2 is at index 1 
+            promiseList.push(componentContract.getChildComponentAddressByIndex(1));// we already know that component 2 is at index 1 
             return Promise.all(promiseList);
         }).then((values) => {
             const [componentData, parentComponentAddress, component2Address] = values;
-            console.log(componentData);
             assert.equal(parentComponentAddress, "0x0000000000000000000000000000000000000000", "Data was tampered");
             assert.equal(componentData, "Component0", "Not the right component!");
             return Component.at(component2Address); 
         }).then(componentContract => {
-            let promiseList = [];
             return componentContract.getData();
         }).then(componentData => {
-            console.log(componentData);
             assert.equal(componentData, "Component2", "Not the right component!");
         });
     });
