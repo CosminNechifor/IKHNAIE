@@ -1,73 +1,65 @@
 pragma solidity >=0.4 <0.6.0; 
 
 
-contract Component { 
-    address parentComponentAddress;
+import "./Ownable.sol";
+
+
+contract Component is Ownable { 
+
+    /** 
+    * TODO:
+    * - Add the other component specific fields 
+    * - add modifiers for state management
+    * - emit the proper events in order to track the component history
+    */
+
     string data;
 
-    uint256 childComponentNumber;
-    address owner;
-
-    event ChildComponentAdded(uint256 index, address componentAddress);
-    event ChildComponentRemoved(uint256 index, address componentAddress);
-
-    event UpdateParentAddress(address componentAddress);
-    event DataWasUpdated(string _previousData, string _newData);
-
-    mapping (uint256 => address) indexToChildComponentAddress;
-    mapping (address => uint256) childComponentAddressToIndex;
-
-    constructor(string memory _data, address _owner) public {
+    address parentComponentAddress;
+    address[] childComponentList;
+    
+    constructor(string memory _data, address owner) Ownable(owner) public {
         data = _data;
-        owner = _owner;
-        childComponentNumber = 0;
         parentComponentAddress = address(0); 
     }
 
     function updateParentAddress(address _parentComponentAddress) external {
         parentComponentAddress = _parentComponentAddress;    
-        emit UpdateParentAddress(_parentComponentAddress);
     }    
 
     function updateData(string calldata _data) external { 
-        emit DataWasUpdated(data, _data);
         data = _data; 
     }
 
+    // child specific operations
     function addChild(address _childComponentAddress) external {
-        indexToChildComponentAddress[childComponentNumber] = _childComponentAddress;
-        childComponentAddressToIndex[_childComponentAddress] = childComponentNumber;
-        childComponentNumber++; 
-        emit ChildComponentAdded(childComponentNumber, _childComponentAddress);
+        childComponentList.push(_childComponentAddress) - 1;
     }
 
-    function removeChild(address _childComponentAddress) external {
-        uint256 childComponentIndex = childComponentAddressToIndex[_childComponentAddress]; 
-        delete indexToChildComponentAddress[childComponentIndex];
-        emit ChildComponentRemoved(childComponentIndex, _childComponentAddress);
+    function removeChild(uint256 _index) external {
+        uint256 lastElementIndex = childComponentList.length - 1;
+        address _childComponentAddress = childComponentList[lastElementIndex]; 
+
+        childComponentList[_index] = _childComponentAddress;
+        
+        // deleteing the element and enusre there is no empty space
+        delete childComponentList[lastElementIndex];
+        childComponentList.length--;
     }
 
     function getData() external view returns (string memory){
         return data;
     }
 
-    function getOwner() external view returns (address) {
-        return owner;
-    }
-
     function getParentComponentAddress() external view returns (address) {
         return parentComponentAddress;
     }
 
-    function getChildComponentNumber() external view returns(uint256) {
-        return childComponentNumber;
-    }
-
-    function getChildComponentIndexByAddress(address _childComponentAddress) external view returns(uint256) {
-        return childComponentAddressToIndex[_childComponentAddress];
+    function getNumberOfChildComponents() external view returns(uint256) {
+        return childComponentList.length;
     }
 
     function getChildComponentAddressById(uint256 _childComponentAddress) external view returns(address) {
-        return indexToChildComponentAddress[_childComponentAddress];
+        return childComponentList[_childComponentAddress];
     }
 }
