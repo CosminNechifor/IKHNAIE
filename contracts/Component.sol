@@ -10,13 +10,15 @@ contract Component is Ownable {
     * TODO:
     * - Add the other component specific fields 
     * - add modifiers for state management
+    * - Add a field to allow ONLY the Manager contract to 
+    *   change the state of the contract
     * - emit the proper events in order to track the component history
     */
 
-    string data;
+    string private data;
 
-    address parentComponentAddress;
-    address[] childComponentList;
+    address private parentComponentAddress;
+    address[] private childComponentList;
     
     constructor(string memory _data, address owner) Ownable(owner) public {
         data = _data;
@@ -63,7 +65,17 @@ contract Component is Ownable {
         return childComponentList;
     }
 
-    function getChildComponentAddressById(uint256 _childComponentAddress) external view returns(address) {
-        return childComponentList[_childComponentAddress];
+    function getChildComponentAddressByIndex(uint256 _index) external view returns(address) {
+        return childComponentList[_index];
+    }
+
+    // use carefully
+    function getChildComponentIndexByAddress(address _address) external view returns(uint256) {
+        uint256 length = childComponentList.length;
+        for (uint256 i = 0; i < length; i++) {
+            if(_address == childComponentList[i]) {
+                return i;
+            }
+        } 
     }
 }
