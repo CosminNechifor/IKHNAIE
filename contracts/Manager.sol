@@ -2,44 +2,35 @@ pragma solidity >=0.4 <0.6.0;
 
 import "./IComponentFactory.sol";
 import "./IComponent.sol";
+import "./Ownable.sol";
 
-contract Manager {
+contract Manager is Ownable {
 
-    address owner;
-
-    // replace this with another contract called Database.sol or Registry.sol
-    uint256 componentNumber;
-    mapping(uint256 => address) public registredComponents;
-
-    event ComponentCreated(uint256 index, address componentAddress);
-    event ComponentUpdated(uint256 index, address componentAddress);
+    address[] private _registredComponents;
 
     IComponentFactory componentFactory;
 
-    constructor(address _componentFactoryAddress) public {
-        componentNumber = 0;
+    constructor(address _componentFactoryAddress) Ownable(msg.sender) public {
         componentFactory = IComponentFactory(_componentFactoryAddress);
     }
 
     function createComponent(string memory _data) public returns(address) {
         address componentAddress = componentFactory.createComponent(_data, msg.sender);
-        registredComponents[componentNumber] = componentAddress;
-        emit ComponentCreated(componentNumber, componentAddress);
-        componentNumber++;
+        _registredComponents.push(componentAddress);
         return componentAddress;
     }
 
     function addChildComponentToComponent(address _parentComponentAddress, address _childComponentAddress) public {
         IComponent parentComponent = IComponent(_parentComponentAddress);
-        parentComponent.addChild(_childComponentAddress);
         IComponent childComponent = IComponent(_childComponentAddress);
+        parentComponent.addChild(_childComponentAddress);
         childComponent.updateParentAddress(_parentComponentAddress);
     }
 
-    function removeChildComponentFromComponent(address _parentComponentAddress, address _childComponentAddress) public {
+    function removeChildComponentFromComponent(address _parentComponentAddress, uint256 _childIndex) public {
         IComponent parentComponent = IComponent(_parentComponentAddress);
-        parentComponent.removeChild(_childComponentAddress);
-        IComponent childComponent = IComponent(_childComponentAddress);
+        address childComponentAddress = parentComponent.removeChild(_childIndex);
+        IComponent childComponent = IComponent(childComponentAddress);
         childComponent.updateParentAddress(address(0));
     }
 
@@ -48,9 +39,9 @@ contract Manager {
         component.updateData(_data);
     }
 
-    function getChildComponentAddressById(address _parentComponentAddress, uint256 _id) public view returns(address) {
+    function getChildComponentAddressByIndex(address _parentComponentAddress, uint256 _id) public view returns(address) {
         IComponent component = IComponent(_parentComponentAddress);
-        address childAddress = component.getChildComponentAddressById(_id);
+        address childAddress = component.getChildComponentAddressByIndex(_id);
         return childAddress;
     }
 
@@ -60,15 +51,6 @@ contract Manager {
         return childComponentIndex;
     }
 
-    // TODO: move to registry/database contract
-    function getComponentNumber() public view returns(uint) {
-        return componentNumber;
-    }
-
-    function getComponentAddressRegistredByIndex(uint256 _index) public view returns(address) {
-        return registredComponents[_index];
-    } 
-
     function getComponentData(uint256 _componentAddress) public view returns(string memory){
         IComponent component = IComponent(_componentAddress);
         return component.getData();
@@ -76,6 +58,6 @@ contract Manager {
 
     function getComponentOwner(address _componentAddress) public view returns(address) {
         IComponent component = IComponent(_componentAddress);
-        return component.getOwner();
+        return component.owner();
     }
 }
