@@ -31,7 +31,6 @@ contract('Component - testing deployment and creation of Component contract', (a
                 childComponentList,
                 owner
             ] = values;
-            console.log("Number: ", childComponentList);
             assert.equal(data, "Component", "Component data was tampered!!"); 
             assert.equal(parentComponentAddress, "0x0000000000000000000000000000000000000000", "Parent address is wrong!!"); 
             assert.equal(numberOfChildComponents.toNumber(), 0, "Wrong number child components!!"); 

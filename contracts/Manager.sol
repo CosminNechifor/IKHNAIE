@@ -1,12 +1,12 @@
 pragma solidity >=0.4 <0.6.0; 
 
-import "./IComponentFactory.sol";
-import "./IComponent.sol";
 import "./Ownable.sol";
+import "./IComponent.sol";
+import "./IComponentFactory.sol";
 
 contract Manager is Ownable {
 
-    address[] private _registredComponents;
+    address[] private _database;
 
     IComponentFactory componentFactory;
 
@@ -16,7 +16,7 @@ contract Manager is Ownable {
 
     function createComponent(string memory _data) public returns(address) {
         address componentAddress = componentFactory.createComponent(_data, msg.sender);
-        _registredComponents.push(componentAddress);
+        _database.push(componentAddress);
         return componentAddress;
     }
 
@@ -51,7 +51,7 @@ contract Manager is Ownable {
         return childComponentIndex;
     }
 
-    function getComponentData(uint256 _componentAddress) public view returns(string memory){
+    function getComponentData(address _componentAddress) public view returns(string memory){
         IComponent component = IComponent(_componentAddress);
         return component.getData();
     }
@@ -60,4 +60,17 @@ contract Manager is Ownable {
         IComponent component = IComponent(_componentAddress);
         return component.owner();
     }
+
+    function getComponentAtIndex(uint256 _index) public view returns(address) {
+        return _database[_index];
+    }
+
+    function getDatabase() public view returns(address[] memory) {
+        return _database;
+    }
+
+    function getDatabaseSize() public view returns(uint256) {
+        return _database.length;
+    }
+
 }

@@ -1,6 +1,5 @@
 pragma solidity >=0.4 <0.6.0; 
 
-
 import "./Ownable.sol";
 
 
@@ -35,7 +34,7 @@ contract Component is Ownable {
 
     // child specific operations
     function addChild(address _childComponentAddress) external {
-        childComponentList.push(_childComponentAddress) - 1;
+        childComponentList.push(_childComponentAddress);
     }
 
     function removeChild(uint256 _index) external {
