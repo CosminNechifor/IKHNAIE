@@ -1,9 +1,12 @@
 pragma solidity >=0.4 <0.6.0; 
 
 import "./Ownable.sol";
-import "./IComponent.sol";
-import "./IComponentFactory.sol";
 
+/**
+ * TODO: 
+ * - add modifier to allow only the Manager to perform operations
+ * - decide if removeComponent is wanted
+ */
 
 contract Registry is Ownable {
 
@@ -22,7 +25,7 @@ contract Registry is Ownable {
 
         _registry[_index] = _componentAddress;
         
-        // deleteing the element and enusre there is no empty space
+        // delete the element and enusre there is no empty space
         delete _registry[lastElementIndex];
         _registry.length--;
     }
