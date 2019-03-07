@@ -1,18 +1,15 @@
 pragma solidity >=0.4 <0.6.0; 
 
-import "./Ownable.sol";
-
 /**
  * TODO: 
  * - add modifier to allow only the Manager to perform operations
  * - decide if removeComponent is wanted
  */
 
-contract Registry is Ownable {
+contract Registry {
 
     // the place where all components in the system are going to be stored
     address[] private _registry;
-
 
     function addComponent(address _componentAddress) external {
         _registry.push(_componentAddress);

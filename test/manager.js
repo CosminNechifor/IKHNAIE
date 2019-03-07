@@ -1,11 +1,13 @@
 const ComponentFactory = artifacts.require("ComponentFactory");
 const Manager = artifacts.require("Manager");
 const Component = artifacts.require("Component");
+const Registry = artifacts.require("Registry");
 
 contract('Manager - testing deployment and creation of components [happy case]', function (accounts) {
     
     let managerContract;
     let factoryAddress;
+    let registryAddress;
 
     /**
      * TESTING DEPLOYMENT OF ComponentFactory CONTRACT
@@ -18,10 +20,20 @@ contract('Manager - testing deployment and creation of components [happy case]',
     });
 
     /**
+     * TESTING DEPLOYMENT OF ComponentFactory CONTRACT
+     *  */    
+    it("Deploy Registry contract", () => {
+        return Registry.new().then((instance) => {
+            registryAddress = instance.address;
+            assert.notEqual(registryAddress, undefined, "Failed to deploy RegistryContract");
+        });
+    });
+
+    /**
      * TESTING DEPLOYMENT OF ManagerContract USING ALREADY DEPLOYED ComponentFactory
      */
     it("Deploy ManagerContract contract", () => {
-        return Manager.new(factoryAddress).then((instance) => {
+        return Manager.new(factoryAddress, registryAddress).then((instance) => {
             managerContract = instance;
             assert.notEqual(managerContract, undefined, "Failed to deploy Manager contract!");
         });
@@ -33,7 +45,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
     it("Create components", () => {
         return managerContract.createComponent("Component0").then(() => {
             //check if componentRegistred has the rigth number of components
-            return managerContract.getDatabaseSize();
+            return managerContract.getRegistrySize();
         }).then((databaseSize) => {
             assert.equal(databaseSize.toNumber(), 1, "Creation of the Component0 failed!"); 
         })
@@ -45,11 +57,11 @@ contract('Manager - testing deployment and creation of components [happy case]',
     it("Get content of registry and access the components", () => {
         return managerContract.createComponent("Component1").then(() => {
             //check if componentRegistred has the rigth number of components
-            return managerContract.getDatabaseSize();
+            return managerContract.getRegistrySize();
         }).then((databaseSize) => {
             numberOfComponents = databaseSize.toNumber();
             assert.equal(numberOfComponents, 2, "Creation of the Component1 failed!");
-            return managerContract.getDatabase();
+            return managerContract.getRegistredComponents();
         }).then((values) => {
             const [component0Address, component1Address] = values;
             assert.notEqual(component0Address, undefined, "GetComponentAddressREgistredByIndex failed!");
@@ -111,7 +123,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
                 managerContract.createComponent("Component3")
             ]
         ).then(() => {
-            return managerContract.getDatabase();
+            return managerContract.getRegistredComponents();
         }).then((values) => {
             promiseList = [];
             for (let i = 2; i < values.length; i++) {
@@ -130,7 +142,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
             assert.equal(values[0], "Component2", "Data was tampered!");
             assert.equal(values[1], "Component3", "Data was tampered!");
         }).then(() => {
-            return managerContract.getDatabase(); 
+            return managerContract.getRegistredComponents(); 
         }).then((database) => {
             assert.equal(database.length, 4, "Creation of components failed failed!");
             return Promise.all(
@@ -151,7 +163,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
 
     it("Stage 2: Travel from component 3 to component 2", () => {
         // We already know where component3 is at index 3
-        return managerContract.getComponentAtIndex(3).then(componentAddress => {
+        return managerContract.getRegistredComponentAtIndex(3).then(componentAddress => {
             return Component.at(componentAddress);
         }).then(componentContract => {
             // getting the data and asserting for the content
