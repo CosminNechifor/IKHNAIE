@@ -10,7 +10,7 @@ contract Manager is Ownable {
     IComponentFactory componentFactory;
     IRegistry registryContract;
 
-    constructor(address _componentFactoryAddress,address _registryContractAddress) Ownable(msg.sender) public {
+    constructor(address _componentFactoryAddress, address _registryContractAddress) Ownable(msg.sender) public {
         componentFactory = IComponentFactory(_componentFactoryAddress);
         registryContract = IRegistry(_registryContractAddress);
     }
@@ -73,6 +73,4 @@ contract Manager is Ownable {
     function getRegistredComponents() public view returns(address[] memory) {
         return registryContract.getRegistredComponents();
     }
-
-
 }
