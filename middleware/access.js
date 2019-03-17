@@ -27,23 +27,10 @@ const getRegistrySize = () => {
     return contract.methods.getRegistrySize.call({from: account.address});
 }
 
+const createComponent = (data) => {
+    return contract.methods.createComponent(data).send({from: account.address, gas: 3900000});
+} 
+
+export {getRegistrySize, createComponent};
 
 
-export {printBlockNumber, getRegistrySize};
-
-
-
-
-
-
-
-
-
-
-
-
-
-// web3.eth.getBalance(account.address).then(res => console.log(res));
-const printBlockNumber = (number) => {
-    return web3.eth.getBlock(number);
-}
