@@ -1,15 +1,20 @@
 import express from 'express';
-import {getRegistrySize, printBlockNumber} from './access.js';
+import {getRegistrySize, createComponent} from './access.js';
 
 const app = express()
 app.use(express.json())
 
-app.get('/', (req, res) => {
-    printBlockNumber(1);
-    getRegistrySize().then(res => console.log(res));
+app.get('/size', (req, res) => {
+    getRegistrySize().then(size => {
+        res.status(200).send({'size': size });
+    });
+});
 
-    return res.status(200).send({'message': 'worked' });
-})
+app.post('/component', (req, res) => {
+    createComponent(req.body.data).then(blockdata=> {
+        res.status(200).send({'blockdata': blockdata}); 
+    });
+});
 
 app.listen(3000)
 console.log('app running on port ', 3000);
