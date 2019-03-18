@@ -200,4 +200,13 @@ contract('Manager - testing deployment and creation of components [happy case]',
             assert.equal(componentData, "Component2", "Not the right component!");
         });
     });
+
+    it("Get all children", () => {
+        return managerContract.getRegistredComponents().then((values) => {
+            parentComponentAddress = values[0];
+            return managerContract.getChildComponentListOfAddress(parentComponentAddress);
+        }).then((values) => {
+            assert.equal(values.length, 2, "getChildComponentListOfAddress failed!"); 
+        });
+    });
 });

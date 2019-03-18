@@ -52,6 +52,12 @@ contract Manager is Ownable {
         return childComponentIndex;
     }
 
+    function getChildComponentListOfAddress(address _parentComponentAddress) public view returns(address[] memory){
+        IComponent component = IComponent(_parentComponentAddress);
+        address[] memory childrenList = component.getChildComponentList();
+        return childrenList;
+    }
+
     function getComponentData(address _componentAddress) public view returns(string memory){
         IComponent component = IComponent(_componentAddress);
         return component.getData();
