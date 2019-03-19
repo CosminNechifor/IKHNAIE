@@ -209,4 +209,22 @@ contract('Manager - testing deployment and creation of components [happy case]',
             assert.equal(values.length, 2, "getChildComponentListOfAddress failed!"); 
         });
     });
+
+    it("Check for component owner to be accounts[0]", () => {
+        return managerContract.getRegistredComponents().then((values) => {
+            return Promise.all(
+                [
+                    managerContract.getComponentOwner(values[0]),
+                    managerContract.getComponentOwner(values[1]),
+                    managerContract.getComponentOwner(values[2]),
+                    managerContract.getComponentOwner(values[3])
+                ]
+            );
+        }).then((values) => {
+            assert.equal(values[0], accounts[0], "Ownership is broken!"); 
+            assert.equal(values[1], accounts[0], "Ownership is broken!"); 
+            assert.equal(values[2], accounts[0], "Ownership is broken!"); 
+            assert.equal(values[3], accounts[0], "Ownership is broken!"); 
+        });
+    });
 });
