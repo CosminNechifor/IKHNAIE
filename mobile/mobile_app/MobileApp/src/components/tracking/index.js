@@ -42,7 +42,6 @@ class Tracking extends Component {
 	  };
 	});
 	this.setState({componentList: componentList})
-	console.log(componentList);
       }).catch(e => 
 	console.log(e)
       );
@@ -56,9 +55,32 @@ class Tracking extends Component {
       textStyle: { color: "yellow" },
       buttonText: "Okay"
     });
+
+    const url = '/api/v1/_component/'+component.address+'/child'
+
+    axios.get(url).then(res => {
+      let requests = res.data.childComponentsAddresses.map(addr => {
+	return axios.get('/api/v1/_component/' + addr);
+      });
+      Promise.all(requests).then(res => {
+	const componentList = res.map(r => {
+	  return {
+	    'data': r.data.data,
+	    'parent': r.data.parentAddress,
+	    'address': r.data.componentAddress
+	  };
+	});
+	this.setState({componentList: componentList})
+      }).catch(e => 
+	console.log(e)
+      );
+    }).catch(e => {
+      console.log(e);
+    });
     
     const newComponentsHistory = this.state.componentsHistory;
     newComponentsHistory.push(this.state.currentComponent);
+
     this.setState({
       componentsHistory: newComponentsHistory,
       currentComponent: component 

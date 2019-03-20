@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 const managerContractPath = '../blockchain/build/contracts/Manager.json';
 const componentContractPath = '../blockchain/build/contracts/Component.json';
-const managerContractAddress = '0xe1Fc79fcEba402B6B59c980255439aC7BbA042bF';
+const managerContractAddress = '0xad934659b1e341dE46442E77437655B51aDe3dB3';
 const privKey = '0x876258c7c6c0eecff9c179a76b2f002bc9a35cde23ff4fbc7df17f8f683e1614';
 
 const web3 = new Web3(Web3.givenProvider || "ws://localhost:8540");
