@@ -33,7 +33,19 @@ const datas = [
     route: "AddComponents",
     icon: "keypad",
     bg: "#B89EF5"
-  }
+  },
+  {
+    name: "Update Component",
+    route: "UpdateComponent",
+    icon: "keypad",
+    bg: "#B89EF5"
+  },
+  {
+    name: "Link Components",
+    route: "LinkComponent",
+    icon: "keypad",
+    bg: "#B89EF5"
+  },
 ];
 
 class SideBar extends Component {

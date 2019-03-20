@@ -6,12 +6,16 @@ import SideBar from "./components/sidebar";
 import Home from "./components/home";
 import Tracking from "./components/tracking";
 import AddComponents from "./components/addComponents";
+import UpdateComponent from "./components/updateComponent";
+import LinkComponent from "./components/linkComponent";
 
 const Drawer = createDrawerNavigator(
   {
     Home: { screen: Home },
     Tracking: { screen: Tracking },
-    AddComponents: { screen: AddComponents }
+    AddComponents: { screen: AddComponents },
+    UpdateComponent: { screen: UpdateComponent},
+    LinkComponent: { screen: LinkComponent},
   },
   {
     initialRouteName: "Home",
