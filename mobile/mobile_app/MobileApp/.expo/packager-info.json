@@ -2,9 +2,9 @@
   "devToolsPort": 19002,
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 7871,
-  "expoServerNgrokUrl": "https://w9-fxx.cosminpetru.mobileapp.exp.direct",
-  "packagerNgrokUrl": "https://packager.w9-fxx.cosminpetru.mobileapp.exp.direct",
-  "ngrokPid": 7943,
+  "packagerPid": 23578,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
   "webpackServerPort": null
 }

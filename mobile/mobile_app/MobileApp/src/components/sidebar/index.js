@@ -27,6 +27,12 @@ const datas = [
     route: "Tracking",
     icon: "keypad",
     bg: "#B89EF5"
+  },
+  {
+    name: "Add Components",
+    route: "AddComponents",
+    icon: "keypad",
+    bg: "#B89EF5"
   }
 ];
 
