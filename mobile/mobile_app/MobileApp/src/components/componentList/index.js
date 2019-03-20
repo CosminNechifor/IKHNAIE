@@ -10,7 +10,6 @@ class ComponentList extends Component {
 	  <ComponentElement 
 	    components={this.props.components}
 	    showChildComponents={this.props.showChildComponents} 
-	    showParentComponent={this.props.showParentComponent}
 	  />
 	</Content>
       </Container>

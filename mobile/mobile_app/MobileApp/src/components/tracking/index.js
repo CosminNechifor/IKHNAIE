@@ -21,13 +21,17 @@ import axios from '../../axios';
 class Tracking extends Component {
 
   state = {
-    currnetComponent: null,
+    currentComponent: '0x0000000000000000000000000000000000000000',
     componentList: [ 
     ],
     componentsHistory: []
   };
   
   componentWillMount() {
+    this.loadApp();
+  }
+
+  loadApp() {
     axios.get('/api/v1/component').then(res => {
       //console.log(res.data.components)
       let requests = res.data.components.map(addr => {
@@ -41,23 +45,18 @@ class Tracking extends Component {
 	    'address': r.data.componentAddress
 	  };
 	});
-	this.setState({componentList: componentList})
+	this.setState({
+	  componentList: componentList,
+	  currentComponent: '0x0000000000000000000000000000000000000000'
+	});
       }).catch(e => 
 	console.log(e)
       );
     });
   }
 
-  showChildComponentsHandler = (component) => {
-    const text = "Showing child components for: " + component.address;
-    Toast.show({
-      text: text,
-      textStyle: { color: "yellow" },
-      buttonText: "Okay"
-    });
-
+  updateComponentList(component) {
     const url = '/api/v1/_component/'+component.address+'/child'
-
     axios.get(url).then(res => {
       let requests = res.data.childComponentsAddresses.map(addr => {
 	return axios.get('/api/v1/_component/' + addr);
@@ -70,37 +69,46 @@ class Tracking extends Component {
 	    'address': r.data.componentAddress
 	  };
 	});
-	this.setState({componentList: componentList})
+	this.setState({componentList: componentList, currentComponent: component});
       }).catch(e => 
 	console.log(e)
       );
     }).catch(e => {
       console.log(e);
     });
-    
-    const newComponentsHistory = this.state.componentsHistory;
-    newComponentsHistory.push(this.state.currentComponent);
-
-    this.setState({
-      componentsHistory: newComponentsHistory,
-      currentComponent: component 
-    });
   }
 
-  //replace with proper logic
-  showParentComponentHandler = () => {
+  showChildComponentsHandler = (component) => {
+    const text = "Showing child components for: " + component.address;
+    Toast.show({
+      text: text,
+      textStyle: { color: "yellow" },
+      buttonText: "Okay"
+    });
+    this.updateComponentList(component);
+  }
+
+  showParentComponentHandler = (component) => {
     text = "Showing parent component";
     Toast.show({
       text: text,
       textStyle: { color: "yellow" },
       buttonText: "Okay"
     });
-    const newComponentsHistory = this.state.componentsHistory;
-    const newCurrentComponent =  newComponentsHistory.pop();
-    this.setState({
-      componentsHistory: newComponentsHistory,
-      currentComponent: newCurrentComponent
-    });
+    
+    if (component.parent === '0x0000000000000000000000000000000000000000') {
+      this.loadApp();
+    }
+    
+    axios.get('/api/v1/_component/' + component.parent).then(res => {
+      const parentComponent = {
+	'data': res.data.data,
+	'parent': res.data.parentAddress,
+	'address': res.data.componentAddress
+      };
+      console.log(parentComponent);
+      this.updateComponentList(parentComponent);
+    }).catch(e => console.log(e));
   }
 
   render() {
@@ -121,13 +129,13 @@ class Tracking extends Component {
           <Right />
         </Header>
 	{
-	  this.state.currentComponent ? 
+	  this.state.currentComponent !== '0x0000000000000000000000000000000000000000' ? 
 	  <Header style={{backgroundColor: '#808080'}}>
-	    <Button transparent success>
+	    <Button transparent success onPress={() => this.showParentComponentHandler(this.state.currentComponent)}>
 	      <Text>{this.state.currentComponent.data}</Text>
 	    </Button>
 	  </Header>
-	  :<Header style={{backgroundColor: '#808080'}}>
+	  : <Header style={{backgroundColor: '#808080'}}>
 	    <Button transparent success>
 	      <Text>All Components</Text>
 	    </Button>
@@ -136,7 +144,6 @@ class Tracking extends Component {
 	<ComponentList
 	  components={this.state.componentList}
 	  showChildComponents={this.showChildComponentsHandler}	
-	  showParentComponent={this.showParentComponentHandler}
 	/>
       </Container>
     );
