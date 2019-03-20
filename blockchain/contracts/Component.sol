@@ -68,6 +68,10 @@ contract Component is Ownable {
         return childComponentList[_index];
     }
 
+    function getComponentInfo() external view returns(address, string memory) {
+        return (parentComponentAddress, data);
+    }
+
     // use carefully
     function getChildComponentIndexByAddress(address _address) external view returns(uint256) {
         uint256 length = childComponentList.length;
