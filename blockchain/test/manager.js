@@ -227,4 +227,14 @@ contract('Manager - testing deployment and creation of components [happy case]',
             assert.equal(values[3], accounts[0], "Ownership is broken!"); 
         });
     });
+
+    it("Get component info", () => {
+        return managerContract.getRegistredComponents().then((values) => {
+            parentComponentAddress = values[0];
+            return managerContract.getComponentInfo(parentComponentAddress);
+        }).then((values) => {
+            assert.equal(values[0], "0x0000000000000000000000000000000000000000", "Data was tampered");
+            assert.equal(values[1], "Component0", "Not the right component!");
+        });
+    });
 });
