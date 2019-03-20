@@ -10,6 +10,7 @@ interface IComponent{
     function getNumberOfChildComponents() external view returns(uint256);
     function getChildComponentList() external view returns(address[] memory);
     function getChildComponentAddressByIndex(uint256 _index) external view returns(address);
+    function getComponentInfo() external view returns(address, string memory);
     function getChildComponentIndexByAddress(address _address) external view returns(uint256);
     function owner() external view returns (address); 
     function transferOwnership(address newOwner) external; 

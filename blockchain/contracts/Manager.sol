@@ -63,6 +63,11 @@ contract Manager is Ownable {
         return component.getData();
     }
 
+    function getComponentInfo(address _componentAddress) public view returns(address, string memory){
+        IComponent component = IComponent(_componentAddress);
+        return component.getComponentInfo();
+    } 
+
     function getComponentOwner(address _componentAddress) public view returns(address) {
         IComponent component = IComponent(_componentAddress);
         return component.owner();
