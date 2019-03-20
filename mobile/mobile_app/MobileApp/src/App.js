@@ -4,13 +4,14 @@ import { createDrawerNavigator, createStackNavigator, createAppContainer } from 
 
 import SideBar from "./components/sidebar";
 import Home from "./components/home";
-
 import Tracking from "./components/tracking";
+import AddComponents from "./components/addComponents";
 
 const Drawer = createDrawerNavigator(
   {
     Home: { screen: Home },
-    Tracking: { screen: Tracking }
+    Tracking: { screen: Tracking },
+    AddComponents: { screen: AddComponents }
   },
   {
     initialRouteName: "Home",
