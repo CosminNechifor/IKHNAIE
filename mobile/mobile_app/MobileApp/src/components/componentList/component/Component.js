@@ -18,11 +18,6 @@ const componentElement = (props) => props.components.map(e => {
         </Body>
       </CardItem>
       <CardItem footer>
-        <Button light onPress={() => props.showParentComponent(e)}> 
-          <Text>
-            Parent Component 
-          </Text>
-        </Button>
         <Button light onPress={() => props.showChildComponents(e)}> 
           <Text>
             Child components 
