@@ -11,7 +11,8 @@ import {
     updateData,
     removeChildComponentFromComponent, 
     addChildComponentToComponent,
-    getChildComponentListOfAddress
+    getChildComponentListOfAddress,
+    getComponentInfo
 } from './access.js';
 
 const app = express()
@@ -50,9 +51,10 @@ app.get('/api/v1/component/:id', (req, res) => {
 });
 
 app.get('/api/v1/_component/:address', (req, res) => {
-    getComponentData(req.params.address).then(data => {
+    getComponentInfo(req.params.address).then(data => {
         res.status(200).send({
-            'data': data,
+            'data': data['1'],
+            'parentAddress': data['0'],
             'componentAddress': req.params.address 
         });
     }).catch(e => {
