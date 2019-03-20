@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 const managerContractPath = '../blockchain/build/contracts/Manager.json';
 const componentContractPath = '../blockchain/build/contracts/Component.json';
-const managerContractAddress = '0x1Cef916B9027cE2272504447847B2Ac1F4366171';
+const managerContractAddress = '0xe1Fc79fcEba402B6B59c980255439aC7BbA042bF';
 const privKey = '0x876258c7c6c0eecff9c179a76b2f002bc9a35cde23ff4fbc7df17f8f683e1614';
 
 const web3 = new Web3(Web3.givenProvider || "ws://localhost:8540");
@@ -50,6 +50,12 @@ const getRegistredComponentAtIndex = (index) => {
 const getComponentOwner = (address) => {
     return ManagerContract.methods
         .getComponentOwner(address)
+        .call({from: account.address});
+} 
+
+const getComponentInfo = (address) => {
+    return ManagerContract.methods
+        .getComponentInfo(address)
         .call({from: account.address});
 } 
 
@@ -107,7 +113,8 @@ export {
     updateData,
     removeChildComponentFromComponent, 
     addChildComponentToComponent,
-    getChildComponentListOfAddress
+    getChildComponentListOfAddress,
+    getComponentInfo,
 };
 
 
