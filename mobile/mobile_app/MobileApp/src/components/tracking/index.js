@@ -33,7 +33,6 @@ class Tracking extends Component {
 
   loadApp() {
     axios.get('/api/v1/component').then(res => {
-      //console.log(res.data.components)
       let requests = res.data.components.map(addr => {
 	return axios.get('/api/v1/_component/' + addr);
       });
@@ -95,11 +94,14 @@ class Tracking extends Component {
       textStyle: { color: "yellow" },
       buttonText: "Okay"
     });
-    
-    if (component.parent === '0x0000000000000000000000000000000000000000') {
+
+    if (component.parent === '0x0000000000000000000000000000000000000000' || 
+      component === '0x0000000000000000000000000000000000000000') {
+      console.log('this is called');
       this.loadApp();
+      return;
     }
-    
+
     axios.get('/api/v1/_component/' + component.parent).then(res => {
       const parentComponent = {
 	'data': res.data.data,
@@ -132,11 +134,11 @@ class Tracking extends Component {
 	  this.state.currentComponent !== '0x0000000000000000000000000000000000000000' ? 
 	  <Header style={{backgroundColor: '#808080'}}>
 	    <Button transparent success onPress={() => this.showParentComponentHandler(this.state.currentComponent)}>
-	      <Text>{this.state.currentComponent.data}</Text>
+	      <Text>{this.state.currentComponent.data} children</Text>
 	    </Button>
 	  </Header>
 	  : <Header style={{backgroundColor: '#808080'}}>
-	    <Button transparent success>
+	    <Button transparent success onPress={() => this.showParentComponentHandler(this.state.currentComponent)}>
 	      <Text>All Components</Text>
 	    </Button>
 	  </Header>
