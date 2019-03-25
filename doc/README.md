@@ -4,6 +4,12 @@
 
 In this project I try to implement something that would be against the **linear economy model** which describes itself as: **Take** -> **Make** -> **Dispose**.
 
+![Linear Model](./images/linear_model.png)
+
+Image was taken from [here](https://circulartayside.co.uk/what-is-the-circular-economy/).
+
+
+
 This model (``liniar``) as we can clearly see is not long term sustainable and comes with a lot 
 of problems and disadvantages such as waste and emission leakage which results later in pollution. 
 Further more in the case of **linear** model we have problems with the system because of the agents that are not being honest on how the resources are being managed.
@@ -73,11 +79,13 @@ Fields that a component should have:
 | childComponentsAddresses |    address[]   |                                      Addresses of the child components                                      |
 
 
-The **state** field is gonna be one of the must important fields of a component.
+The **state** field is gonna be one of the must important fields of a component, because it allows and restricts which actors have access to the components.
 
 ![State Machine](./images/state_machine.png)
 
 **States**:
+
+------------
 
 - **(E) Editable** = An entity will be in Editable state only at the beginning
 
@@ -97,13 +105,26 @@ The **state** field is gonna be one of the must important fields of a component.
 
   
 
-
-
-
-
 **Events** the ``ComponentContract`` will emit:
 
-- 
+--------------------------------------------------------------
+
+- **ComponentCreated** &rarr; emitted when we create a component
+
+- **ComponentUpdated** &rarr; emitted when we change the value of one field. Musty when we call the following methods: 
+  - updateComponentName
+  - updateComponentExpiration
+  - updateComponentPrice
+  - updateOtherInformation
+  - addToOtherComponent
+  - removeComponentFromOtherComponent
+  - flagAsBroken
+  - flagAsExpired
+  - replaceComponent
+- **ComponentSubmitedForSale** &rarr; emitted when a component is submitted for sale.
+- **ComponentWasBought** &rarr; emitted when someone else bought the component
+- **ComponentRemovedFromMarket** &rarr; emitted when a component was removed by the owner from the market
+- **OwnershipTransferred**  &rarr; emitted when a component is bought.
 
 
 ### IComponent interface 
