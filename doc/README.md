@@ -1,6 +1,8 @@
 # Circular economy on top of the Blockchain
 
-## What motivates this project? 
+
+
+## What motivates this project?
 
 In this project I try to implement something that would be against the **linear economy model** which describes itself as: **Take** -> **Make** -> **Dispose**.
 
@@ -30,7 +32,7 @@ And as we all know [ownership](https://www.economist.com/briefing/2015/10/31/the
 
 Thanks to the **Blockchain technology** I will be able to develop a system that will create a solution to those problems. 
 
-## Objective 
+## Objective
 
 The system has to make sure that every actor that is interacting with the components:
 
@@ -40,7 +42,7 @@ The system has to make sure that every actor that is interacting with the compon
 - Provide immutable data => digital trails
 - enable manufacturers, recyclers, all the way to consumers to confidently assert the circularity of their products
 
-## Description 
+## Description
 
 All products that are tracked by the system will be divided into **components** and every component
 will be composed by other components. 
@@ -50,7 +52,8 @@ will be composed by other components.
 ## Contracts
 
 
-**insert picture here with the design**
+
+![System conceptual design](./images/system_conceptual_design.png)
 
 ### Component 
 
@@ -70,6 +73,7 @@ Fields that a component should have:
 |  parentComponentAddress  |     address    | Address of the component containing this component. Should be ``address(0)`` if the component doesn't exist |
 |     otherInformation     |     string     |                                  Other information related to the component                                 |
 | childComponentsAddresses |    address[]   |                                      Addresses of the child components                                      |
+
 
 
 The **state** field is gonna be one of the must important fields of a component, because it allows and restricts which actors have access to the components.
@@ -231,23 +235,50 @@ Manager takes care of the following:
 
 
 
-
-
-# Actors
+## Actors
 
 The system will have 3 actors in the beginning: 
 
 - Manufacturer 
-
 - Consumer/Owner
-
 - Recycler 
 
-  
+
+
+### Manufacturer
+
+The person which is gonna be responsible of turning the raw material that he has to a product (in this case a component). 
+
+In order for a user to become a manufacturer he would have to register for this.
+
+Things he can do: 
+
+- Create new components.
+- Allowed to edit everything about them before submitting it for sale. After that he can no longer touch them.
+- Buy recycled raw material from the Recycler.
+
+### Consumer/Owner
+
+The Consumer/Owner will consume/own the **Component** and he has the following rights:
+
+- Buys Components.
+- Sells Components.
+- Update the price of the Components.
+- Flag his or other components as broken
 
 
 
+### Recycler
+
+The Recycler takes the components that expired or were flanged as ``broken`` and recycles them. He will be rewarded for doing this. He can perform the following actions:
+
+- Flag component as broken
+- Recycle component
+- Sell raw material
 
 
 
+## The system should reward actors who: 
 
+- Flag Components for being ``Expired`` and 
+- Recycle Components
