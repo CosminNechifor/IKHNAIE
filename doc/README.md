@@ -1,4 +1,4 @@
-# Circular economy on the Blockchain
+# Circular economy on top of the Blockchain
 
 ## What motivates this project? 
 
@@ -7,8 +7,6 @@ In this project I try to implement something that would be against the **linear 
 ![Linear Model](./images/linear_model.png)
 
 Image was taken from [here](https://circulartayside.co.uk/what-is-the-circular-economy/).
-
-
 
 This model (``liniar``) as we can clearly see is not long term sustainable and comes with a lot 
 of problems and disadvantages such as waste and emission leakage which results later in pollution. 
@@ -24,18 +22,15 @@ This image was taken from [here](https://ec.europa.eu/jrc/en/news/research-helps
 
 ## Problems with the linear model and how does blockchain fit into the mix, in order to solve this problem?
 
-One can not solve the problem by centralizing the ``circular model`` in my opinion, because of 
-problems such as **corruption** and **lack of transparency**. 
+One can not solve the problem by centralizing the ``circular model`` in my opinion, because of problems such as **corruption** and **lack of transparency**. 
 
-That is why the new system has the following qualities **incorruptible**, **fully transparent** and to **benefit all actors**. This system will also solve problems such as ownership,
-and will benefit all the honest actors using it.
+That is why the new system has the following qualities **incorruptible**, **fully transparent** and to **benefit all actors**. This system will also solve problems such as ownership, and will benefit all the honest actors using it.
 
-And as we all know [ownership](https://www.economist.com/briefing/2015/10/31/the-great-chain-of-being-sure-about-things), corruption, lack of transparency and pollution are the biggest 
-problems that we face in the 21st century. 
+And as we all know [ownership](https://www.economist.com/briefing/2015/10/31/the-great-chain-of-being-sure-about-things), corruption, lack of transparency and pollution are the biggest problems that we face in the 21st century. 
 
 Thanks to the **Blockchain technology** I will be able to develop a system that will create a solution to those problems. 
 
-## Objective  
+## Objective 
 
 The system has to make sure that every actor that is interacting with the components:
 
@@ -44,8 +39,6 @@ The system has to make sure that every actor that is interacting with the compon
 - Benefits himself and the others by using this system
 - Provide immutable data => digital trails
 - enable manufacturers, recyclers, all the way to consumers to confidently assert the circularity of their products
-
-``to add more``
 
 ## Description 
 
@@ -127,37 +120,130 @@ The **state** field is gonna be one of the must important fields of a component,
 - **OwnershipTransferred**  &rarr; emitted when a component is bought.
 
 
-### IComponent interface 
 
-This will act as a proxy for the component contract and is gonna be called from both ``ComponentFactory`` contract the and ``Manager`` contract
+### IComponent
+
+This contract will define a interface that the  ``Manager``  contract will use in order to interact with the ``components`` .
+
+
+
+IComponent standard interface: 
+
+```solidity
+pragma solidity >=0.4 <0.6.0; 
+
+interface IComponent{
+	// Will be defined as I dive deeper into the project
+}
+
+```
+
+
 
 ### ComponentFactory
 
-Contract responsible of creating(deploying) other components.
+Contract responsible of creating(deploying) other components on the blockchain.
+
+```solidity
+pragma solidity >=0.4.22 <0.6.0;
+
+import "./Component.sol";
+
+contract ComponentFactory {
+
+    function createComponent(string calldata _listOfComponentInfo, address _owner) external returns (address){
+        Component c = new Component(_listOfComponentInfo, _owner);
+        return address(c);
+    }
+}
+
+```
+
+
+
+<span style="color:red">Open discussion: Should people be able to deploy components on their own without using the ComponentFactory and then... later on add them using some method inside the manager contract?</span>
+
+
 
 ### IComponentFactory interface
 
-Contract that takes care on the ``Deploymnet`` of the Components on the blockchain.
+This contract will define a interface that the  ``Manager``  contract will use in order to interact with the ``ComponentFactory`` .
+
+
 
 ### Registry
 
-Contract that stores the addresses of the deployed contract on the blockchain.
+Contract that stores the addresses of the deployed contracts on the Blockchain.
+
+Used mainly in order to retrieve the address of all deployed components. Should also take care of the components that have been ``SubmitedForSale`` in another list. 
+
+**Events** emitted by the **Registry** contract:
+
+- **NewComponentRegistred** &rarr; emitted when we register a new component that was deployed.
+- ? **ComponentRemoved** &rarr; emitted when we remove a component, usually happens if we recycle/destroy the component.
+
+
+
+
 
 ### IRegistry interface
 
 Contract that acts like a proxy in order to interact with the registry contract.
 
+```
+pragma solidity >=0.4 <0.6.0; 
+
+interface IRegistry {
+    function addComponent(address _componentAddress) external;
+    function removeComponent(uint256 _index) external;
+    function getRegistrySize() external view returns(uint256);
+    function getRegistredComponentAtIndex(uint256 _index) external view returns(address);
+    function getRegistredComponents() external view returns(address[] memory);
+    function owner() external view returns (address);
+    function transferOwnership(address newOwner) external;
+    
+    // might need 2 more functions responsible for storing submitedForSale components and 
+    // removal of those components
+}
+
+```
+
+
+
 ### Manager
 
+
+
 Contract that allows user to perform operations inside the system and also orchestrates the 
-other contracts.
+other contracts. 
+
+Manager takes care of the following:
+
+- registering components to the **Registry**.
+- orchestrates all ``system contracts``
+- trust-less transfers of components and tokens when a component is bought/sold.
+- ensures that each actor on the system is rewarded/punished for his behavior.
+- ? the only way  change the state of a component would be by using the **Manager** contract
 
 
-## State managemnt of components
 
-## Events
+<span style="color:red"> Open dicussion: Should the manager be the only component allowed to do changes on other components?</span>
 
 
+
+
+
+# Actors
+
+The system will have 3 actors in the beginning: 
+
+- Manufacturer 
+
+- Consumer/Owner
+
+- Recycler 
+
+  
 
 
 
