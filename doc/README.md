@@ -1,4 +1,4 @@
-# Circular economy on the blockchain
+# Circular economy on the Blockchain
 
 ## What motivates this project? 
 
@@ -9,6 +9,12 @@ of problems and disadvantages such as waste and emission leakage which results l
 Further more in the case of **linear** model we have problems with the system because of the agents that are not being honest on how the resources are being managed.
 
 The **circular economy model** focuses on **recycling**. It proves himself more sustainable then the **linear model** by reusing the raw material that was initially used in the creation of other products.
+
+![Circular economy](./images/circular_economy.jpg)
+
+This image was taken from [here](https://ec.europa.eu/jrc/en/news/research-helps-europe-advance-towards-circular-economy) and it pretty much illustrates the circular model.
+
+
 
 ## Problems with the linear model and how does blockchain fit into the mix, in order to solve this problem?
 
@@ -67,9 +73,33 @@ Fields that a component should have:
 | childComponentsAddresses |    address[]   |                                      Addresses of the child components                                      |
 
 
-The ``state`` field is gonna be one of the must important fields of a component.
+The **state** field is gonna be one of the must important fields of a component.
 
-**insert picture with state management**
+![State Machine](./images/state_machine.png)
+
+**States**:
+
+- **(E) Editable** = An entity will be in Editable state only at the beginning
+
+  And as long as the component is in this state, the manufacturer can change some of it's properties.
+
+- **(SFS) SubmitedForSale** = When a component is ``SubmitedForSale`` we can no longer change properties of that component (except for the ``price``). After is being bought it goes into ``Owned`` state.
+
+- **(O) Owned** =  Simply means that a ``Component`` is being used by a user who owns it.  Where being used means the owner can do the following things: 
+
+  - Replace some of the component children
+  - Remove parts of it
+  - Sell it
+
+- **(B) Broken** = A ``Component`` gets into Broken state if one of the components has been removed without being replaced.  It also stays in broken state if we remove more from it.
+
+- **(Exp) Expired** = A ``Component`` that is into Expired state need to immediately be recycled or destroyed.
+
+  
+
+
+
+
 
 **Events** the ``ComponentContract`` will emit:
 
