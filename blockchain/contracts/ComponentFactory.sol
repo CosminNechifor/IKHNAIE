@@ -4,8 +4,25 @@ import "./Component.sol";
 
 contract ComponentFactory {
 
-    function createComponent(string calldata _componentData, address _owner) external returns (address){
-        Component c = new Component(_componentData, _owner);
+    function createComponent(
+        address _owner,
+        string calldata _entityName,
+        uint64 _expirationTime,
+        uint128 _price,
+        string calldata _otherInformation
+    ) 
+        external 
+        returns (address)
+    {
+
+        Component c = new Component(
+            _owner,
+            _entityName,
+            _expirationTime,
+            _price,
+            _otherInformation
+        );
+
         return address(c);
     }
 }
