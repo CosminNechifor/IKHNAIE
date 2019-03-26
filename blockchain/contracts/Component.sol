@@ -5,25 +5,17 @@ import "./Ownable.sol";
 
 contract Component is Ownable { 
 
-    /** 
-    * TODO:
-    * - Add the other component specific fields 
-    * - add modifiers for state management
-    * - Add a field to allow ONLY the Manager contract to 
-    *   change the state of the contract
-    * - emit the proper events in order to track the component history
-    */
-    enum EntityState { 
+    enum ComponentState { 
         // An entity will be in Editable state only at the beginning 
         Editable,
         // When an entity is posted for sale it goes into SubmitedForSale state
         SubmitedForSale,
         // Simply means that an entity is being used by a user who owns it
         Owned,
-        // An Entity gets into Broken state if one of the components has been removed without being replaced
+        // A Component gets into Broken state if one of the components has been removed without being replaced
         // if a entity gets into broken state must be changed with another one that you are the owner of  
         Broken,
-        // When the expiration period is finished then the Entity will get into needs recycled
+        // When the expiration period is finished then the Component will get into needs recycled
         // This has to be flagged by another user whoich is gonna get rewarded  
         NeedsRecylced,
         // Recycling an entity should give the user who recilced it some tokens
@@ -37,7 +29,7 @@ contract Component is Ownable {
     uint256 creationgTime;
     uint64 expiration;
     uint128 price;
-    EntityState state;
+    ComponentState state;
     string otherInformation;
 
     // navigation fields
@@ -52,10 +44,36 @@ contract Component is Ownable {
         uint256 _creationTime,
         uint64 _expiration,
         uint128 _price,
-        EntityState state,
+        ComponentState state,
         string _otherInformation,
         address _parentComponentAddress
     ); 
+
+    modifier inEditableState() {
+        require(state == ComponentState.Editable, "Component is not in Editable state.");
+        _;
+    }
+
+    modifier inSubmitedForSaleState() {
+        require(state == ComponentState.SubmitedForSale, "Component is not in SubmitedForSale state.");
+        _; 
+    }
+
+    modifier inOwnedState() {
+        require(state == ComponentState.Owned, "Component is not in Owned state.");
+        _; 
+    }
+
+    modifier inBrokenState() {
+        require(state == ComponentState.Broken, "Component is not in Broken state.");
+        _;
+    }
+
+    modifier inNeedsRecycledState() {
+        require(state == ComponentState.NeedsRecylced, "Component is not in NeedsRecycled state.");
+        _;
+    }
+
 
     constructor(
         address owner,
@@ -71,7 +89,7 @@ contract Component is Ownable {
         creationgTime = block.timestamp;
         expiration = _expirationTime;
         price = _price;
-        state = EntityState.Editable; 
+        state = ComponentState.Editable; 
         otherInformation = _otherInformation;
 
         parentComponentAddress = address(0); 
@@ -92,11 +110,6 @@ contract Component is Ownable {
         parentComponentAddress = _parentComponentAddress;    
     }    
 
-    // function updateData(string calldata _data) external { 
-    //     data = _data; 
-    // }
-
-    // child specific operations
     function addChild(address _childComponentAddress) external {
         childComponentList.push(_childComponentAddress);
     }
@@ -122,7 +135,7 @@ contract Component is Ownable {
             uint256,
             uint64,
             uint128,
-            EntityState,
+            ComponentState,
             string memory,
             address,
             address[] memory
