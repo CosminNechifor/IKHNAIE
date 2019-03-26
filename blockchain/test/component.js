@@ -73,4 +73,26 @@ contract('Component - testing happy cases', (accounts) => {
         });
     });
 
+    it("Test updateComponentExpiration", () => {
+        return componentContract.getData().then(values => {
+            assert.equal(values[3].toNumber(), 120, "Component expiration was tampered!!"); 
+            return componentContract.updateComponentExpiration(60);
+        }).then(() => {
+            return componentContract.getData();
+        }).then(values => {
+            assert.equal(values[3].toNumber(), 60, "Expiration is wrong!"); 
+        });
+    });
+
+    it("Test updateComponentPrice", () => {
+        return componentContract.getData().then(values => {
+            assert.equal(values[4].toNumber(), 20000, "Component price was tampered!!"); 
+            return componentContract.updateComponentPrice(10000);
+        }).then(() => {
+            return componentContract.getData();
+        }).then(values => {
+            assert.equal(values[4].toNumber(), 10000, "Price is wrong!"); 
+        });
+    });
+
 });

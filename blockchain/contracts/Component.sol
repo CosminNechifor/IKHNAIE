@@ -131,6 +131,25 @@ contract Component is Ownable {
     {
         parentComponentAddress = _parentComponentAddress;    
     }    
+    
+    // we don't need the component to be in any state
+    // to update the price
+    function updateComponentExpiration(
+        uint64 _expiration
+    )
+        external
+    {
+        expiration = _expiration;
+    }
+
+    function updateComponentPrice(
+        uint128 _price
+    )
+        external
+        inEditableState()
+    {
+        price = _price;
+    }
 
     function addChild(address _childComponentAddress) external {
         childComponentList.push(_childComponentAddress);
