@@ -2,7 +2,7 @@ const Component = artifacts.require("Component");
 
 
 
-contract('Component - testing deployment and creation of Component contract', (accounts) => {
+contract('Component - testing happy cases', (accounts) => {
 
     let componentContract;
 
@@ -27,7 +27,6 @@ contract('Component - testing deployment and creation of Component contract', (a
                 ]
             );
         }).then((values) => {
-            //console.log(values[0]);
             const result = values[0]; 
             const owner = result[0];
             const componentName = result[1];
@@ -51,4 +50,16 @@ contract('Component - testing deployment and creation of Component contract', (a
             assert.equal(childComponentList, 0, "Wrong number of child components!!"); 
         });
     });
+    
+    it("Test updateParentAddress", () => {
+        return componentContract.getParentComponentAddress().then(parentComponentAddress => {
+            assert.equal(parentComponentAddress, "0x0000000000000000000000000000000000000000", "Parent address is wrong!!"); 
+            return componentContract.updateParentAddress("0x1f81A518F69b6AAF5f54A583F44d9b1A95081A6f");
+        }).then(() => {
+            return componentContract.getParentComponentAddress();
+        }).then(parentComponentAddress  => {
+            assert.equal(parentComponentAddress, "0x1f81A518F69b6AAF5f54A583F44d9b1A95081A6f", "Parent address is wrong!!"); 
+        });
+    });
+
 });

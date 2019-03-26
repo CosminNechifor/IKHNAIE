@@ -50,14 +50,13 @@ contract Component is Ownable {
         address _owner,
         string _componentName,
         uint256 _creationTime,
-        uint32 _expiration,
+        uint64 _expiration,
         uint128 _price,
         EntityState state,
         string _otherInformation,
-        address _parentComponentAddress,
-        address[] _childComponentList
+        address _parentComponentAddress
     ); 
-    
+
     constructor(
         address owner,
         string memory _componentName,
@@ -76,6 +75,17 @@ contract Component is Ownable {
         otherInformation = _otherInformation;
 
         parentComponentAddress = address(0); 
+
+        emit ComponentCreated(
+            owner,
+            componentName,
+            creationgTime,
+            expiration,
+            price,
+            state,
+            otherInformation,
+            parentComponentAddress 
+        );
     }
 
     function updateParentAddress(address _parentComponentAddress) external {
@@ -146,10 +156,6 @@ contract Component is Ownable {
     function getChildComponentAddressByIndex(uint256 _index) external view returns(address) {
         return childComponentList[_index];
     }
-
-    // function getComponentInfo() external view returns(address, string memory) {
-    //     return (parentComponentAddress, data);
-    // }
 
     // use carefully
     function getChildComponentIndexByAddress(address _address) external view returns(uint256) {
