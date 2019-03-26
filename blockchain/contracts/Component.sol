@@ -13,14 +13,68 @@ contract Component is Ownable {
     *   change the state of the contract
     * - emit the proper events in order to track the component history
     */
+    enum EntityState { 
+        // An entity will be in Editable state only at the beginning 
+        Editable,
+        // When an entity is posted for sale it goes into SubmitedForSale state
+        SubmitedForSale,
+        // Simply means that an entity is being used by a user who owns it
+        Owned,
+        // An Entity gets into Broken state if one of the components has been removed without being replaced
+        // if a entity gets into broken state must be changed with another one that you are the owner of  
+        Broken,
+        // When the expiration period is finished then the Entity will get into needs recycled
+        // This has to be flagged by another user whoich is gonna get rewarded  
+        NeedsRecylced,
+        // Recycling an entity should give the user who recilced it some tokens
+        // That can be reused in the ecosystem
+        Recycled,
+        // When a component is being destroyed/removed by an user 
+        Destroyed
+    }
 
-    string private data;
+    string componentName;
+    uint256 creationgTime;
+    uint64 expiration;
+    uint128 price;
+    EntityState state;
+    string otherInformation;
 
+    // navigation fields
     address private parentComponentAddress;
     address[] private childComponentList;
+
     
-    constructor(string memory _data, address owner) Ownable(owner) public {
-        data = _data;
+    event ComponentCreated 
+    (
+        address _owner,
+        string _componentName,
+        uint256 _creationTime,
+        uint32 _expiration,
+        uint128 _price,
+        EntityState state,
+        string _otherInformation,
+        address _parentComponentAddress,
+        address[] _childComponentList
+    ); 
+    
+    constructor(
+        address owner,
+        string memory _componentName,
+        uint64 _expirationTime,
+        uint128 _price,
+        string memory _otherInformation
+    ) 
+        Ownable(owner)
+        public
+    {
+        componentName = _componentName;
+        creationgTime = block.timestamp;
+        expiration = _expirationTime;
+        price = _price;
+        state = EntityState.Editable; 
+        otherInformation = _otherInformation;
+
         parentComponentAddress = address(0); 
     }
 
@@ -28,9 +82,9 @@ contract Component is Ownable {
         parentComponentAddress = _parentComponentAddress;    
     }    
 
-    function updateData(string calldata _data) external { 
-        data = _data; 
-    }
+    // function updateData(string calldata _data) external { 
+    //     data = _data; 
+    // }
 
     // child specific operations
     function addChild(address _childComponentAddress) external {
@@ -48,8 +102,33 @@ contract Component is Ownable {
         childComponentList.length--;
     }
 
-    function getData() external view returns (string memory){
-        return data;
+    function getData() 
+        external 
+        view 
+        returns 
+        (
+            address,
+            string memory,
+            uint256,
+            uint64,
+            uint128,
+            EntityState,
+            string memory,
+            address,
+            address[] memory
+        )
+    {
+        return (
+            owner(),
+            componentName,
+            creationgTime,
+            expiration,
+            price,
+            state,
+            otherInformation,
+            parentComponentAddress,
+            childComponentList
+        );
     }
 
     function getParentComponentAddress() external view returns (address) {
@@ -68,9 +147,9 @@ contract Component is Ownable {
         return childComponentList[_index];
     }
 
-    function getComponentInfo() external view returns(address, string memory) {
-        return (parentComponentAddress, data);
-    }
+    // function getComponentInfo() external view returns(address, string memory) {
+    //     return (parentComponentAddress, data);
+    // }
 
     // use carefully
     function getChildComponentIndexByAddress(address _address) external view returns(uint256) {
