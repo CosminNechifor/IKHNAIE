@@ -62,4 +62,15 @@ contract('Component - testing happy cases', (accounts) => {
         });
     });
 
+    it("Test updateComponentName", () => {
+        return componentContract.getData().then(values => {
+            assert.equal(values[1], "ComponentName", "ComponentName is wrong!!"); 
+            return componentContract.updateComponentName("NewComponentName");
+        }).then(() => {
+            return componentContract.getData();
+        }).then(values => {
+            assert.equal(values[1], "NewComponentName", "ComponentName is wrong!!"); 
+        });
+    });
+
 });

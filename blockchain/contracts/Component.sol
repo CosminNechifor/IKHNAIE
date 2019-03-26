@@ -6,19 +6,19 @@ import "./Ownable.sol";
 contract Component is Ownable { 
 
     enum ComponentState { 
-        // An entity will be in Editable state only at the beginning 
+        // An component will be in Editable state only at the beginning 
         Editable,
-        // When an entity is posted for sale it goes into SubmitedForSale state
+        // When a component is posted for sale it goes into SubmitedForSale state
         SubmitedForSale,
-        // Simply means that an entity is being used by a user who owns it
+        // Simply means that a component is being used by a user who owns it
         Owned,
         // A Component gets into Broken state if one of the components has been removed without being replaced
-        // if a entity gets into broken state must be changed with another one that you are the owner of  
+        // if a component gets into broken state must be changed with another one that you are the owner of  
         Broken,
         // When the expiration period is finished then the Component will get into needs recycled
         // This has to be flagged by another user whoich is gonna get rewarded  
         NeedsRecylced,
-        // Recycling an entity should give the user who recilced it some tokens
+        // Recycling an component should give the user who recilced it some tokens
         // That can be reused in the ecosystem
         Recycled,
         // When a component is being destroyed/removed by an user 
@@ -74,6 +74,11 @@ contract Component is Ownable {
         _;
     }
 
+    // TODO: add it to the other update functions
+    modifier onlyManager(address managerAddress) {
+        require(msg.sender == managerAddress, "Not called from manager contract!");
+        _;
+    }
 
     constructor(
         address owner,
@@ -105,8 +110,25 @@ contract Component is Ownable {
             parentComponentAddress 
         );
     }
+    
+    // Todo: manager has to check if the sender is the component owner
+    // only the manager can change the components -> modifer exists and needs to
+    // be added to the functions
+    function updateComponentName(
+        string calldata _componentName
+    )
+        external
+        inEditableState()
+    {
+        componentName = _componentName; 
+    }
 
-    function updateParentAddress(address _parentComponentAddress) external {
+    function updateParentAddress(
+        address _parentComponentAddress
+    ) 
+        external
+        inEditableState()
+    {
         parentComponentAddress = _parentComponentAddress;    
     }    
 
