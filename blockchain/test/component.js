@@ -95,4 +95,14 @@ contract('Component - testing happy cases', (accounts) => {
         });
     });
 
+    it("Test updateComponentOtherInformation", () => {
+        return componentContract.getData().then(values => {
+            assert.equal(values[6], "other information", "Component otherInformation wasn't corectly initialized!!"); 
+            return componentContract.updateComponentOtherInformation("newOtherInformation");
+        }).then(() => {
+            return componentContract.getData();
+        }).then(values => {
+            assert.equal(values[6], "newOtherInformation", "OtherInformation is wrong!"); 
+        });
+    });
 });

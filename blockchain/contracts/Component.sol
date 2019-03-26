@@ -146,9 +146,17 @@ contract Component is Ownable {
         uint128 _price
     )
         external
-        inEditableState()
     {
         price = _price;
+    }
+
+    function updateComponentOtherInformation(
+        string calldata _otherInformation
+    )
+        external
+        inEditableState()
+    {
+        otherInformation = _otherInformation;
     }
 
     function addChild(address _childComponentAddress) external {
