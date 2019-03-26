@@ -62,17 +62,17 @@ for better state management of the component.
 
 Fields that a component should have: 
 
-|           Name           | Type           | Description                                                                                                 |
-|:------------------------:|----------------|-------------------------------------------------------------------------------------------------------------|
-|           owner          |     address    |                    Is gonna keep the information about the current owner of the component                   |
-|        entityName        | string/bytes32 |                                        The name of the current entity                                       |
-|       creationTime       |     uint256    |                    The time at which the component was created / added to the Blockchain                    |
-|        expiration        |     uint64     |                      Time when the component should be taken out of the market/recycled                     |
-|           price          |     uint128    |                                     Price of the corresponding component                                    |
-|           state          |   EntityState  |                                 Represents the state, this component is in.                                 |
-|  parentComponentAddress  |     address    | Address of the component containing this component. Should be ``address(0)`` if the component doesn't exist |
-|     otherInformation     |     string     |                                  Other information related to the component                                 |
-| childComponentsAddresses |    address[]   |                                      Addresses of the child components                                      |
+|           Name           | Type           | Description                                                  |
+| :----------------------: | -------------- | ------------------------------------------------------------ |
+|          owner           | address        | Is gonna keep the information about the current owner of the component |
+|        entityName        | string/bytes32 | The name of the current entity                               |
+|       creationTime       | uint64         | The time at which the component was created / added to the Blockchain |
+|        expiration        | uint64         | Time when the component should be taken out of the market/recycled |
+|          price           | uint128        | Price of the corresponding component                         |
+|          state           | EntityState    | Represents the state, this component is in.                  |
+|  parentComponentAddress  | address        | Address of the component containing this component. Should be ``address(0)`` if the component doesn't exist |
+|     otherInformation     | string         | Other information related to the component                   |
+| childComponentsAddresses | address[]      | Addresses of the child components                            |
 
 
 
@@ -118,10 +118,20 @@ The **state** field is gonna be one of the must important fields of a component,
   - flagAsBroken
   - flagAsExpired
   - replaceComponent
+
+  ### custom events vs general event
+
+  
+
 - **ComponentSubmitedForSale** &rarr; emitted when a component is submitted for sale.
+
 - **ComponentWasBought** &rarr; emitted when someone else bought the component
+
 - **ComponentRemovedFromMarket** &rarr; emitted when a component was removed by the owner from the market
+
 - **OwnershipTransferred**  &rarr; emitted when a component is bought.
+
+
 
 
 
@@ -167,6 +177,12 @@ contract ComponentFactory {
 
 <span style="color:red">Open discussion: Should people be able to deploy components on their own without using the ComponentFactory and then... later on add them using some method inside the manager contract?</span>
 
+A: only manager can do that.
+
+- CompFac as library?
+- Inside manager
+-  
+
 
 
 ### IComponentFactory interface
@@ -184,7 +200,7 @@ Used mainly in order to retrieve the address of all deployed components. Should 
 **Events** emitted by the **Registry** contract:
 
 - **NewComponentRegistred** &rarr; emitted when we register a new component that was deployed.
-- ? **ComponentRemoved** &rarr; emitted when we remove a component, usually happens if we recycle/destroy the component.
+- ? **ComponentRemoved** &rarr; emitted when we remove a component, usually happens if we recycle/destroy the component. &rarr; flag
 
 
 
@@ -214,6 +230,15 @@ interface IRegistry {
 
 
 
+## Market
+
+- TBD
+- Lock component till reaches block number for multiple users (auction base)
+
+
+
+
+
 ### Manager
 
 
@@ -235,17 +260,27 @@ Manager takes care of the following:
 
 
 
+A: Only manager has access.
+
+
+
+
+
 ## Actors
 
 The system will have 3 actors in the beginning: 
 
 - Manufacturer 
+
 - Consumer/Owner
-- Recycler 
+
+- Recycler /**Repairer**
+
+  
 
 
 
-### Manufacturer
+### Manufacturerz
 
 The person which is gonna be responsible of turning the raw material that he has to a product (in this case a component). 
 
