@@ -1,20 +1,28 @@
 pragma solidity >=0.4 <0.6.0; 
 
-interface IComponent{
+contract IComponent{
+
+    function updateComponentName(string calldata _componentName) external;
     function updateParentAddress(address _parentComponentAddress) external;
-    function updateData(string calldata _data) external; 
-    function addChild(address _childComponentAddress) external; 
-    function removeChild(uint256 _index) external returns(address);
-    function getData() external view returns (string memory);
+    function updateComponentExpiration(uint64 _expiration) external;
+    function updateComponentPrice(uint128 _price) external;
+    function updateComponentOtherInformation(string calldata _otherInformation) external;
+    function addChild(address _childComponentAddress) external;
+    function removeChild(uint256 _index) external;
+    function flagAsExpired() external;
+    function getData() external view returns (
+        address, 
+        string memory, 
+        uint256, 
+        uint64, 
+        uint128, 
+        uint8, 
+        string memory, 
+        address, 
+        address[] memory
+    );
     function getParentComponentAddress() external view returns (address);
-    function getNumberOfChildComponents() external view returns(uint256);
-    function getChildComponentList() external view returns(address[] memory);
-    function getChildComponentAddressByIndex(uint256 _index) external view returns(address);
-    function getComponentInfo() external view returns(address, string memory);
-    function getChildComponentIndexByAddress(address _address) external view returns(uint256);
-    function owner() external view returns (address); 
-    function transferOwnership(address newOwner) external; 
-
-    function updateComponentName(string calldata _componentName) external inEditableState();
-
+    function getNumberOfChildComponents() external view returns (uint256);
+    function getChildComponentAddressByIndex(uint256 _index) external view returns (address);
+    function getchildcomponentindexbyaddress(address _address) external view returns (uint256);
 }
