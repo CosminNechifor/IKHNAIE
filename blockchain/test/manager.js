@@ -44,7 +44,9 @@ contract('Manager - testing deployment and creation of components [happy case]',
      * TESTING THE CREATION OF SIMPLE COMPONENT
      */
     it("Create components", () => {
-        return managerContract.createComponent("Component0").then(() => {
+        return managerContract.createComponent(
+            "Component0"
+        ).then(() => {
             //check if componentRegistred has the rigth number of components
             return managerContract.getRegistrySize();
         }).then((databaseSize) => {

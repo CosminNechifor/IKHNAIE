@@ -9,6 +9,7 @@ module.exports = deployer => {
       deployer.deploy(Registry)
     ]
   ).then(() => {
+    console.log('worked');
     return deployer.deploy(Manager, ComponentFactory.address, Registry.address)
   });
 };

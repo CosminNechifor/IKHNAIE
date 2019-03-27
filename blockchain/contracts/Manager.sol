@@ -10,67 +10,176 @@ contract Manager is Ownable {
     IComponentFactory componentFactory;
     IRegistry registryContract;
 
-    constructor(address _componentFactoryAddress, address _registryContractAddress) Ownable(msg.sender) public {
+    constructor(
+        address _componentFactoryAddress,
+        address _registryContractAddress
+    ) 
+        Ownable(msg.sender) 
+        public 
+    {
         componentFactory = IComponentFactory(_componentFactoryAddress);
         registryContract = IRegistry(_registryContractAddress);
     }
 
-    function createComponent(string memory _data) public returns(address) {
-        address componentAddress = componentFactory.createComponent(_data, msg.sender);
+    function createComponent(
+        string memory _entityName,
+        uint64 _expirationTime,
+        uint128 _price,
+        string memory _otherInformation
+    ) 
+        public 
+        returns
+        (
+            address
+        ) 
+    {
+        address componentAddress = componentFactory.createComponent(
+            msg.sender,
+            _entityName,
+            _expirationTime,
+            _price,
+            _otherInformation
+        );
         registryContract.addComponent(componentAddress);
         return componentAddress;
     }
 
-    function addChildComponentToComponent(address _parentComponentAddress, address _childComponentAddress) public {
+    function addChildComponentToComponent(
+        address _parentComponentAddress,
+        address _childComponentAddress
+    ) 
+        public 
+    {
         IComponent parentComponent = IComponent(_parentComponentAddress);
         IComponent childComponent = IComponent(_childComponentAddress);
         parentComponent.addChild(_childComponentAddress);
         childComponent.updateParentAddress(_parentComponentAddress);
     }
 
-    function removeChildComponentFromComponent(address _parentComponentAddress, uint256 _childIndex) public {
+    function removeChildComponentFromComponent(
+        address _parentComponentAddress, 
+        uint256 _childIndex
+    ) 
+        public 
+    {
         IComponent parentComponent = IComponent(_parentComponentAddress);
         address childComponentAddress = parentComponent.removeChild(_childIndex);
         IComponent childComponent = IComponent(childComponentAddress);
         childComponent.updateParentAddress(address(0));
     }
 
-    function updateData(address _componentAddress, string memory _data) public {
+    function updateComponentName(
+        address _componentAddress, 
+        string memory _newName 
+    ) 
+        public 
+    {
         IComponent component = IComponent(_componentAddress);
-        component.updateData(_data);
+        component.updateComponentName(_newName);
     }
 
-    function getChildComponentAddressByIndex(address _parentComponentAddress, uint256 _id) public view returns(address) {
+    function updateComponentExpiration(
+        address _componentAddress, 
+        uint64 _newExpiration 
+    ) 
+        public 
+    {
+        IComponent component = IComponent(_componentAddress);
+        component.updateComponentExpiration(_newExpiration);
+    }
+
+    function updateComponentPrice(
+        address _componentAddress,
+        uint128 _newPrice
+    )
+        public
+    {
+        IComponent component = IComponent(_componentAddress);
+        component.updateComponentPrice(_newPrice);
+    }
+
+    function updateComponentExpiration(
+        address _componentAddress,
+        string memory _newOtherInformation
+    )
+        public 
+    {
+        IComponent component = IComponent(_componentAddress);
+        component.updateComponentOtherInformation(_newOtherInformation);
+    }
+
+    function getChildComponentAddressByIndex(
+        address _parentComponentAddress,
+        uint256 _id
+    ) 
+        public 
+        view 
+        returns
+        (
+            address
+        ) 
+    {
         IComponent component = IComponent(_parentComponentAddress);
         address childAddress = component.getChildComponentAddressByIndex(_id);
         return childAddress;
     }
 
-    function getChildComponentIndexByAddress(address _parentComponentAddress, address _childComponentAddress) public view returns(uint256) {
+    function getChildComponentIndexByAddress(
+        address _parentComponentAddress, 
+        address _childComponentAddress
+    ) 
+        public 
+        view 
+        returns
+        (
+            uint256
+        ) 
+    {
         IComponent component = IComponent(_parentComponentAddress);
         uint256 childComponentIndex = component.getChildComponentIndexByAddress(_childComponentAddress);
         return childComponentIndex;
     }
 
-    function getChildComponentListOfAddress(address _parentComponentAddress) public view returns(address[] memory){
+    function getChildComponentListOfAddress(
+        address _parentComponentAddress
+    ) 
+        public 
+        view 
+        returns
+        (
+            address[] memory
+        )
+    {
         IComponent component = IComponent(_parentComponentAddress);
         address[] memory childrenList = component.getChildComponentList();
         return childrenList;
     }
 
-    function getComponentData(address _componentAddress) public view returns(string memory){
+    function getComponentData(
+        address _componentAddress
+    ) 
+        public 
+        view 
+        returns
+        (
+            address, 
+            string memory, 
+            uint256, 
+            uint64, 
+            uint128, 
+            uint8, 
+            string memory, 
+            address, 
+            address[] memory
+        )
+    {
         IComponent component = IComponent(_componentAddress);
         return component.getData();
     }
 
-    function getComponentInfo(address _componentAddress) public view returns(address, string memory){
-        IComponent component = IComponent(_componentAddress);
-        return component.getComponentInfo();
-    } 
-
     function getComponentOwner(address _componentAddress) public view returns(address) {
         IComponent component = IComponent(_componentAddress);
-        return component.owner();
+        return component.getOwner();
     }
 
     function getRegistrySize() public view returns(uint256) {

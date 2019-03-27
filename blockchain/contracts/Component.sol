@@ -245,6 +245,10 @@ contract Component is Ownable {
         notInSubmitedForSaleState()
         notInNeedsRecycledState()
         notInRecycledOrDestoyedState()
+        returns 
+        (
+            address
+        )
     {
         uint256 lastElementIndex = childComponentList.length - 1;
         address _childComponentAddress = childComponentList[lastElementIndex]; 
@@ -260,6 +264,7 @@ contract Component is Ownable {
             removedComponent,
             childComponentList
         );
+        return removedComponent;
     }
 
     function flagAsExpired() 
@@ -281,7 +286,7 @@ contract Component is Ownable {
             uint256,
             uint64,
             uint128,
-            ComponentState,
+            uint8,
             string memory,
             address,
             address[] memory
@@ -293,7 +298,7 @@ contract Component is Ownable {
             creationTime,
             expiration,
             price,
-            state,
+            uint8(state),
             otherInformation,
             parentComponentAddress,
             childComponentList
@@ -346,8 +351,21 @@ contract Component is Ownable {
         return childComponentList[_index];
     }
 
+    // has to be replaced
+    // it was added only termporary
+    function getOwner() 
+        external 
+        view 
+        returns 
+        (
+            address
+        )
+    {
+        return owner();
+    }
+
     // use carefully
-    function getchildcomponentindexbyaddress(
+    function getChildComponentIndexByAddress(
         address _address
     ) 
         external 
