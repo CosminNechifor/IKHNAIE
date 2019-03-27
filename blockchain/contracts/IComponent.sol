@@ -14,4 +14,7 @@ interface IComponent{
     function getChildComponentIndexByAddress(address _address) external view returns(uint256);
     function owner() external view returns (address); 
     function transferOwnership(address newOwner) external; 
+
+    function updateComponentName(string calldata _componentName) external inEditableState();
+
 }
