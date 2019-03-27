@@ -1,9 +1,9 @@
 pragma solidity >=0.4 <0.6.0; 
 
 import "./Ownable.sol";
+import './IComponent.sol';
 
-
-contract Component is Ownable { 
+contract Component is Ownable, IComponent { 
 
     enum ComponentState { 
         // An component will be in Editable state only at the beginning 
@@ -348,7 +348,7 @@ contract Component is Ownable {
     }
 
     // use carefully
-    function getChildComponentIndexByAddress(
+    function getchildcomponentindexbyaddress(
         address _address
     ) 
         external 
