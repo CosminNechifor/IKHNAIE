@@ -26,7 +26,7 @@ contract Component is Ownable {
     }
 
     string componentName;
-    uint256 creationgTime;
+    uint256 creationTime;
     uint64 expiration;
     uint128 price;
     ComponentState state;
@@ -35,7 +35,6 @@ contract Component is Ownable {
     // navigation fields
     address private parentComponentAddress;
     address[] private childComponentList;
-
     
     event ComponentCreated 
     (
@@ -110,11 +109,16 @@ contract Component is Ownable {
         _;
     }
 
-    // TODO: add it to the other update functions
-    modifier onlyManager(address managerAddress) {
-        require(msg.sender == managerAddress, "Not called from manager contract!");
+    modifier isExpired() {
+        require(block.timestamp > creationTime + expiration, "Component has not expired yet.");
         _;
     }
+
+    // TODO: add it to the other update functions
+    // modifier onlyManager() {
+    //     require(msg.sender == managerAddress, "Not called from manager contract!");
+    //     _;
+    // }
 
     constructor(
         address owner,
@@ -127,7 +131,7 @@ contract Component is Ownable {
         public
     {
         componentName = _componentName;
-        creationgTime = block.timestamp;
+        creationTime = block.timestamp;
         expiration = _expirationTime;
         price = _price;
         state = ComponentState.Editable; 
@@ -138,7 +142,7 @@ contract Component is Ownable {
         emit ComponentCreated(
             owner,
             componentName,
-            creationgTime,
+            creationTime,
             expiration,
             price,
             state,
@@ -259,6 +263,15 @@ contract Component is Ownable {
         );
     }
 
+    function flagAsExpired() 
+        external 
+        notInNeedsRecycledState()
+        notInRecycledOrDestoyedState()
+        isExpired()  
+    {
+       state = ComponentState.NeedsRecycled; 
+    }
+
     function getData() 
         external 
         view 
@@ -278,7 +291,7 @@ contract Component is Ownable {
         return (
             owner(),
             componentName,
-            creationgTime,
+            creationTime,
             expiration,
             price,
             state,
@@ -288,24 +301,63 @@ contract Component is Ownable {
         );
     }
 
-    function getParentComponentAddress() external view returns (address) {
+    function getParentComponentAddress() 
+        external
+        view 
+        returns 
+        (
+            address
+        ) 
+    {
         return parentComponentAddress;
     }
 
-    function getNumberOfChildComponents() external view returns(uint256) {
+    function getNumberOfChildComponents() 
+        external 
+        view 
+        returns
+        (
+            uint256
+        ) 
+    {
         return childComponentList.length;
     }
 
-    function getChildComponentList() external view returns(address[] memory) {
+    function getChildComponentList() 
+        external 
+        view 
+        returns
+        (
+            address[] memory
+        ) 
+    {
         return childComponentList;
     }
 
-    function getChildComponentAddressByIndex(uint256 _index) external view returns(address) {
+    function getChildComponentAddressByIndex(
+        uint256 _index
+    ) 
+        external 
+        view 
+        returns
+        (
+            address
+        ) 
+    {
         return childComponentList[_index];
     }
 
     // use carefully
-    function getChildComponentIndexByAddress(address _address) external view returns(uint256) {
+    function getChildComponentIndexByAddress(
+        address _address
+    ) 
+        external 
+        view 
+        returns
+        (
+            uint256
+        ) 
+    {
         uint256 length = childComponentList.length;
         for (uint256 i = 0; i < length; i++) {
             if(_address == childComponentList[i]) {
