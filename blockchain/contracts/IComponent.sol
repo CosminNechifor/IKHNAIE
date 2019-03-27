@@ -1,6 +1,6 @@
 pragma solidity >=0.4 <0.6.0; 
 
-contract IComponent{
+interface IComponent{
 
     function updateComponentName(string calldata _componentName) external;
     function updateParentAddress(address _parentComponentAddress) external;

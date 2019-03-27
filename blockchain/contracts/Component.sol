@@ -1,9 +1,8 @@
 pragma solidity >=0.4 <0.6.0; 
 
 import "./Ownable.sol";
-import './IComponent.sol';
 
-contract Component is Ownable, IComponent { 
+contract Component is Ownable { 
 
     enum ComponentState { 
         // An component will be in Editable state only at the beginning 
@@ -17,7 +16,7 @@ contract Component is Ownable, IComponent {
         Broken,
         // When the expiration period is finished then the Component will get into needs recycled
         // This has to be flagged by another user whoich is gonna get rewarded  
-        NeedsRecylced,
+        NeedsRecycled,
         // Recycling an component should give the user who recilced it some tokens
         // That can be reused in the ecosystem
         Recycled,
@@ -99,7 +98,7 @@ contract Component is Ownable, IComponent {
     }
 
     modifier notInNeedsRecycledState() {
-        require(state != ComponentState.NeedsRecylced, "Component is in NeedsRecycled state.");
+        require(state != ComponentState.NeedsRecycled, "Component is in NeedsRecycled state.");
         _;
     }
 
