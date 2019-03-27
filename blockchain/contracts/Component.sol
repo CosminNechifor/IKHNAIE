@@ -21,7 +21,7 @@ contract Component is Ownable {
         // Recycling an component should give the user who recilced it some tokens
         // That can be reused in the ecosystem
         Recycled,
-        // When a component is being destroyed/removed by an user 
+        // When a component is being destroyed
         Destroyed
     }
 
@@ -49,28 +49,64 @@ contract Component is Ownable {
         address _parentComponentAddress
     ); 
 
+    event ComponentSubmitedForSale(
+        uint256 timestamp,
+        uint128 price
+    );
+    
+    event ComponentNameUpdated(
+        string _oldName,
+        string _newName
+    );
+    
+    event ComponentParentAddressUpdated(
+        address _previousParent,
+        address _newParent
+    );
+
+    event ComponentExpirationUpdated(
+        uint64 _oldExpiration,
+        uint64 _newExpiration
+    );
+
+    event ComponentPriceUpdated(
+        uint128 _oldPrice,
+        uint128 _newPrice
+    );
+
+    event ComponentOtherInformationUpdated(
+        string _oldOtherInformation,
+        string _newOtherInformation
+    );
+
+    event ComponentChildAdded(
+        address _newChildComponent,
+        address[] _newChildComponentList
+    ); 
+
+    event ComponentChildRemoved(
+        address _removedComponent,
+        address[] _newChildComponentList
+    ); 
+
     modifier inEditableState() {
         require(state == ComponentState.Editable, "Component is not in Editable state.");
         _;
     }
 
-    modifier inSubmitedForSaleState() {
-        require(state == ComponentState.SubmitedForSale, "Component is not in SubmitedForSale state.");
+    modifier notInSubmitedForSaleState() {
+        require(state != ComponentState.SubmitedForSale, "Component is in SubmitedForSale state.");
         _; 
     }
 
-    modifier inOwnedState() {
-        require(state == ComponentState.Owned, "Component is not in Owned state.");
-        _; 
-    }
-
-    modifier inBrokenState() {
-        require(state == ComponentState.Broken, "Component is not in Broken state.");
+    modifier notInNeedsRecycledState() {
+        require(state != ComponentState.NeedsRecylced, "Component is in NeedsRecycled state.");
         _;
     }
 
-    modifier inNeedsRecycledState() {
-        require(state == ComponentState.NeedsRecylced, "Component is not in NeedsRecycled state.");
+    modifier notInRecycledOrDestoyedState() {
+        require(state != ComponentState.Recycled, "Component was already recycled.");
+        require(state != ComponentState.Destroyed, "Component was already destroyed.");
         _;
     }
 
@@ -120,6 +156,10 @@ contract Component is Ownable {
         external
         inEditableState()
     {
+        emit ComponentNameUpdated(
+            componentName,
+            _componentName
+        );
         componentName = _componentName; 
     }
 
@@ -127,8 +167,14 @@ contract Component is Ownable {
         address _parentComponentAddress
     ) 
         external
-        inEditableState()
+        notInSubmitedForSaleState()
+        notInNeedsRecycledState()
+        notInRecycledOrDestoyedState()
     {
+        emit ComponentParentAddressUpdated(
+            parentComponentAddress,
+            _parentComponentAddress
+        );
         parentComponentAddress = _parentComponentAddress;    
     }    
     
@@ -138,7 +184,12 @@ contract Component is Ownable {
         uint64 _expiration
     )
         external
+        inEditableState()
     {
+        emit ComponentExpirationUpdated(
+            expiration,
+            _expiration
+        );
         expiration = _expiration;
     }
 
@@ -146,7 +197,13 @@ contract Component is Ownable {
         uint128 _price
     )
         external
+        notInNeedsRecycledState()
+        notInRecycledOrDestoyedState()
     {
+        emit ComponentPriceUpdated(
+            price,
+            _price
+        );
         price = _price;
     }
 
@@ -156,22 +213,50 @@ contract Component is Ownable {
         external
         inEditableState()
     {
+        emit ComponentOtherInformationUpdated(
+            otherInformation,
+            _otherInformation
+        );
         otherInformation = _otherInformation;
     }
 
-    function addChild(address _childComponentAddress) external {
+    function addChild(
+        address _childComponentAddress
+    ) 
+        external
+        notInNeedsRecycledState()
+        notInSubmitedForSaleState()
+        notInRecycledOrDestoyedState()
+    {
         childComponentList.push(_childComponentAddress);
+        emit ComponentChildAdded(
+            _childComponentAddress,
+            childComponentList
+        );
     }
 
-    function removeChild(uint256 _index) external {
+    function removeChild(
+        uint256 _index
+    )
+        external
+        notInSubmitedForSaleState()
+        notInNeedsRecycledState()
+        notInRecycledOrDestoyedState()
+    {
         uint256 lastElementIndex = childComponentList.length - 1;
         address _childComponentAddress = childComponentList[lastElementIndex]; 
 
+        address removedComponent = childComponentList[_index];
         childComponentList[_index] = _childComponentAddress;
         
-        // deleteing the element and enusre there is no empty space
+        // delete the element and ensure there is no empty space
         delete childComponentList[lastElementIndex];
         childComponentList.length--;
+        
+        emit ComponentChildRemoved(
+            removedComponent,
+            childComponentList
+        );
     }
 
     function getData() 
