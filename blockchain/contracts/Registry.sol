@@ -1,26 +1,25 @@
 pragma solidity >=0.4 <0.6.0; 
 
 import "./Ownable.sol";
+import "./Management.sol";
 
 /**
  * TODO: 
- * - add modifier to allow only the Manager to perform operations
  * - decide if removeComponent is wanted
  */
 
-contract Registry is Ownable {
+contract Registry is Ownable, Management {
 
     // the place where all components in the system are going to be stored
     address[] private _registry;
 
-    constructor() Ownable(msg.sender) public {}
+    constructor(address _manager) Management(_manager) Ownable(msg.sender) public {}
 
-    function addComponent(address _componentAddress) external {
+    function addComponent(address _componentAddress) onlyManager() external {
         _registry.push(_componentAddress);
     }
 
-    // TODO: migh need to be changed/removed 
-    function removeComponent(uint256 _index) external {
+    function removeComponent(uint256 _index) onlyManager() external {
         uint256 lastElementIndex = _registry.length - 1;
         address _componentAddress = _registry[lastElementIndex]; 
 

@@ -11,6 +11,7 @@ contract('Component - testing happy cases', (accounts) => {
      *  */    
     it("Deploy Component contract and assert for the right values", () => {
         return Component.new(
+            accounts[0], // assuming that account[0] is the manager
             accounts[0],
             "ComponentName",
             120,
