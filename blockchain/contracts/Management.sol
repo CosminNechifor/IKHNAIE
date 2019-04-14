@@ -9,7 +9,7 @@ contract Management {
 
     address private _manager;
 
-    constructor (address manager) {
+    constructor (address manager) public {
         _manager = manager;
     }
 

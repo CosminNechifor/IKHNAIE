@@ -114,12 +114,6 @@ contract Component is Ownable, Management {
         _;
     }
 
-    // TODO: add it to the other update functions
-    // modifier onlyManager() {
-    //     require(msg.sender == managerAddress, "Not called from manager contract!");
-    //     _;
-    // }
-
     constructor(
         address manager,
         address owner,
@@ -160,6 +154,7 @@ contract Component is Ownable, Management {
         string calldata _componentName
     )
         external
+        onlyManager()
         inEditableState()
     {
         emit ComponentNameUpdated(
@@ -173,6 +168,7 @@ contract Component is Ownable, Management {
         address _parentComponentAddress
     ) 
         external
+        onlyManager()
         notInSubmitedForSaleState()
         notInNeedsRecycledState()
         notInRecycledOrDestoyedState()
@@ -190,6 +186,7 @@ contract Component is Ownable, Management {
         uint64 _expiration
     )
         external
+        onlyManager()
         inEditableState()
     {
         emit ComponentExpirationUpdated(
@@ -203,6 +200,7 @@ contract Component is Ownable, Management {
         uint128 _price
     )
         external
+        onlyManager()
         notInNeedsRecycledState()
         notInRecycledOrDestoyedState()
     {
@@ -217,6 +215,7 @@ contract Component is Ownable, Management {
         string calldata _otherInformation
     )
         external
+        onlyManager()
         inEditableState()
     {
         emit ComponentOtherInformationUpdated(
@@ -245,6 +244,7 @@ contract Component is Ownable, Management {
         uint256 _index
     )
         external
+        onlyManager()
         notInSubmitedForSaleState()
         notInNeedsRecycledState()
         notInRecycledOrDestoyedState()
