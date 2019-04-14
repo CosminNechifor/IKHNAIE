@@ -35,7 +35,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
     it("Deploy ManagerContract contract", () => {
         return Manager.new(factoryAddress, registryAddress).then((instance) => {
             managerContract = instance;
-            console.log('Manager address: ', managerContract.address);
             assert.notEqual(managerContract, undefined, "Failed to deploy Manager contract!");
         });
     });
@@ -45,7 +44,10 @@ contract('Manager - testing deployment and creation of components [happy case]',
      */
     it("Create components", () => {
         return managerContract.createComponent(
-            "Component0"
+            "Component0",
+            100,
+            1000,
+            "Some information"
         ).then(() => {
             //check if componentRegistred has the rigth number of components
             return managerContract.getRegistrySize();
@@ -58,7 +60,12 @@ contract('Manager - testing deployment and creation of components [happy case]',
      * TESTING DEPLOYED COMPONENTS DATA AND ACESS METHOD 
      */
     it("Get content of registry and access the components", () => {
-        return managerContract.createComponent("Component1").then(() => {
+        return managerContract.createComponent(
+            "Component1",
+            200,
+            2000,
+            "Some information"
+        ).then(() => {
             //check if componentRegistred has the rigth number of components
             return managerContract.getRegistrySize();
         }).then((databaseSize) => {
@@ -80,28 +87,58 @@ contract('Manager - testing deployment and creation of components [happy case]',
             return Promise.all(
                 [
                     component0Contract.getData(),
-                    component1Contract.getData(),
-                    component0Contract.getParentComponentAddress(),
-                    component1Contract.getParentComponentAddress(),
                     component0Contract.getNumberOfChildComponents(),
+                    component1Contract.getData(),
                     component1Contract.getNumberOfChildComponents(),
-                    component0Contract.getChildComponentList(),
-                    component1Contract.getChildComponentList(),
-                    component0Contract.owner(),
-                    component1Contract.owner()
                 ]
             );
         }).then((values) => {
-            assert.equal(values[0], "Component0", "Data was tampered!");
-            assert.equal(values[1], "Component1", "Data was tampered!");
-            assert.equal(values[2], "0x0000000000000000000000000000000000000000", "Data was tampered");
-            assert.equal(values[3], "0x0000000000000000000000000000000000000000", "Data was tampered");
-            assert.equal(values[4].toNumber(), 0, "Wrong number child components!!"); 
-            assert.equal(values[5].toNumber(), 0, "Wrong number child components!!"); 
-            assert.equal(values[6], 0, "Wrong number of child components!!"); 
-            assert.equal(values[7], 0, "Wrong number of child components!!"); 
-            assert.equal(values[8], accounts[0], "Wrong number of child components!!"); 
-            assert.equal(values[9], accounts[0], "Wrong number of child components!!"); 
+            // component1 data
+            const result_comp0 = values[0]; 
+            const owner0 = result_comp0[0];
+            const componentName0 = result_comp0[1];
+            const creationgTime0 = result_comp0[2];
+            const expiration0 = result_comp0[3];
+            const price0 = result_comp0[4];
+            const state0 = result_comp0[5];
+            const otherInformation0 = result_comp0[6];
+            const parentComponentAddress0 = result_comp0[7];
+            const childComponentList0 = result_comp0[8];
+            const numberOfChildComponents0 = values[1]; 
+
+            // component2 data
+            const result_comp1 = values[2]; 
+            const owner1 = result_comp1[0];
+            const componentName1 = result_comp1[1];
+            const creationgTime1 = result_comp1[2];
+            const expiration1 = result_comp1[3];
+            const price1 = result_comp1[4];
+            const state1 = result_comp1[5];
+            const otherInformation1 = result_comp1[6];
+            const parentComponentAddress1 = result_comp1[7];
+            const childComponentList1 = result_comp1[8];
+            const numberOfChildComponents1 = values[3]; 
+
+
+            assert.equal(owner0, accounts[0], "Wrong number of child components!!"); 
+            assert.equal(componentName0, "Component0", "Component name was tampered!!"); 
+            assert.equal(expiration0.toNumber(), 100, "Component expiration was tampered!!"); 
+            assert.equal(price0.toNumber(), 1000, "Component price was tampered!!"); 
+            assert.equal(state0.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
+            assert.equal(otherInformation0, "Some information", "Component otherInformation wasn't corectly initialized!!"); 
+            assert.equal(parentComponentAddress0, "0x0000000000000000000000000000000000000000", "Parent address is wrong!!"); 
+            assert.equal(numberOfChildComponents0.toNumber(), 0, "Wrong number child components!!"); 
+            assert.equal(childComponentList0, 0, "Wrong number of child components!!"); 
+
+            assert.equal(owner1, accounts[0], "Wrong number of child components!!"); 
+            assert.equal(componentName1, "Component1", "Component name was tampered!!"); 
+            assert.equal(expiration1.toNumber(), 200, "Component expiration was tampered!!"); 
+            assert.equal(price1.toNumber(), 2000, "Component price was tampered!!"); 
+            assert.equal(state1.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
+            assert.equal(otherInformation1, "Some information", "Component otherInformation wasn't corectly initialized!!"); 
+            assert.equal(parentComponentAddress1, "0x0000000000000000000000000000000000000000", "Parent address is wrong!!"); 
+            assert.equal(numberOfChildComponents1.toNumber(), 0, "Wrong number child components!!"); 
+            assert.equal(childComponentList1, 0, "Wrong number of child components!!"); 
         });
     });
 
@@ -122,8 +159,18 @@ contract('Manager - testing deployment and creation of components [happy case]',
     it("Stage 1: Create a tree of components", () => {
         return Promise.all(
             [
-                managerContract.createComponent("Component2"),
-                managerContract.createComponent("Component3")
+                managerContract.createComponent(
+                    "Component2",
+                    300,
+                    3000,
+                    "Some information"
+                ),
+                managerContract.createComponent(
+                    "Component3",
+                    400,
+                    4000,
+                    "Some information"
+                )
             ]
         ).then(() => {
             return managerContract.getRegistredComponents();
@@ -142,8 +189,46 @@ contract('Manager - testing deployment and creation of components [happy case]',
                 ]
             );
         }).then((values) => {
-            assert.equal(values[0], "Component2", "Data was tampered!");
-            assert.equal(values[1], "Component3", "Data was tampered!");
+
+            const result_comp2 = values[0]; 
+            const owner2 = result_comp2[0];
+            const componentName2 = result_comp2[1];
+            const creationgTime2 = result_comp2[2];
+            const expiration2 = result_comp2[3];
+            const price2 = result_comp2[4];
+            const state2 = result_comp2[5];
+            const otherInformation2 = result_comp2[6];
+            const parentComponentAddress2 = result_comp2[7];
+            const childComponentList2 = result_comp2[8];
+
+            const result_comp3 = values[1]; 
+            const owner3 = result_comp3[0];
+            const componentName3 = result_comp3[1];
+            const creationgTime3 = result_comp3[2];
+            const expiration3 = result_comp3[3];
+            const price3 = result_comp3[4];
+            const state3 = result_comp3[5];
+            const otherInformation3 = result_comp3[6];
+            const parentComponentAddress3 = result_comp3[7];
+            const childComponentList3 = result_comp3[8];
+
+            assert.equal(owner2, accounts[0], "Wrong number of child components!!"); 
+            assert.equal(componentName2, "Component2", "Component name was tampered!!"); 
+            assert.equal(expiration2.toNumber(), 300, "Component expiration was tampered!!"); 
+            assert.equal(price2.toNumber(), 3000, "Component price was tampered!!"); 
+            assert.equal(state2.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
+            assert.equal(otherInformation2, "Some information", "Component otherInformation wasn't corectly initialized!!"); 
+            assert.equal(parentComponentAddress2, "0x0000000000000000000000000000000000000000", "Parent address is wrong!!"); 
+            assert.equal(childComponentList2.length, 0, "Wrong number of child components!!"); 
+
+            assert.equal(owner3, accounts[0], "Wrong number of child components!!"); 
+            assert.equal(componentName3, "Component3", "Component name was tampered!!"); 
+            assert.equal(expiration3.toNumber(), 400, "Component expiration was tampered!!"); 
+            assert.equal(price3.toNumber(), 4000, "Component price was tampered!!"); 
+            assert.equal(state3.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
+            assert.equal(otherInformation3, "Some information", "Component otherInformation wasn't corectly initialized!!"); 
+            assert.equal(parentComponentAddress3, "0x0000000000000000000000000000000000000000", "Parent address is wrong!!"); 
+            assert.equal(childComponentList3.length, 0, "Wrong number of child components!!"); 
         }).then(() => {
             return managerContract.getRegistredComponents(); 
         }).then((database) => {
@@ -170,43 +255,106 @@ contract('Manager - testing deployment and creation of components [happy case]',
             return Component.at(componentAddress);
         }).then(componentContract => {
             // getting the data and asserting for the content
-            let promiseList = [];
-            promiseList.push(componentContract.getData());
-            promiseList.push(componentContract.getParentComponentAddress());
-            return Promise.all(promiseList);
-        }).then((values) => {
-            assert.equal(values[0], "Component3", "Not the right component!");
-            return Component.at(values[1]);
+            return componentContract.getData();
+        }).then((result_comp3) => {
+            const owner3 = result_comp3[0];
+            const componentName3 = result_comp3[1];
+            const creationgTime3 = result_comp3[2];
+            const expiration3 = result_comp3[3];
+            const price3 = result_comp3[4];
+            const state3 = result_comp3[5];
+            const otherInformation3 = result_comp3[6];
+            const parentComponentAddress3 = result_comp3[7];
+            const childComponentList3 = result_comp3[8];
+
+            assert.equal(componentName3, "Component3", "Component name was tampered!!"); 
+            assert.equal(expiration3.toNumber(), 400, "Component expiration was tampered!!"); 
+            assert.equal(owner3, accounts[0], "Wrong number of child components!!"); 
+            assert.equal(price3.toNumber(), 4000, "Component price was tampered!!"); 
+            assert.equal(state3.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
+            assert.equal(otherInformation3, "Some information", "Component otherInformation wasn't corectly initialized!!"); 
+            assert.equal(childComponentList3.length, 0, "Wrong number of child components!!"); 
+
+            return Component.at(parentComponentAddress3);
+        }).then(componentContract => {
+            return componentContract.getData();
+        }).then((result_comp1) => {
+            const owner1 = result_comp1[0];
+            const componentName1 = result_comp1[1];
+            const creationgTime1 = result_comp1[2];
+            const expiration1 = result_comp1[3];
+            const price1 = result_comp1[4];
+            const state1 = result_comp1[5];
+            const otherInformation1 = result_comp1[6];
+            const parentComponentAddress1 = result_comp1[7];
+            const childComponentList1 = result_comp1[8];
+
+            assert.equal(owner1, accounts[0], "Wrong parent address!!"); 
+            assert.equal(componentName1, "Component1", "Component name was tampered!!"); 
+            assert.equal(expiration1.toNumber(), 200, "Component expiration was tampered!!"); 
+            assert.equal(price1.toNumber(), 2000, "Component price was tampered!!"); 
+            assert.equal(state1.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
+            assert.equal(otherInformation1, "Some information", "Component otherInformation wasn't corectly initialized!!"); 
+            assert.equal(childComponentList1.length, 1, "Wrong number of child components!!"); 
+
+            return Component.at(parentComponentAddress1);
         }).then(componentContract => {
             let promiseList = [];
             promiseList.push(componentContract.getData());
-            promiseList.push(componentContract.getParentComponentAddress());
-            return Promise.all(promiseList);
-        }).then((values) => {
-            assert.equal(values[0], "Component1", "Not the right component!");
-            return Component.at(values[1]);
-        }).then(componentContract => {
-            let promiseList = [];
-            promiseList.push(componentContract.getData());
-            promiseList.push(componentContract.getParentComponentAddress());
             promiseList.push(componentContract.getChildComponentAddressByIndex(1));// we already know that component 2 is at index 1 
             return Promise.all(promiseList);
         }).then((values) => {
-            const [componentData, parentComponentAddress, component2Address] = values;
-            assert.equal(parentComponentAddress, "0x0000000000000000000000000000000000000000", "Data was tampered");
-            assert.equal(componentData, "Component0", "Not the right component!");
+            const [componentData, component2Address] = values;
+
+            const owner0 = componentData[0];
+            const componentName0 = componentData[1];
+            const creationgTime0 = componentData[2];
+            const expiration0 = componentData[3];
+            const price0 = componentData[4];
+            const state0 = componentData[5];
+            const otherInformation0 = componentData[6];
+            const parentComponentAddress0 = componentData[7];
+            const childComponentList0 = componentData[8];
+
+            assert.equal(parentComponentAddress0, "0x0000000000000000000000000000000000000000", "Data was tampered");
+            assert.equal(componentName0, "Component0", "Component name was tampered!!"); 
+            assert.equal(expiration0.toNumber(), 100, "Component expiration was tampered!!"); 
+            assert.equal(owner0, accounts[0], "Wrong number of child components!!"); 
+            assert.equal(price0.toNumber(), 1000, "Component price was tampered!!"); 
+            assert.equal(state0.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
+            assert.equal(otherInformation0, "Some information", "Component otherInformation wasn't corectly initialized!!"); 
+            assert.equal(childComponentList0.length, 2, "Wrong number of child components!!"); 
+
             return Component.at(component2Address); 
         }).then(componentContract => {
             return componentContract.getData();
-        }).then(componentData => {
-            assert.equal(componentData, "Component2", "Not the right component!");
+        }).then(result_comp2 => {
+            const owner2 = result_comp2[0];
+            const componentName2 = result_comp2[1];
+            const creationgTime2 = result_comp2[2];
+            const expiration2 = result_comp2[3];
+            const price2 = result_comp2[4];
+            const state2 = result_comp2[5];
+            const otherInformation2 = result_comp2[6];
+            const parentComponentAddress2 = result_comp2[7];
+            const childComponentList2 = result_comp2[8];
+
+            assert.equal(owner2, accounts[0], "Wrong number of child components!!"); 
+            assert.equal(componentName2, "Component2", "Component name was tampered!!"); 
+            assert.equal(expiration2.toNumber(), 300, "Component expiration was tampered!!"); 
+            assert.equal(price2.toNumber(), 3000, "Component price was tampered!!"); 
+            assert.equal(state2.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
+            assert.equal(otherInformation2, "Some information", "Component otherInformation wasn't corectly initialized!!"); 
+            assert.notEqual(parentComponentAddress2, "0x0000000000000000000000000000000000000000", "Parent address is wrong!!"); 
+            assert.equal(childComponentList2.length, 0, "Wrong number of child components!!"); 
+
         });
     });
 
     it("Get all children", () => {
         return managerContract.getRegistredComponents().then((values) => {
-            parentComponentAddress = values[0];
-            return managerContract.getChildComponentListOfAddress(parentComponentAddress);
+            componentAddress = values[0];
+            return managerContract.getChildComponentListOfAddress(componentAddress);
         }).then((values) => {
             assert.equal(values.length, 2, "getChildComponentListOfAddress failed!"); 
         });
@@ -227,16 +375,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             assert.equal(values[1], accounts[0], "Ownership is broken!"); 
             assert.equal(values[2], accounts[0], "Ownership is broken!"); 
             assert.equal(values[3], accounts[0], "Ownership is broken!"); 
-        });
-    });
-
-    it("Get component info", () => {
-        return managerContract.getRegistredComponents().then((values) => {
-            parentComponentAddress = values[0];
-            return managerContract.getComponentInfo(parentComponentAddress);
-        }).then((values) => {
-            assert.equal(values[0], "0x0000000000000000000000000000000000000000", "Data was tampered");
-            assert.equal(values[1], "Component0", "Not the right component!");
         });
     });
 });
