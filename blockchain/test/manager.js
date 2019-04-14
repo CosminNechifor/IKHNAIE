@@ -9,11 +9,18 @@ contract('Manager - testing deployment and creation of components [happy case]',
     let factoryAddress;
     let registryAddress;
 
+    it("Deploy ManagerContract contract", () => {
+        return Manager.new().then((instance) => {
+            managerContract = instance;
+            assert.notEqual(managerContract, undefined, "Failed to deploy Manager contract!");
+        });
+    });
+
     /**
      * TESTING DEPLOYMENT OF ComponentFactory CONTRACT
      *  */    
     it("Deploy ComponentFactory contract", () => {
-        return ComponentFactory.new().then((instance) => {
+        return ComponentFactory.new(managerContract.address).then((instance) => {
             factoryAddress = instance.address;
             assert.notEqual(factoryAddress, undefined, "Failed to deploy FactoryContract");
         });
@@ -23,19 +30,15 @@ contract('Manager - testing deployment and creation of components [happy case]',
      * TESTING DEPLOYMENT OF ComponentFactory CONTRACT
      *  */    
     it("Deploy Registry contract", () => {
-        return Registry.new().then((instance) => {
+        return Registry.new(managerContract.address).then((instance) => {
             registryAddress = instance.address;
             assert.notEqual(registryAddress, undefined, "Failed to deploy RegistryContract");
         });
     });
 
-    /**
-     * TESTING DEPLOYMENT OF ManagerContract USING ALREADY DEPLOYED ComponentFactory
-     */
-    it("Deploy ManagerContract contract", () => {
-        return Manager.new(factoryAddress, registryAddress).then((instance) => {
-            managerContract = instance;
-            assert.notEqual(managerContract, undefined, "Failed to deploy Manager contract!");
+    it("Linking the contracts together", () => {
+        return managerContract.link(registryAddress, factoryAddress).then((tx) => {
+            assert.equal(tx.receipt.status, true, "Link could not be created!");
         });
     });
 
