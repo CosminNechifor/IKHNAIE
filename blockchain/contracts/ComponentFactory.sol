@@ -17,6 +17,7 @@ contract ComponentFactory {
     {
 
         Component c = new Component(
+            msg.sender,
             _owner,
             _entityName,
             _expirationTime,

@@ -1,8 +1,9 @@
 pragma solidity >=0.4 <0.6.0; 
 
 import "./Ownable.sol";
+import "./Management.sol";
 
-contract Component is Ownable { 
+contract Component is Ownable, Management { 
 
     enum ComponentState { 
         // An component will be in Editable state only at the beginning 
@@ -120,6 +121,7 @@ contract Component is Ownable {
     // }
 
     constructor(
+        address manager,
         address owner,
         string memory _componentName,
         uint64 _expirationTime,
@@ -127,6 +129,7 @@ contract Component is Ownable {
         string memory _otherInformation
     ) 
         Ownable(owner)
+        Management(manager)
         public
     {
         componentName = _componentName;
