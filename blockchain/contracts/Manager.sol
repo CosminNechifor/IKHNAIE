@@ -10,29 +10,29 @@ contract Manager is Ownable {
     IComponentFactory componentFactory;
     IRegistry registryContract;
 
-    bool private _notWired;
+    bool private _notLinked;
 
-    modifier notWired() {
-        require(_notWired, "Contract can no longer be rewired");
+    modifier notLinked() {
+        require(_notLinked, "Contract can no longer be relinked");
         _;
     }
 
     constructor() Ownable(msg.sender) public {
-        _notWired = true;
+        _notLinked = true;
     }
     
     function link(
         address _registryContractAddress,
         address _componentFactoryAddress
     )
-        notWired()
+        notLinked()
         onlyOwner()
         public
         returns (bool)
     {
         componentFactory = IComponentFactory(_componentFactoryAddress);
         registryContract = IRegistry(_registryContractAddress);
-        _notWired = false;
+        _notLinked = false;
         return true;
     }
 
