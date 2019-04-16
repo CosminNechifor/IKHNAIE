@@ -10,24 +10,41 @@ import "./Management.sol";
 
 contract Registry is Ownable, Management {
 
+    event ComponentRegistred(
+        uint256 indexed _index,
+        address indexed _componentAddress
+    ); 
+
+    event ComponentRecycled(
+        uint256 indexed _index,
+        address indexed _componentAddress
+    ); 
+
+    event ComponentDestroyed(
+        uint256 indexed _index,
+        address indexed _componentAddress
+    ); 
+
     // the place where all components in the system are going to be stored
     address[] private _registry;
+    mapping(address => uint256) private _addressToIndex;
 
     constructor(address _manager) Management(_manager) Ownable(msg.sender) public {}
 
     function addComponent(address _componentAddress) onlyManager() external {
-        _registry.push(_componentAddress);
+        uint256 _index = _registry.push(_componentAddress) - 1;
+        _addressToIndex[_componentAddress] = _index;
+        emit ComponentRegistred(_index, _componentAddress);
+    }
+    
+    function componentDestroyed(address _componentAddress) onlyManager() external {
+        uint256 _index = _addressToIndex[_componentAddress]; 
+        emit ComponentDestroyed(_index, _componentAddress);
     }
 
-    function removeComponent(uint256 _index) onlyManager() external {
-        uint256 lastElementIndex = _registry.length - 1;
-        address _componentAddress = _registry[lastElementIndex]; 
-
-        _registry[_index] = _componentAddress;
-        
-        // delete the element and enusre there is no empty space
-        delete _registry[lastElementIndex];
-        _registry.length--;
+    function componentRecycled(address _componentAddress) onlyManager() external {
+        uint256 _index = _addressToIndex[_componentAddress]; 
+        emit ComponentRecycled(_index, _componentAddress);
     }
 
     function getRegistrySize() external view returns(uint256) {
