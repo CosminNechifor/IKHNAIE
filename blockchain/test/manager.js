@@ -2,12 +2,14 @@ const ComponentFactory = artifacts.require("ComponentFactory");
 const Manager = artifacts.require("Manager");
 const Component = artifacts.require("Component");
 const Registry = artifacts.require("Registry");
+const Storage = artifacts.require("Storage");
 
 contract('Manager - testing deployment and creation of components [happy case]', function (accounts) {
     
     let managerContract;
     let factoryAddress;
     let registryAddress;
+    let storageAddress;
 
     it("Deploy ManagerContract contract", () => {
         return Manager.new().then((instance) => {
@@ -27,7 +29,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
     });
 
     /**
-     * TESTING DEPLOYMENT OF ComponentFactory CONTRACT
+     * TESTING DEPLOYMENT OF Registry CONTRACT
      *  */    
     it("Deploy Registry contract", () => {
         return Registry.new(managerContract.address).then((instance) => {
@@ -36,8 +38,18 @@ contract('Manager - testing deployment and creation of components [happy case]',
         });
     });
 
+    /**
+     * TESTING DEPLOYMENT OF Storage CONTRACT
+     *  */    
+    it("Deploy Storage contract", () => {
+        return Storage.new(managerContract.address).then((instance) => {
+            storageAddress = instance.address;
+            assert.notEqual(storageAddress, undefined, "Failed to deploy StorageContract");
+        });
+    });
+
     it("Linking the contracts together", () => {
-        return managerContract.link(registryAddress, factoryAddress).then((tx) => {
+        return managerContract.link(registryAddress, factoryAddress, storageAddress).then((tx) => {
             assert.equal(tx.receipt.status, true, "Link could not be created!");
         });
     });
