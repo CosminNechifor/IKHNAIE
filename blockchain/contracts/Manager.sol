@@ -181,7 +181,6 @@ contract Manager is Ownable {
         view 
         returns
         (
-            address, 
             string memory, 
             uint256, 
             uint64, 

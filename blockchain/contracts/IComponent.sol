@@ -10,7 +10,6 @@ interface IComponent{
     function removeChild(uint256 _index) external returns(address);
     function flagAsExpired() external;
     function getData() external view returns (
-        address, 
         string memory, 
         uint256, 
         uint64, 
