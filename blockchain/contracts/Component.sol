@@ -1,9 +1,8 @@
 pragma solidity >=0.4 <0.6.0; 
 
-import "./Ownable.sol";
 import "./Management.sol";
 
-contract Component is Ownable, Management { 
+contract Component is Management { 
 
     enum ComponentState { 
         // An component will be in Editable state only at the beginning 
@@ -38,7 +37,6 @@ contract Component is Ownable, Management {
     
     event ComponentCreated 
     (
-        address _owner,
         string _componentName,
         uint256 _creationTime,
         uint64 _expiration,
@@ -116,13 +114,11 @@ contract Component is Ownable, Management {
 
     constructor(
         address manager,
-        address owner,
         string memory _componentName,
         uint64 _expirationTime,
         uint128 _price,
         string memory _otherInformation
     ) 
-        Ownable(owner)
         Management(manager)
         public
     {
@@ -136,7 +132,6 @@ contract Component is Ownable, Management {
         parentComponentAddress = address(0); 
 
         emit ComponentCreated(
-            owner,
             componentName,
             creationTime,
             expiration,
@@ -296,7 +291,6 @@ contract Component is Ownable, Management {
         )
     {
         return (
-            owner(),
             componentName,
             creationTime,
             expiration,
@@ -352,19 +346,6 @@ contract Component is Ownable, Management {
         ) 
     {
         return childComponentList[_index];
-    }
-
-    // has to be replaced
-    // it was added only termporary
-    function getOwner() 
-        external 
-        view 
-        returns 
-        (
-            address
-        )
-    {
-        return owner();
     }
 
     // use carefully
