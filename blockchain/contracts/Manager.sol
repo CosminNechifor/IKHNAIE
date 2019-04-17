@@ -48,8 +48,8 @@ contract Manager is Ownable {
             address
         ) 
     {
+        address owner = msg.sender;
         address componentAddress = componentFactory.createComponent(
-            msg.sender,
             _entityName,
             _expirationTime,
             _price,

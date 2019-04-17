@@ -6,7 +6,6 @@ contract ComponentFactory {
 
     // needs to pass further the manager address
     function createComponent(
-        address _owner,
         string calldata _entityName,
         uint64 _expirationTime,
         uint128 _price,
@@ -18,7 +17,6 @@ contract ComponentFactory {
 
         Component c = new Component(
             msg.sender,
-            _owner,
             _entityName,
             _expirationTime,
             _price,

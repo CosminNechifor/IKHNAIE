@@ -279,7 +279,6 @@ contract Component is Management {
         view 
         returns 
         (
-            address,
             string memory,
             uint256,
             uint64,
