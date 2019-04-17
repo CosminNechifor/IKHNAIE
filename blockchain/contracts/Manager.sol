@@ -69,22 +69,16 @@ contract Manager is Ownable {
     ) 
         public 
     {
-        IComponent parentComponent = IComponent(_parentComponentAddress);
-        IComponent childComponent = IComponent(_childComponentAddress);
-        parentComponent.addChild(_childComponentAddress);
-        childComponent.updateParentAddress(_parentComponentAddress);
+        storageContract.addChildToParentComponent(_childComponentAddress, _parentComponentAddress);
     }
 
     function removeChildComponentFromComponent(
         address _parentComponentAddress, 
-        uint256 _childIndex
+        address _childComponentAddress
     ) 
         public 
     {
-        IComponent parentComponent = IComponent(_parentComponentAddress);
-        address childComponentAddress = parentComponent.removeChild(_childIndex);
-        IComponent childComponent = IComponent(childComponentAddress);
-        childComponent.updateParentAddress(address(0));
+        storageContract.removeChildFromParentComponent(_childComponentAddress, _parentComponentAddress);
     }
 
     function updateComponentName(
@@ -169,9 +163,7 @@ contract Manager is Ownable {
             address[] memory
         )
     {
-        IComponent component = IComponent(_parentComponentAddress);
-        address[] memory childrenList = component.getChildComponentList();
-        return childrenList;
+        return storageContract.getChildComponentListOfAddress(_parentComponentAddress);
     }
 
     function getComponentData(
