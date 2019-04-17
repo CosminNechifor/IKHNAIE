@@ -5,10 +5,8 @@ import "./Management.sol";
 
 contract Storage is Ownable, Management {
 
-
     // This would be helpful in the determination of the parent component of a component
     mapping(address => address) componentToParent;
-
 
     // Helpful when finding what components does this owner own. 
     mapping (address => address[]) private ownerToRootComponents;
@@ -45,6 +43,7 @@ contract Storage is Ownable, Management {
         return root;
     }
 
+    // also known as get owner all components
     function getOwnerRootComponents(address _owner) external view returns (address[] memory) {
         return ownerToRootComponents[_owner];
     }

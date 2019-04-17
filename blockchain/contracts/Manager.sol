@@ -4,11 +4,13 @@ import "./Ownable.sol";
 import "./IComponent.sol";
 import "./IComponentFactory.sol";
 import "./IRegistry.sol";
+import "./IStorage.sol";
 
 contract Manager is Ownable {
 
     IComponentFactory componentFactory;
     IRegistry registryContract;
+    IStorage storageContract;
 
     bool private _notLinked;
 
@@ -23,7 +25,8 @@ contract Manager is Ownable {
     
     function link(
         address _registryContractAddress,
-        address _componentFactoryAddress
+        address _componentFactoryAddress,
+        address _storageContractAddress
     )
         notLinked()
         onlyOwner()
@@ -32,6 +35,7 @@ contract Manager is Ownable {
     {
         componentFactory = IComponentFactory(_componentFactoryAddress);
         registryContract = IRegistry(_registryContractAddress);
+        storageContract = IStorage(_storageContractAddress);
         _notLinked = false;
         return true;
     }
@@ -48,7 +52,6 @@ contract Manager is Ownable {
             address
         ) 
     {
-        // fix_29:address owner = msg.sender;
         address componentAddress = componentFactory.createComponent(
             _entityName,
             _expirationTime,
@@ -56,6 +59,7 @@ contract Manager is Ownable {
             _otherInformation
         );
         registryContract.addComponent(componentAddress);
+        storageContract.mapComponentToOwner(componentAddress, msg.sender);
         return componentAddress;
     }
 
@@ -193,8 +197,7 @@ contract Manager is Ownable {
     }
 
     function getComponentOwner(address _componentAddress) public view returns(address) {
-        IComponent component = IComponent(_componentAddress);
-        return component.getOwner();
+        return storageContract.getComponentOwner(_componentAddress); 
     }
 
     function getRegistrySize() public view returns(uint256) {
