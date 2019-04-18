@@ -33,6 +33,9 @@ contract Component is Management {
 
     // navigation fields
     address private _owner;
+    // index to know exacty at which position the in the parrent array
+    // this component is
+    uint64 private _indexInsideParentComponent;
     address private parentComponentAddress;
     address[] private childComponentList;
     
@@ -164,8 +167,8 @@ contract Component is Management {
         componentName = _componentName; 
     }
 
-    function updateParentAddress(
-        address _parentComponentAddress
+    function updateConnection(
+        address _address
     ) 
         external
         onlyManager()
@@ -173,11 +176,15 @@ contract Component is Management {
         notInNeedsRecycledState()
         notInRecycledOrDestoyedState()
     {
-        emit ComponentParentAddressUpdated(
-            parentComponentAddress,
-            _parentComponentAddress
-        );
-        parentComponentAddress = _parentComponentAddress;    
+        // if the component has no parent 
+        if (parentComponentAddress == address(0)) {
+            // TODO: events must be emited
+            parentComponentAddress = _address;    
+            _owner = address(0);
+        } else {
+            parentComponentAddress = address(0);
+            _owner = _address;
+        }
     }    
     
     // we don't need the component to be in any state

@@ -260,7 +260,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             // getting the data and asserting for the content
             return componentContract.getData();
         }).then((result_comp3) => {
-            const owner3 = result_comp3[0];
             const componentName3 = result_comp3[1];
             const creationgTime3 = result_comp3[2];
             const expiration3 = result_comp3[3];
@@ -272,7 +271,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
 
             assert.equal(componentName3, "Component3", "Component name was tampered!!"); 
             assert.equal(expiration3.toNumber(), 400, "Component expiration was tampered!!"); 
-            assert.equal(owner3, accounts[0], "Wrong number of child components!!"); 
             assert.equal(price3.toNumber(), 4000, "Component price was tampered!!"); 
             assert.equal(state3.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
             assert.equal(otherInformation3, "Some information", "Component otherInformation wasn't corectly initialized!!"); 
@@ -282,7 +280,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
         }).then(componentContract => {
             return componentContract.getData();
         }).then((result_comp1) => {
-            const owner1 = result_comp1[0];
             const componentName1 = result_comp1[1];
             const creationgTime1 = result_comp1[2];
             const expiration1 = result_comp1[3];
@@ -292,7 +289,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             const parentComponentAddress1 = result_comp1[7];
             const childComponentList1 = result_comp1[8];
 
-            assert.equal(owner1, accounts[0], "Wrong parent address!!"); 
             assert.equal(componentName1, "Component1", "Component name was tampered!!"); 
             assert.equal(expiration1.toNumber(), 200, "Component expiration was tampered!!"); 
             assert.equal(price1.toNumber(), 2000, "Component price was tampered!!"); 
@@ -309,7 +305,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
         }).then((values) => {
             const [componentData, component2Address] = values;
 
-            const owner0 = componentData[0];
             const componentName0 = componentData[1];
             const creationgTime0 = componentData[2];
             const expiration0 = componentData[3];
@@ -322,7 +317,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             assert.equal(parentComponentAddress0, "0x0000000000000000000000000000000000000000", "Data was tampered");
             assert.equal(componentName0, "Component0", "Component name was tampered!!"); 
             assert.equal(expiration0.toNumber(), 100, "Component expiration was tampered!!"); 
-            assert.equal(owner0, accounts[0], "Wrong number of child components!!"); 
             assert.equal(price0.toNumber(), 1000, "Component price was tampered!!"); 
             assert.equal(state0.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
             assert.equal(otherInformation0, "Some information", "Component otherInformation wasn't corectly initialized!!"); 
@@ -332,7 +326,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
         }).then(componentContract => {
             return componentContract.getData();
         }).then(result_comp2 => {
-            const owner2 = result_comp2[0];
             const componentName2 = result_comp2[1];
             const creationgTime2 = result_comp2[2];
             const expiration2 = result_comp2[3];
@@ -342,7 +335,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             const parentComponentAddress2 = result_comp2[7];
             const childComponentList2 = result_comp2[8];
 
-            assert.equal(owner2, accounts[0], "Wrong number of child components!!"); 
             assert.equal(componentName2, "Component2", "Component name was tampered!!"); 
             assert.equal(expiration2.toNumber(), 300, "Component expiration was tampered!!"); 
             assert.equal(price2.toNumber(), 3000, "Component price was tampered!!"); 
