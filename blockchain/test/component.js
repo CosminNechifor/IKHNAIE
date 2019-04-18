@@ -52,10 +52,10 @@ contract('Component - testing happy cases', (accounts) => {
         });
     });
     
-    it("Test updateParentAddress", () => {
+    it("Test updateConnection", () => {
         return componentContract.getParentComponentAddress().then(parentComponentAddress => {
             assert.equal(parentComponentAddress, "0x0000000000000000000000000000000000000000", "Parent address is wrong!!"); 
-            return componentContract.updateParentAddress("0x1f81A518F69b6AAF5f54A583F44d9b1A95081A6f");
+            return componentContract.updateConnection("0x1f81A518F69b6AAF5f54A583F44d9b1A95081A6f");
         }).then(() => {
             return componentContract.getParentComponentAddress();
         }).then(parentComponentAddress  => {

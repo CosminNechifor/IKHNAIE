@@ -2,7 +2,7 @@ pragma solidity >=0.4 <0.6.0;
 
 interface IComponent{
     function updateComponentName(string calldata _componentName) external;
-    function updateParentAddress(address _parentComponentAddress) external;
+    function updateConnection( address _address) external;
     function updateComponentExpiration(uint64 _expiration) external;
     function updateComponentPrice(uint128 _price) external;
     function updateComponentOtherInformation(string calldata _otherInformation) external;

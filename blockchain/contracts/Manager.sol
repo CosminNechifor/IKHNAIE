@@ -68,7 +68,7 @@ contract Manager is Ownable {
         IComponent parentComponent = IComponent(_parentComponentAddress);
         IComponent childComponent = IComponent(_childComponentAddress);
         parentComponent.addChild(_childComponentAddress);
-        childComponent.updateParentAddress(_parentComponentAddress);
+        childComponent.updateConnection(_parentComponentAddress);
     }
 
     function removeChildComponentFromComponent(
@@ -80,7 +80,7 @@ contract Manager is Ownable {
         IComponent parentComponent = IComponent(_parentComponentAddress);
         address childComponentAddress = parentComponent.removeChild(_childIndex);
         IComponent childComponent = IComponent(childComponentAddress);
-        childComponent.updateParentAddress(address(0));
+        childComponent.updateConnection(parentComponent.getOwner());
     }
 
     function updateComponentName(
@@ -193,8 +193,8 @@ contract Manager is Ownable {
     }
 
     function getComponentOwner(address _componentAddress) public view returns(address) {
-        IComponent component = IComponent(_componentAddress);
-        return component.getOwner();
+        IComponent c = getRootComponent(_componentAddress);
+        return c.getOwner();
     }
 
     function getRegistrySize() public view returns(uint256) {
@@ -207,5 +207,14 @@ contract Manager is Ownable {
 
     function getRegistredComponents() public view returns(address[] memory) {
         return registryContract.getRegistredComponents();
+    }
+
+    // O(log n) 
+    function getRootComponent(address componentAddress) private view returns (IComponent) {
+        IComponent c = IComponent(componentAddress);
+        while(c.getParentComponentAddress() != address(0)) {
+            c = IComponent(c.getParentComponentAddress());
+        }
+        return c;
     }
 }
