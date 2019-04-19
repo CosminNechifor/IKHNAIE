@@ -13,7 +13,20 @@ contract Manager is Ownable {
     bool private _notLinked;
 
     modifier notLinked() {
-        require(_notLinked, "Contract can no longer be relinked");
+        require(_notLinked, "Contract can no longer be relinked!");
+        _;
+    }
+    
+
+    // TODO: we need a better way to determine this 
+    modifier isOwnerOfComponent(address _owner, address _componentAddress) {
+        require(getComponentOwner(_componentAddress) == _owner, "Not the owner of this component!");
+        _;
+    }
+
+    modifier isRootComponent(address _componentAddress) {
+        IComponent _component = IComponent(_componentAddress);
+        require(_component.getParentComponentAddress() == address(0), "Not a root component!");
         _;
     }
 
@@ -58,28 +71,33 @@ contract Manager is Ownable {
         registryContract.addComponent(componentAddress);
         return componentAddress;
     }
+    
 
+    // TODO: check if I need to verify _parrent component for being a root component
     function addChildComponentToComponent(
         address _parentComponentAddress,
         address _childComponentAddress
     ) 
-        public 
+        public
+        isRootComponent(_childComponentAddress)
+        isOwnerOfComponent(msg.sender, _parentComponentAddress) 
+        isOwnerOfComponent(msg.sender, _childComponentAddress) 
     {
         IComponent parentComponent = IComponent(_parentComponentAddress);
-        IComponent childComponent = IComponent(_childComponentAddress);
         parentComponent.addChild(_childComponentAddress);
+        IComponent childComponent = IComponent(_childComponentAddress);
         childComponent.updateConnection(_parentComponentAddress);
     }
 
     function removeChildComponentFromComponent(
         address _parentComponentAddress, 
-        uint256 _childIndex
+        address _childComponentAddress
     ) 
         public 
     {
         IComponent parentComponent = IComponent(_parentComponentAddress);
-        address childComponentAddress = parentComponent.removeChild(_childIndex);
-        IComponent childComponent = IComponent(childComponentAddress);
+        parentComponent.removeChild(_childComponentAddress);
+        IComponent childComponent = IComponent(_childComponentAddress);
         childComponent.updateConnection(parentComponent.getOwner());
     }
 

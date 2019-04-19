@@ -376,7 +376,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
     it("Remove child component 1 from component 0", () => {
         return managerContract.getRegistredComponents().then((values) => {
             parentAddress = values[0];
-            return managerContract.removeChildComponentFromComponent(parentAddress, 0);
+            return managerContract.removeChildComponentFromComponent(parentAddress, values[1]);
         }).then(() => {
             return managerContract.getRegistredComponents();
         }).then((values) => {

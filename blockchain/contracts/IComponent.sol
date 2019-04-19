@@ -7,7 +7,7 @@ interface IComponent{
     function updateComponentPrice(uint128 _price) external;
     function updateComponentOtherInformation(string calldata _otherInformation) external;
     function addChild(address _childComponentAddress) external;
-    function removeChild(uint256 _index) external returns(address);
+    function removeChild(address _childComponentAddress) external returns(address);
     function flagAsExpired() external;
     function getData() external view returns (
         address, 
