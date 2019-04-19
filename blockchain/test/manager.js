@@ -372,4 +372,34 @@ contract('Manager - testing deployment and creation of components [happy case]',
             assert.equal(values[3], accounts[0], "Ownership is broken!"); 
         });
     });
+
+    it("Remove child component 1 from component 0", () => {
+        return managerContract.getRegistredComponents().then((values) => {
+            parentAddress = values[0];
+            return managerContract.removeChildComponentFromComponent(parentAddress, 0);
+        }).then(() => {
+            return managerContract.getRegistredComponents();
+        }).then((values) => {
+            return Promise.all(
+                [
+                    managerContract.getComponentOwner(values[0]),
+                    managerContract.getComponentOwner(values[1]),
+                    managerContract.getComponentOwner(values[2]),
+                    managerContract.getComponentOwner(values[3]),
+                    Component.at(values[1])
+                ]
+            );
+        }).then((values) => {
+            // thw owner address should not be changed
+            assert.equal(values[0], accounts[0], "Ownership is broken!"); 
+            assert.equal(values[1], accounts[0], "Ownership is broken!"); 
+            assert.equal(values[2], accounts[0], "Ownership is broken!"); 
+            assert.equal(values[3], accounts[0], "Ownership is broken!"); 
+
+            // values[4] is the Component1 contract 
+            return values[4].getParentComponentAddress();
+        }).then((parentAddress) => {
+            assert.equal(parentAddress, "0x0000000000000000000000000000000000000000", "Parent address is wrong!!"); 
+        });
+    });
 });
