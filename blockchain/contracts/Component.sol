@@ -101,6 +101,12 @@ contract Component is Management {
 
     event ComponentIsExpired();
 
+    event ComponentRepaired(address _repairer);
+
+    event ComponentRecycled(address _recycler);
+
+    event ComponentDestroyed(address _destroyer);
+
     modifier inEditableState() {
         require(state == ComponentState.Editable, "Component is not in Editable state.");
         _;
@@ -108,6 +114,16 @@ contract Component is Management {
 
     modifier notInSubmitedForSaleState() {
         require(state != ComponentState.SubmitedForSale, "Component is in SubmitedForSale state.");
+        _; 
+    }
+
+    modifier inBrokenState() {
+        require(state == ComponentState.Broken, "Component is not in Broken state.");
+        _; 
+    }
+
+    modifier inNeedsRecycledState() {
+        require(state == ComponentState.NeedsRecycled, "Component is not in NeedsRecycled state.");
         _; 
     }
 
@@ -326,6 +342,33 @@ contract Component is Management {
     {
        state = ComponentState.Broken; 
        emit ComponentIsBroken();
+    }
+
+    function repair(address _repairer)
+        external
+        onlyManager()
+        inBrokenState()
+    {
+        state = ComponentState.Owned; 
+        emit ComponentRepaired(_repairer);
+    }
+
+    function recycle(address _recycler)
+        external
+        onlyManager()
+        inNeedsRecycledState()
+    {
+        state = ComponentState.Recycled; 
+        emit ComponentRecycled(_recycler);
+    }
+
+    function destroy(address _destroyer)
+        external
+        onlyManager()
+        inNeedsRecycledState()
+    {
+        state = ComponentState.Destroyed; 
+        emit ComponentDestroyed(_destroyer);
     }
 
     function getData() 

@@ -10,6 +10,9 @@ interface IComponent{
     function removeChild(address _childComponentAddress) external returns(address);
     function flagAsExpired() external;
     function flagAsBroken() external;
+    function repair(address _repairer) external;
+    function destroy(address _destroyer) external;
+    function recycle(address _recycler) external;
     function getData() external view returns (
         address, 
         string memory, 
