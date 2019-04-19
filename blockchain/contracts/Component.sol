@@ -37,6 +37,13 @@ contract Component is Management {
     // this component is
     address private parentComponentAddress;
     address[] private childComponentList;
+
+    struct Presence {
+        bool _isPresent;
+        uint64 _index;
+    }
+
+    mapping (address => Presence) private _addressToIndex;
     
     event ComponentCreated 
     (
@@ -118,6 +125,11 @@ contract Component is Management {
 
     modifier isPartOfAnotherComponent() {
         require(_owner == address(0), "The component is not part of another component.");
+        _;
+    }
+
+    modifier isPresent(address _componentAddress) {
+        require(_addressToIndex[_componentAddress]._isPresent , "The component is not part of this component.");
         _;
     }
 
@@ -244,7 +256,12 @@ contract Component is Management {
         notInSubmitedForSaleState()
         notInRecycledOrDestoyedState()
     {
-        childComponentList.push(_childComponentAddress);
+        uint64 _childIndex = uint64(childComponentList.push(_childComponentAddress) - 1);
+        Presence memory _presence = Presence({
+            _isPresent: true,
+            _index: _childIndex
+        });
+        _addressToIndex[_childComponentAddress] = _presence;
         emit ComponentChildAdded(
             _childComponentAddress,
             childComponentList
@@ -252,33 +269,42 @@ contract Component is Management {
     }
 
     function removeChild(
-        uint256 _index
+        address _childComponentAddress
     )
         external
         onlyManager()
         notInSubmitedForSaleState()
         notInNeedsRecycledState()
         notInRecycledOrDestoyedState()
+        isPresent(_childComponentAddress)
         returns 
         (
             address
         )
     {
-        uint256 lastElementIndex = childComponentList.length - 1;
-        address _childComponentAddress = childComponentList[lastElementIndex]; 
+        uint64 lastElementIndex = uint64(childComponentList.length - 1);
+        address _lastChildComponentAddress = childComponentList[lastElementIndex]; 
 
-        address removedComponent = childComponentList[_index];
-        childComponentList[_index] = _childComponentAddress;
+        uint64 _index = _addressToIndex[_childComponentAddress]._index; 
+        delete _addressToIndex[_childComponentAddress];
+        childComponentList[_index] = _lastChildComponentAddress;
+
+        Presence memory p = Presence({
+            _isPresent: true,
+            _index: _index
+        });
+        
+        _addressToIndex[_lastChildComponentAddress] = p;
         
         // delete the element and ensure there is no empty space
         delete childComponentList[lastElementIndex];
         childComponentList.length--;
         
         emit ComponentChildRemoved(
-            removedComponent,
+            _childComponentAddress,
             childComponentList
         );
-        return removedComponent;
+        return _childComponentAddress;
     }
 
     function flagAsExpired() 
