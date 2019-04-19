@@ -71,8 +71,6 @@ contract Manager is Ownable {
         return componentAddress;
     }
     
-
-    // TODO: check if I need to verify _parrent component for being a root component
     function addChildComponentToComponent(
         address _parentComponentAddress,
         address _childComponentAddress
@@ -121,6 +119,37 @@ contract Manager is Ownable {
     {
         IComponent _component = IComponent(_componentAddress);
         _component.flagAsBroken();
+    }
+    
+    // TODO: find a way to lock till the reparation is confirmed
+    function repair(
+        address _componentAddress
+    ) 
+        public
+    {
+        IComponent _component = IComponent(_componentAddress);
+        _component.repair(msg.sender);
+        // pay with tokens
+    }
+
+    function recycle(
+        address _componentAddress
+    )
+        public
+    {
+        IComponent _component = IComponent(_componentAddress);
+        _component.recycle(msg.sender);
+        // pay with tokens
+    }
+
+    function destroy(
+        address _componentAddress
+    )
+        public
+    {
+        IComponent _component = IComponent(_componentAddress);
+        _component.destroy(msg.sender);
+        // pay with tokens
     }
 
     function updateComponentName(

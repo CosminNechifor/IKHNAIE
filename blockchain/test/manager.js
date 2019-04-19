@@ -2,6 +2,7 @@ const ComponentFactory = artifacts.require("ComponentFactory");
 const Manager = artifacts.require("Manager");
 const Component = artifacts.require("Component");
 const Registry = artifacts.require("Registry");
+const mineTx = require("./mineTx.js");
 
 contract('Manager - testing deployment and creation of components [happy case]', function (accounts) {
     
@@ -455,9 +456,22 @@ contract('Manager - testing deployment and creation of components [happy case]',
             const state = values[5];
             assert.equal(state.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
             const component = await Component.at(componentAddress);
-            managerResponse = await managerContract.flagComponentAsExpired(componentAddress);
+            let managerResponse = await managerContract.flagComponentAsExpired(componentAddress);
+            await mineTx(managerResponse);
             const afterChangeValues = await component.getData();
             assert.equal(afterChangeValues[5].toNumber(), 4, "Component state should be NeedsRecycled!!"); 
         });
     });
+
+    it("Repair broken component", async () => {
+        const components = await managerContract.getRegistredComponents();
+        const c = await Component.at(components[4]);
+        const stateBeforeRepair = await c.getData();
+        assert.equal(stateBeforeRepair[5].toNumber(), 3, "Component state should be broken!!"); 
+        let tx = await managerContract.repair(components[4]);
+        await mineTx(tx);
+        const stateAfterRepair = await c.getData();
+        assert.equal(stateAfterRepair[5].toNumber(), 2, "Component state should be owned!!"); 
+    });
+
 });
