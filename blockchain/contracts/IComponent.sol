@@ -13,6 +13,7 @@ interface IComponent{
     function repair(address _repairer) external;
     function destroy(address _destroyer) external;
     function recycle(address _recycler) external;
+    function transferOwnership(address _newOwner) external;
     function getData() external view returns (
         address, 
         string memory, 

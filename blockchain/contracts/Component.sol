@@ -107,6 +107,8 @@ contract Component is Management {
 
     event ComponentDestroyed(address _destroyer);
 
+    event ComponentOwnershipTransfered(address _oldOwner, address _newOwner);
+
     modifier inEditableState() {
         require(state == ComponentState.Editable, "Component is not in Editable state.");
         _;
@@ -114,6 +116,11 @@ contract Component is Management {
 
     modifier notInSubmitedForSaleState() {
         require(state != ComponentState.SubmitedForSale, "Component is in SubmitedForSale state.");
+        _; 
+    }
+
+    modifier inSubmitedForSaleState() {
+        require(state == ComponentState.SubmitedForSale, "Component is not in SubmitedForSale state.");
         _; 
     }
 
@@ -342,6 +349,16 @@ contract Component is Management {
     {
        state = ComponentState.Broken; 
        emit ComponentIsBroken();
+    }
+
+    function transferOwnership(address _newOwner) 
+        external 
+        onlyManager()
+        inSubmitedForSaleState()
+    {
+       state = ComponentState.Owned; 
+       _owner = _newOwner;
+       emit ComponentOwnershipTransfered(_owner, _newOwner);
     }
 
     function repair(address _repairer)

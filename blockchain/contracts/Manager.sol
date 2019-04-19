@@ -203,6 +203,23 @@ contract Manager is Ownable {
         component.updateComponentOtherInformation(_newOtherInformation);
     }
 
+    // TODO:
+    // must send the tokens to the user when is being bought
+    // Has to be changed when the market contract is implemented
+    // implement test for this function
+    // neets add to market and remove from market to be implemented first
+    function transferComponentOwnership(
+        address _componentAddress,
+        address _newOwner
+    )
+        public 
+        isOwnerOfComponent(_componentAddress)
+        isRootComponent(_componentAddress)
+    {
+        IComponent component = IComponent(_componentAddress);
+        component.transferOwnership(_newOwner);
+    }
+
     function getChildComponentAddressByIndex(
         address _parentComponentAddress,
         uint256 _id
