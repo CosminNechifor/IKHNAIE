@@ -122,6 +122,7 @@ contract Manager is Ownable {
     }
     
     // TODO: find a way to lock till the reparation is confirmed
+    // TODO: incentivized actors
     function repair(
         address _componentAddress
     ) 
@@ -132,20 +133,26 @@ contract Manager is Ownable {
         // pay with tokens
     }
 
+    // TODO: find a way to lock till the recycle is confirmed
+    // TODO: incentivized actors
     function recycle(
         address _componentAddress
     )
         public
+        isRootComponent(_componentAddress)
     {
         IComponent _component = IComponent(_componentAddress);
         _component.recycle(msg.sender);
         // pay with tokens
     }
 
+    // TODO: find a way to lock till the destruction is confirmed
+    // TODO: actor must not be incentivized 
     function destroy(
         address _componentAddress
     )
         public
+        isRootComponent(_componentAddress)
     {
         IComponent _component = IComponent(_componentAddress);
         _component.destroy(msg.sender);

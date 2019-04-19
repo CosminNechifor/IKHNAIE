@@ -6,22 +6,22 @@ contract Component is Management {
 
     enum ComponentState { 
         // An component will be in Editable state only at the beginning 
-        Editable,
+        Editable, // 0
         // When a component is posted for sale it goes into SubmitedForSale state
-        SubmitedForSale,
+        SubmitedForSale, // 1
         // Simply means that a component is being used by a user who owns it
-        Owned,
+        Owned, // 2
         // A Component gets into Broken state if one of the components has been removed without being replaced
         // if a component gets into broken state must be changed with another one that you are the owner of  
-        Broken,
+        Broken, // 3
         // When the expiration period is finished then the Component will get into needs recycled
         // This has to be flagged by another user whoich is gonna get rewarded  
-        NeedsRecycled,
+        NeedsRecycled, // 4
         // Recycling an component should give the user who recilced it some tokens
         // That can be reused in the ecosystem
-        Recycled,
+        Recycled, // 5
         // When a component is being destroyed
-        Destroyed
+        Destroyed // 6
     }
 
     string componentName;
