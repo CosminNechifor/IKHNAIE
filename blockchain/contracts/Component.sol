@@ -35,7 +35,6 @@ contract Component is Management {
     address private _owner;
     // index to know exacty at which position the in the parrent array
     // this component is
-    uint64 private _indexInsideParentComponent;
     address private parentComponentAddress;
     address[] private childComponentList;
     
@@ -114,6 +113,11 @@ contract Component is Management {
 
     modifier isExpired() {
         require(block.timestamp > creationTime + expiration, "Component has not expired yet.");
+        _;
+    }
+
+    modifier isPartOfAnotherComponent() {
+        require(_owner == address(0), "The component is not part of another component.");
         _;
     }
 
