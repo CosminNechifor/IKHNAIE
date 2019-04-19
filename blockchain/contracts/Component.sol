@@ -171,9 +171,6 @@ contract Component is Management {
         );
     }
     
-    // Todo: manager has to check if the sender is the component owner
-    // only the manager can change the components -> modifer exists and needs to
-    // be added to the functions
     function updateComponentName(
         string calldata _componentName
     )
@@ -208,8 +205,6 @@ contract Component is Management {
         }
     }    
     
-    // we don't need the component to be in any state
-    // to update the price
     function updateComponentExpiration(
         uint64 _expiration
     )

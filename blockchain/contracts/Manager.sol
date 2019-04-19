@@ -7,8 +7,8 @@ import "./IRegistry.sol";
 
 contract Manager is Ownable {
 
-    IComponentFactory componentFactory;
-    IRegistry registryContract;
+    IComponentFactory private componentFactory;
+    IRegistry private registryContract;
 
     bool private _notLinked;
 
@@ -18,8 +18,8 @@ contract Manager is Ownable {
     }
     
     // TODO: we need a better way to determine this 
-    modifier isOwnerOfComponent(address _owner, address _componentAddress) {
-        require(getComponentOwner(_componentAddress) == _owner, "Not the owner of this component!");
+    modifier isOwnerOfComponent(address _componentAddress) {
+        require(getComponentOwner(_componentAddress) == msg.sender, "Not the owner of this component!");
         _;
     }
 
@@ -79,8 +79,8 @@ contract Manager is Ownable {
     ) 
         public
         isRootComponent(_childComponentAddress)
-        isOwnerOfComponent(msg.sender, _parentComponentAddress) 
-        isOwnerOfComponent(msg.sender, _childComponentAddress) 
+        isOwnerOfComponent(_parentComponentAddress) 
+        isOwnerOfComponent(_childComponentAddress) 
     {
         IComponent parentComponent = IComponent(_parentComponentAddress);
         parentComponent.addChild(_childComponentAddress);
@@ -93,6 +93,7 @@ contract Manager is Ownable {
         address _childComponentAddress
     ) 
         public 
+        isOwnerOfComponent(_parentComponentAddress) 
     {
         IComponent parentComponent = IComponent(_parentComponentAddress);
         parentComponent.removeChild(_childComponentAddress);
@@ -100,25 +101,23 @@ contract Manager is Ownable {
         childComponent.updateConnection(parentComponent.getOwner());
     }
     
-    // TODO: write test
-    // only owner
+    // TODO: needs to be incentivized to do so
     function flagComponentAsExpired(
         address _componentAddress
     ) 
         public
-        
+        isOwnerOfComponent(_componentAddress)
     {
         IComponent _component = IComponent(_componentAddress);
         _component.flagAsExpired();
 
     }
 
-    // TODO: write test
-    // only owner
     function flagComponentAsBroken(
         address _componentAddress
     ) 
         public
+        isOwnerOfComponent(_componentAddress)
     {
         IComponent _component = IComponent(_componentAddress);
         _component.flagAsBroken();
@@ -129,6 +128,7 @@ contract Manager is Ownable {
         string memory _newName 
     ) 
         public 
+        isOwnerOfComponent(_componentAddress)
     {
         IComponent component = IComponent(_componentAddress);
         component.updateComponentName(_newName);
@@ -139,6 +139,7 @@ contract Manager is Ownable {
         uint64 _newExpiration 
     ) 
         public 
+        isOwnerOfComponent(_componentAddress)
     {
         IComponent component = IComponent(_componentAddress);
         component.updateComponentExpiration(_newExpiration);
@@ -149,6 +150,7 @@ contract Manager is Ownable {
         uint128 _newPrice
     )
         public
+        isOwnerOfComponent(_componentAddress)
     {
         IComponent component = IComponent(_componentAddress);
         component.updateComponentPrice(_newPrice);
@@ -159,6 +161,7 @@ contract Manager is Ownable {
         string memory _newOtherInformation
     )
         public 
+        isOwnerOfComponent(_componentAddress)
     {
         IComponent component = IComponent(_componentAddress);
         component.updateComponentOtherInformation(_newOtherInformation);
