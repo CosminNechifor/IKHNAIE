@@ -474,4 +474,41 @@ contract('Manager - testing deployment and creation of components [happy case]',
         assert.equal(stateAfterRepair[5].toNumber(), 2, "Component state should be owned!!"); 
     });
 
+    it("Destroy component", async () => {
+        await managerContract.createComponent(
+            "Testing destroy component",
+            0,
+            1000,
+            "Component that will be destroyed"
+        );
+        const components = await managerContract.getRegistredComponents();
+        const c = await Component.at(components[components.length-1]);
+        const stateBeforeDestory= await c.getData();
+        assert.equal(stateBeforeDestory[5].toNumber(), 0, "Component state editable!!"); 
+        let tx = await managerContract.flagComponentAsExpired(components[components.length-1]);
+        await mineTx(tx);
+        tx = await managerContract.destroy(components[components.length-1]);
+        await mineTx(tx);
+        const stateAfterDestroy = await c.getData();
+        assert.equal(stateAfterDestroy[5].toNumber(), 6, "Component state should be destroyed!!"); 
+    });
+
+    it("Recycle component", async () => {
+        await managerContract.createComponent(
+            "Testing destroy component",
+            0,
+            1000,
+            "Component that will be destroyed"
+        );
+        const components = await managerContract.getRegistredComponents();
+        const c = await Component.at(components[components.length-1]);
+        const stateBeforeDestory= await c.getData();
+        assert.equal(stateBeforeDestory[5].toNumber(), 0, "Component state editable!!"); 
+        let tx = await managerContract.flagComponentAsExpired(components[components.length-1]);
+        await mineTx(tx);
+        tx = await managerContract.recycle(components[components.length-1]);
+        await mineTx(tx);
+        const stateAfterDestroy = await c.getData();
+        assert.equal(stateAfterDestroy[5].toNumber(), 5, "Component state should be recycled!!"); 
+    });
 });
