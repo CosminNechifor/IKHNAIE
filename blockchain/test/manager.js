@@ -402,4 +402,62 @@ contract('Manager - testing deployment and creation of components [happy case]',
             assert.equal(parentAddress, "0x0000000000000000000000000000000000000000", "Parent address is wrong!!"); 
         });
     });
+    
+    it("Flag component as broken", () => {
+        return managerContract.createComponent(
+            "Component5",
+            500,
+            5000,
+            "Component that will be broken"
+        ).then(() => {
+            //check if componentRegistred has the rigth number of components
+            return managerContract.getRegistrySize();
+        }).then((databaseSize) => {
+            assert.equal(databaseSize.toNumber(), 5, "Creation of the Component5 failed!"); 
+            return managerContract.getRegistredComponents();
+        }).then(values => {
+            const componentAddress = values[4];
+            return Component.at(componentAddress);
+        }).then( async (component) => {
+            const data = await component.getData();
+            return [component.address, data];
+        }).then(async result => {
+            const [componentAddress, values] = result;
+            const state = values[5];
+            assert.equal(state.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
+            const component = await Component.at(componentAddress);
+            const resultFlagBroken = await managerContract.flagComponentAsBroken(componentAddress);
+            const afterChangeValues = await component.getData();
+            assert.equal(afterChangeValues[5].toNumber(), 3, "Component state should be broken!!"); 
+        });
+    });
+
+    it("Flag component as expired", () => {
+        return managerContract.createComponent(
+            "Component6",
+            0,
+            6000,
+            "Component that will be flagedAsExpired"
+        ).then(() => {
+            //check if componentRegistred has the rigth number of components
+            return managerContract.getRegistrySize();
+        }).then((databaseSize) => {
+            assert.equal(databaseSize.toNumber(), 6, "Creation of the Component6 failed!"); 
+            return managerContract.getRegistredComponents();
+        }).then(values => {
+            const componentAddress = values[5];
+            return Component.at(componentAddress);
+        }).then( async (component) => {
+            const data = await component.getData();
+            return [component.address, data];
+        }).then(async result => {
+            const [componentAddress, values] = result;
+            const state = values[5];
+            assert.equal(state.toNumber(), 0, "Component state wasn't corectly initialized!!"); 
+            const component = await Component.at(componentAddress);
+            managerResponse = await managerContract.flagComponentAsExpired(componentAddress);
+            const afterChangeValues = await component.getData();
+            assert.equal(afterChangeValues[5].toNumber(), 4, "Component state should be NeedsRecycled!!"); 
+        });
+    });
 });
