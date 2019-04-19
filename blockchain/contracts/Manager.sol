@@ -17,7 +17,6 @@ contract Manager is Ownable {
         _;
     }
     
-
     // TODO: we need a better way to determine this 
     modifier isOwnerOfComponent(address _owner, address _componentAddress) {
         require(getComponentOwner(_componentAddress) == _owner, "Not the owner of this component!");
@@ -99,6 +98,30 @@ contract Manager is Ownable {
         parentComponent.removeChild(_childComponentAddress);
         IComponent childComponent = IComponent(_childComponentAddress);
         childComponent.updateConnection(parentComponent.getOwner());
+    }
+    
+    // TODO: write test
+    // only owner
+    function flagComponentAsExpired(
+        address _componentAddress
+    ) 
+        public
+        
+    {
+        IComponent _component = IComponent(_componentAddress);
+        _component.flagAsExpired();
+
+    }
+
+    // TODO: write test
+    // only owner
+    function flagComponentAsBroken(
+        address _componentAddress
+    ) 
+        public
+    {
+        IComponent _component = IComponent(_componentAddress);
+        _component.flagAsBroken();
     }
 
     function updateComponentName(

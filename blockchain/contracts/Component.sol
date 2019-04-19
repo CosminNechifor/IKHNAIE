@@ -97,6 +97,10 @@ contract Component is Management {
         address[] _newChildComponentList
     ); 
 
+    event ComponentIsBroken();
+
+    event ComponentIsExpired();
+
     modifier inEditableState() {
         require(state == ComponentState.Editable, "Component is not in Editable state.");
         _;
@@ -119,7 +123,8 @@ contract Component is Management {
     }
 
     modifier isExpired() {
-        require(block.timestamp > creationTime + expiration, "Component has not expired yet.");
+        // TODO: make it > 
+        require(block.timestamp >= creationTime + expiration, "Component has not expired yet.");
         _;
     }
 
@@ -309,11 +314,23 @@ contract Component is Management {
 
     function flagAsExpired() 
         external 
+        onlyManager()
         notInNeedsRecycledState()
         notInRecycledOrDestoyedState()
         isExpired()  
     {
        state = ComponentState.NeedsRecycled; 
+       emit ComponentIsExpired();
+    }
+
+    function flagAsBroken() 
+        external 
+        onlyManager()
+        notInNeedsRecycledState()
+        notInRecycledOrDestoyedState()
+    {
+       state = ComponentState.Broken; 
+       emit ComponentIsBroken();
     }
 
     function getData() 
