@@ -1,7 +1,5 @@
 const Component = artifacts.require("Component");
 
-
-
 contract('Component - testing happy cases', (accounts) => {
 
     let componentContract;

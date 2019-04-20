@@ -2,6 +2,8 @@ const ComponentFactory = artifacts.require("ComponentFactory");
 const Manager = artifacts.require("Manager");
 const Component = artifacts.require("Component");
 const Registry = artifacts.require("Registry");
+const MarketPlace = artifacts.require("MarketPlace");
+
 const mineTx = require("./mineTx.js");
 
 contract('Manager - testing deployment and creation of components [happy case]', function (accounts) {
@@ -9,6 +11,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
     let managerContract;
     let factoryAddress;
     let registryAddress;
+    let marketPlaceAddress;
 
     it("Deploy ManagerContract contract", () => {
         return Manager.new().then((instance) => {
@@ -18,7 +21,8 @@ contract('Manager - testing deployment and creation of components [happy case]',
     });
 
     /**
-     * TESTING DEPLOYMENT OF ComponentFactory CONTRACT
+     * TESTING DEPLOYMENT OF ComponentFactory CONTRACT 
+     * using the manager address as argument for the constructor
      *  */    
     it("Deploy ComponentFactory contract", () => {
         return ComponentFactory.new(managerContract.address).then((instance) => {
@@ -28,7 +32,8 @@ contract('Manager - testing deployment and creation of components [happy case]',
     });
 
     /**
-     * TESTING DEPLOYMENT OF ComponentFactory CONTRACT
+     * TESTING DEPLOYMENT OF ComponentFactory CONTRACT 
+     * using the manager address as argument for the constructor
      *  */    
     it("Deploy Registry contract", () => {
         return Registry.new(managerContract.address).then((instance) => {
@@ -37,10 +42,22 @@ contract('Manager - testing deployment and creation of components [happy case]',
         });
     });
 
-    it("Linking the contracts together", () => {
-        return managerContract.link(registryAddress, factoryAddress).then((tx) => {
-            assert.equal(tx.receipt.status, true, "Link could not be created!");
-        });
+    /**
+     * TESTING DEPLOYMENT OF MarketPlace CONTRACT 
+     * using the manager address as argument for the constructor
+     *  */    
+    it("Deploy MarketPlace contract", async () => {
+        const marketContract = await MarketPlace.new(managerContract.address);
+        marketPlaceAddress = marketContract.address;
+    });
+
+    it("Linking the contracts together", async () => {
+        const tx = await managerContract.link(
+            registryAddress,
+            factoryAddress,
+            marketPlaceAddress
+        );
+        assert.equal(tx.receipt.status, true, "Link could not be created!");
     });
 
     /**
@@ -101,7 +118,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             const result_comp0 = values[0]; 
             const owner0 = result_comp0[0];
             const componentName0 = result_comp0[1];
-            const creationgTime0 = result_comp0[2];
             const expiration0 = result_comp0[3];
             const price0 = result_comp0[4];
             const state0 = result_comp0[5];
@@ -114,7 +130,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             const result_comp1 = values[2]; 
             const owner1 = result_comp1[0];
             const componentName1 = result_comp1[1];
-            const creationgTime1 = result_comp1[2];
             const expiration1 = result_comp1[3];
             const price1 = result_comp1[4];
             const state1 = result_comp1[5];
@@ -197,7 +212,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             const result_comp2 = values[0]; 
             const owner2 = result_comp2[0];
             const componentName2 = result_comp2[1];
-            const creationgTime2 = result_comp2[2];
             const expiration2 = result_comp2[3];
             const price2 = result_comp2[4];
             const state2 = result_comp2[5];
@@ -208,7 +222,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             const result_comp3 = values[1]; 
             const owner3 = result_comp3[0];
             const componentName3 = result_comp3[1];
-            const creationgTime3 = result_comp3[2];
             const expiration3 = result_comp3[3];
             const price3 = result_comp3[4];
             const state3 = result_comp3[5];
@@ -262,7 +275,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             return componentContract.getData();
         }).then((result_comp3) => {
             const componentName3 = result_comp3[1];
-            const creationgTime3 = result_comp3[2];
             const expiration3 = result_comp3[3];
             const price3 = result_comp3[4];
             const state3 = result_comp3[5];
@@ -282,7 +294,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             return componentContract.getData();
         }).then((result_comp1) => {
             const componentName1 = result_comp1[1];
-            const creationgTime1 = result_comp1[2];
             const expiration1 = result_comp1[3];
             const price1 = result_comp1[4];
             const state1 = result_comp1[5];
@@ -307,7 +318,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             const [componentData, component2Address] = values;
 
             const componentName0 = componentData[1];
-            const creationgTime0 = componentData[2];
             const expiration0 = componentData[3];
             const price0 = componentData[4];
             const state0 = componentData[5];
@@ -328,7 +338,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             return componentContract.getData();
         }).then(result_comp2 => {
             const componentName2 = result_comp2[1];
-            const creationgTime2 = result_comp2[2];
             const expiration2 = result_comp2[3];
             const price2 = result_comp2[4];
             const state2 = result_comp2[5];
