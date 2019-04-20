@@ -141,13 +141,16 @@ contract MarketPlace is Management {
     ) 
         external 
         onlyManager()
+        validOfferIndex(_componentAddress, _offerIndex)
         returns (bool)
     {
-        uint256 _indexOfLastOffer = _componentToOffers[_componentAddress].length;
+        uint256 _indexOfLastOffer = _componentToOffers[_componentAddress].length - 1;
         Offer memory offer = _componentToOffers[_componentAddress][_offerIndex];
+
         _componentToOffers[_componentAddress][_offerIndex] = _componentToOffers[_componentAddress][_indexOfLastOffer]; 
         delete _componentToOffers[_componentAddress][_indexOfLastOffer];
         _componentToOffers[_componentAddress].length--;
+
         emit OfferRejected(
             offer.senderAddress,
             _componentAddress,
