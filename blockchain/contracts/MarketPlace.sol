@@ -8,6 +8,7 @@ contract MarketPlace is Management {
     struct IndexStorage {
         uint256 indexInComponents;
         uint256 indexInOwnerComponents;
+        bool isSubmited;
     }
 
     struct Offer {
@@ -17,6 +18,21 @@ contract MarketPlace is Management {
 
     modifier inLimits(address _componentAddress) {
         require(_componentToOffers[_componentAddress].length < 256, "Exceded offers size");
+        _;
+    }
+
+    modifier isNotSubmited(address _componentAddress) {
+        require( ! _addressToIndex[_componentAddress].isSubmited, "Component was already submited");
+        _;
+    }
+
+    modifier validOfferIndex(address _componentAddress, uint256 _index) {
+        require(_componentToOffers[_componentAddress].length > _index, "Not a valid Offer index!");
+        _;
+    }
+
+    modifier amountBiggerThen(uint256 _amount, uint256 _threshold) {
+        require(_amount >= _threshold, "Amount is smaller then the threshold");
         _;
     }
 
@@ -53,13 +69,15 @@ contract MarketPlace is Management {
     function submitForSale(address _owner, address _componentAddress) 
         external
         onlyManager()
+        isNotSubmited(_componentAddress)
         returns (bool)
     {
         uint256 _indexInComponents = _components.push(_componentAddress) - 1;
         uint256 _indexInOwnerComponents = _ownerToComponents[_owner].push(_componentAddress) - 1;
         _addressToIndex[_componentAddress] = IndexStorage({
             indexInOwnerComponents: _indexInOwnerComponents,
-            indexInComponents: _indexInComponents
+            indexInComponents: _indexInComponents,
+            isSubmited: true
         });
         emit ComponentWasSubmitedForSale(_componentAddress);
         return true;
@@ -78,7 +96,7 @@ contract MarketPlace is Management {
         return true;
     }
 
-
+    // TODO: sender != owner in manager
     function addOffer(
         address _sender,
         address _componentAddress,
@@ -87,6 +105,7 @@ contract MarketPlace is Management {
         external 
         onlyManager() 
         inLimits(_componentAddress)
+        amountBiggerThen(_amount, 0) // can be changed to bigger then price
     {
         _componentToOffers[_componentAddress].push(Offer({
             amountOfTokens: _amount,
@@ -102,6 +121,7 @@ contract MarketPlace is Management {
     ) 
         external 
         onlyManager()
+        validOfferIndex(_componentAddress, _offerIndex)
         returns (address, uint256)
     {
         Offer memory offer = _componentToOffers[_componentAddress][_offerIndex]; 
@@ -114,6 +134,7 @@ contract MarketPlace is Management {
         return (offer.senderAddress, offer.amountOfTokens);
     }
 
+    // only the owner can calll this function
     function rejectOffer(
         address _componentAddress,
         uint256 _offerIndex
@@ -143,9 +164,11 @@ contract MarketPlace is Management {
         returns(bool)
     {
         uint256 _indexInComponents = _addressToIndex[_componentAddress].indexInComponents;
-        uint256 _indexInOwnerComponents = _addressToIndex[_componentAddress].indexInOwnerComponents;
         uint256 _lastIndexInComponents = _components.length - 1;
+        uint256 _indexInOwnerComponents = _addressToIndex[_componentAddress].indexInOwnerComponents;
         uint256 _lastIndexInOwnerComponents = _ownerToComponents[_owner].length - 1;
+
+        address _lastComponentAddress = _components[_lastIndexInComponents];
 
         _components[_indexInComponents] = _components[_lastIndexInComponents];
         delete _components[_lastIndexInComponents];
@@ -154,6 +177,15 @@ contract MarketPlace is Management {
         _ownerToComponents[_owner][_indexInOwnerComponents] = _ownerToComponents[_owner][_lastIndexInOwnerComponents];
         delete _ownerToComponents[_owner][_lastIndexInOwnerComponents];
         _ownerToComponents[_owner].length--;
+
+        delete _addressToIndex[_componentAddress];
+        if (_lastComponentAddress != _componentAddress) {
+            _addressToIndex[_lastComponentAddress] = IndexStorage({
+                indexInOwnerComponents: _indexInOwnerComponents,
+                indexInComponents: _indexInComponents,
+                isSubmited: true
+            });
+        }
 
         if (_componentToOffers[_componentAddress].length > 0) {
             delete _componentToOffers[_componentAddress];
@@ -181,6 +213,7 @@ contract MarketPlace is Management {
     ) 
         external 
         view 
+        validOfferIndex(_componentAddress, _index)
         returns (uint256, address) 
     {
         return (
@@ -197,6 +230,14 @@ contract MarketPlace is Management {
         returns(uint256) 
     {
         return _componentToOffers[_componentAddress].length;
+    }
+
+    function getIndexByAddress(address _contractAddress) external view returns (uint256, uint256, bool) {
+        return (
+            _addressToIndex[_contractAddress].indexInComponents,
+            _addressToIndex[_contractAddress].indexInOwnerComponents,
+            _addressToIndex[_contractAddress].isSubmited
+        );
     }
 
 }
