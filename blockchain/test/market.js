@@ -88,18 +88,17 @@ contract('Market testing', (accounts) => {
         assert.equal(comps.length, 1, "Accept offer worked!");
     });
 
-    // it("Testing rejectOffer logic", async () => {
-    //     const acceptedOffer = await marketContract.rejectOffer(
-    //         components[1],
-    //         1
-    //     );
+    it("Testing rejectOffer logic", async () => {
+        const acceptedOffer = await marketContract.rejectOffer(
+            components[1],
+            1
+        );
 
-    //     truffleAssert.eventNotEmitted(acceptedOffer, 'OfferRejected', (ev) => {console.log(ev)});
-    //     const comps = await marketContract.getComponentsSubmitedForSale();
-    //     assert.equal(comps.length, 2, "Accept offer worked!");
+        truffleAssert.eventNotEmitted(acceptedOffer, 'OfferRejected', (ev) => {});
+        const comps = await marketContract.getComponentsSubmitedForSale();
+        assert.equal(comps.length, 1, "Accept offer worked!");
 
-    //     //assert for only one offer
-    //     const componentOffersSize = await marketContract.getComponentOfferSize(components[1]);
-    //     assert.equal(componentOffersSize.length, 1, "Reject offer worked!");
-    // });
+        const componentOffersSize = await marketContract.getComponentOfferSize(components[1]);
+        assert.equal(componentOffersSize.length, 1, "Reject offer worked!");
+    });
 });
