@@ -520,4 +520,5 @@ contract('Manager - testing deployment and creation of components [happy case]',
         const stateAfterDestroy = await c.getData();
         assert.equal(stateAfterDestroy[5].toNumber(), 5, "Component state should be recycled!!"); 
     });
+
 });
