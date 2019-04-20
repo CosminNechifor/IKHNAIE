@@ -165,11 +165,38 @@ contract MarketPlace is Management {
        return _components; 
     }
 
-    function getOwnerComonentsSubmitedForSale(address _owner) external view returns(address[] memory){
+    function getOwnerComonentsSubmitedForSale(
+        address _owner
+    ) 
+        external 
+        view 
+        returns(address[] memory) 
+    {
         return _ownerToComponents[_owner];
     }
 
-    function getComponentOffers(address _componentAddress) external view returns () {
-
+    function getComponentOfferByIndex(
+        address _componentAddress,
+        uint256 _index
+    ) 
+        external 
+        view 
+        returns (uint256, address) 
+    {
+        return (
+            _componentToOffers[_componentAddress][_index].amountOfTokens,
+            _componentToOffers[_componentAddress][_index].senderAddress
+        );
     }
+
+    function getComponentOfferSize(
+        address _componentAddress
+    ) 
+        external
+        view
+        returns(uint256) 
+    {
+        return _componentToOffers[_componentAddress].length;
+    }
+
 }
