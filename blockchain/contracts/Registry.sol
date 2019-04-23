@@ -3,11 +3,6 @@ pragma solidity >=0.4 <0.6.0;
 import "./Ownable.sol";
 import "./Managed.sol";
 
-/**
- * TODO: 
- * - decide if removeComponent is wanted
- */
-
 contract Registry is Ownable, Managed {
 
     event ComponentRegistred(
@@ -31,18 +26,18 @@ contract Registry is Ownable, Managed {
 
     constructor(address _manager) Managed(_manager) Ownable(msg.sender) public {}
 
-    function addComponent(address _componentAddress) onlyManager() external {
+    function addComponent(address _componentAddress) onlyManager external {
         uint256 _index = _registry.push(_componentAddress) - 1;
         _addressToIndex[_componentAddress] = _index;
         emit ComponentRegistred(_index, _componentAddress);
     }
     
-    function componentDestroyed(address _componentAddress) onlyManager() external {
+    function componentDestroyed(address _componentAddress) onlyManager external {
         uint256 _index = _addressToIndex[_componentAddress]; 
         emit ComponentDestroyed(_index, _componentAddress);
     }
 
-    function componentRecycled(address _componentAddress) onlyManager() external {
+    function componentRecycled(address _componentAddress) onlyManager external {
         uint256 _index = _addressToIndex[_componentAddress]; 
         emit ComponentRecycled(_index, _componentAddress);
     }
