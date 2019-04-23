@@ -69,7 +69,8 @@ contract('Manager - testing deployment and creation of components [happy case]',
         const tx = await managerContract.link(
             registryAddress,
             factoryAddress,
-            marketPlaceAddress
+            marketPlaceAddress,
+            tokenAddress
         );
         assert.equal(tx.receipt.status, true, "Link could not be created!");
     });

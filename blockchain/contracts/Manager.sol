@@ -5,12 +5,14 @@ import "./IComponent.sol";
 import "./IComponentFactory.sol";
 import "./IRegistry.sol";
 import "./IMarketPlace.sol";
+import "./IToken.sol";
 
 contract Manager is Ownable {
 
     IComponentFactory private componentFactory;
     IRegistry private registryContract;
     IMarketPlace private marketPlace;
+    IToken private token;
 
     bool private _notLinked;
 
@@ -38,7 +40,8 @@ contract Manager is Ownable {
     function link(
         address _registryContractAddress,
         address _componentFactoryAddress,
-        address _marketPlaceContractAddress
+        address _marketPlaceContractAddress,
+        address _tokenContractAddress
     )
         notLinked()
         onlyOwner()
@@ -48,6 +51,7 @@ contract Manager is Ownable {
         componentFactory = IComponentFactory(_componentFactoryAddress);
         registryContract = IRegistry(_registryContractAddress);
         marketPlace = IMarketPlace(_marketPlaceContractAddress);
+        token = IToken(_tokenContractAddress);
         _notLinked = false;
 
         return true;
