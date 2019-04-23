@@ -3,6 +3,8 @@ const Manager = artifacts.require("Manager");
 const Component = artifacts.require("Component");
 const Registry = artifacts.require("Registry");
 const MarketPlace = artifacts.require("MarketPlace");
+const SafeMath = artifacts.require("SafeMath");
+const Token = artifacts.require("Token");
 
 const mineTx = require("./mineTx.js");
 
@@ -12,6 +14,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
     let factoryAddress;
     let registryAddress;
     let marketPlaceAddress;
+    let tokenAddress;
 
     it("Deploy ManagerContract contract", () => {
         return Manager.new().then((instance) => {
@@ -49,6 +52,17 @@ contract('Manager - testing deployment and creation of components [happy case]',
     it("Deploy MarketPlace contract", async () => {
         const marketContract = await MarketPlace.new(managerContract.address);
         marketPlaceAddress = marketContract.address;
+        assert.notEqual(marketPlaceAddress, undefined, "Failed to deploy RegistryContract");
+    });
+
+    /**
+     * TESTING DEPLOYMENT OF SafeMath library and Token contract
+     *  */    
+    it("Deploy SafeMath library and Token contract", async () => {
+        const safeMathContract = await SafeMath.new();
+        await Token.link("SafeMath", safeMathContract.address); 
+        const tokenContract = await Token.new(managerContract.address);
+        tokenAddress = tokenContract.address;
     });
 
     it("Linking the contracts together", async () => {
