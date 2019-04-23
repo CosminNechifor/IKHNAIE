@@ -68,7 +68,7 @@ contract MarketPlace is Managed {
 
     function submitForSale(address _owner, address _componentAddress) 
         external
-        onlyManager()
+        onlyManager
         isNotSubmited(_componentAddress)
         returns (bool)
     {
@@ -88,7 +88,7 @@ contract MarketPlace is Managed {
         address _componentAddress
     ) 
         external 
-        onlyManager() 
+        onlyManager 
         returns (bool)
     {
         require(_performStorageCleanup(_owner, _componentAddress), "Storage cleanup failed!");
@@ -103,7 +103,7 @@ contract MarketPlace is Managed {
         uint256 _amount
     ) 
         external 
-        onlyManager() 
+        onlyManager 
         inLimits(_componentAddress)
         amountBiggerThen(_amount, 0) // can be changed to bigger then price
     {
@@ -120,7 +120,7 @@ contract MarketPlace is Managed {
         uint256 _offerIndex
     ) 
         external 
-        onlyManager()
+        onlyManager
         validOfferIndex(_componentAddress, _offerIndex)
         returns (address, uint256)
     {
@@ -140,7 +140,7 @@ contract MarketPlace is Managed {
         uint256 _offerIndex
     ) 
         external 
-        onlyManager()
+        onlyManager
         validOfferIndex(_componentAddress, _offerIndex)
         returns (bool)
     {

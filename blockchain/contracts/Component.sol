@@ -198,8 +198,8 @@ contract Component is Managed {
         string calldata _componentName
     )
         external
-        onlyManager()
-        inEditableState()
+        onlyManager
+        inEditableState
     {
         emit ComponentNameUpdated(
             componentName,
@@ -212,10 +212,10 @@ contract Component is Managed {
         address _address
     ) 
         external
-        onlyManager()
-        notInSubmitedForSaleState()
-        notInNeedsRecycledState()
-        notInRecycledOrDestoyedState()
+        onlyManager
+        notInSubmitedForSaleState
+        notInNeedsRecycledState
+        notInRecycledOrDestoyedState
     {
         // if the component has no parent 
         if (parentComponentAddress == address(0)) {
@@ -232,8 +232,8 @@ contract Component is Managed {
         uint64 _expiration
     )
         external
-        onlyManager()
-        inEditableState()
+        onlyManager
+        inEditableState
     {
         emit ComponentExpirationUpdated(
             expiration,
@@ -246,9 +246,9 @@ contract Component is Managed {
         uint128 _price
     )
         external
-        onlyManager()
-        notInNeedsRecycledState()
-        notInRecycledOrDestoyedState()
+        onlyManager
+        notInNeedsRecycledState
+        notInRecycledOrDestoyedState
     {
         emit ComponentPriceUpdated(
             price,
@@ -261,8 +261,8 @@ contract Component is Managed {
         string calldata _otherInformation
     )
         external
-        onlyManager()
-        inEditableState()
+        onlyManager
+        inEditableState
     {
         emit ComponentOtherInformationUpdated(
             otherInformation,
@@ -275,9 +275,9 @@ contract Component is Managed {
         address _childComponentAddress
     ) 
         external
-        notInNeedsRecycledState()
-        notInSubmitedForSaleState()
-        notInRecycledOrDestoyedState()
+        notInNeedsRecycledState
+        notInSubmitedForSaleState
+        notInRecycledOrDestoyedState
     {
         uint64 _childIndex = uint64(childComponentList.push(_childComponentAddress) - 1);
         Presence memory _presence = Presence({
@@ -295,10 +295,10 @@ contract Component is Managed {
         address _childComponentAddress
     )
         external
-        onlyManager()
-        notInSubmitedForSaleState()
-        notInNeedsRecycledState()
-        notInRecycledOrDestoyedState()
+        onlyManager
+        notInSubmitedForSaleState
+        notInNeedsRecycledState
+        notInRecycledOrDestoyedState
         isPresent(_childComponentAddress)
         returns 
         (
@@ -332,10 +332,10 @@ contract Component is Managed {
 
     function flagAsExpired() 
         external 
-        onlyManager()
-        notInNeedsRecycledState()
-        notInRecycledOrDestoyedState()
-        isExpired()  
+        onlyManager
+        notInNeedsRecycledState
+        notInRecycledOrDestoyedState
+        isExpired
     {
        state = ComponentState.NeedsRecycled; 
        emit ComponentIsExpired();
@@ -343,9 +343,9 @@ contract Component is Managed {
 
     function flagAsBroken() 
         external 
-        onlyManager()
-        notInNeedsRecycledState()
-        notInRecycledOrDestoyedState()
+        onlyManager
+        notInNeedsRecycledState
+        notInRecycledOrDestoyedState
     {
        state = ComponentState.Broken; 
        emit ComponentIsBroken();
@@ -353,8 +353,8 @@ contract Component is Managed {
 
     function transferOwnership(address _newOwner) 
         external 
-        onlyManager()
-        inSubmitedForSaleState()
+        onlyManager
+        inSubmitedForSaleState
     {
        state = ComponentState.Owned; 
        _owner = _newOwner;
@@ -363,8 +363,8 @@ contract Component is Managed {
 
     function repair(address _repairer)
         external
-        onlyManager()
-        inBrokenState()
+        onlyManager
+        inBrokenState
     {
         state = ComponentState.Owned; 
         emit ComponentRepaired(_repairer);
@@ -372,8 +372,8 @@ contract Component is Managed {
 
     function recycle(address _recycler)
         external
-        onlyManager()
-        inNeedsRecycledState()
+        onlyManager
+        inNeedsRecycledState
     {
         state = ComponentState.Recycled; 
         emit ComponentRecycled(_recycler);
@@ -381,8 +381,8 @@ contract Component is Managed {
 
     function destroy(address _destroyer)
         external
-        onlyManager()
-        inNeedsRecycledState()
+        onlyManager
+        inNeedsRecycledState
     {
         state = ComponentState.Destroyed; 
         emit ComponentDestroyed(_destroyer);

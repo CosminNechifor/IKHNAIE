@@ -43,8 +43,8 @@ contract Manager is Ownable {
         address _marketPlaceContractAddress,
         address _tokenContractAddress
     )
-        notLinked()
-        onlyOwner()
+        notLinked
+        onlyOwner
         public
         returns (bool)
     {
