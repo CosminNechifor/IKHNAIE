@@ -4,6 +4,7 @@ import "./library/SafeMath.sol";
 import "./IToken.sol";
 import "./Managed.sol";
 
+// Can only be called by the Manager contract
 contract Token is IToken, Managed {
 
     using SafeMath for uint256;
@@ -15,19 +16,19 @@ contract Token is IToken, Managed {
 
     constructor (address _manager) Managed(_manager) public {} 
 
-    function transfer(address to, uint256 value) external returns (bool) {
-        _transfer(msg.sender, to, value);
+    function transfer(address msg_sender, address to, uint256 value) external onlyManager returns (bool) {
+        _transfer(msg_sender, to, value);
         return true;
     }
 
-    function approve(address spender, uint256 value) external returns (bool) {
-        _approve(msg.sender, spender, value);
+    function approve(address msg_sender, address spender, uint256 value) external onlyManager returns (bool) {
+        _approve(msg_sender, spender, value);
         return true;
     }
 
-    function transferFrom(address from, address to, uint256 value) external returns (bool) {
+    function transferFrom(address msg_sender, address from, address to, uint256 value) external onlyManager returns (bool) {
         _transfer(from, to, value);
-        _approve(from, msg.sender, _allowed[from][msg.sender].sub(value));
+        _approve(from, msg_sender, _allowed[from][msg_sender].sub(value));
         return true;
     }
 
@@ -36,7 +37,7 @@ contract Token is IToken, Managed {
         return true;
     }
 
-    function totalSupply() external view returns (uint256) {
+    function totalSupply() external onlyManager view returns (uint256) {
         return _totalSupply;
     }
 

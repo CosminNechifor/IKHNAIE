@@ -2,9 +2,9 @@ pragma solidity >=0.4 <0.6.0;
 
 interface IToken {
 
-    function transfer(address to, uint256 value) external returns (bool);
-    function approve(address spender, uint256 value) external returns (bool);
-    function transferFrom(address from, address to, uint256 value) external returns (bool);
+    function transfer(address msg_sender, address to, uint256 value) external returns (bool);
+    function approve(address msg_sender, address spender, uint256 value) external returns (bool);
+    function transferFrom(address msg_sender, address from, address to, uint256 value) external returns (bool);
     function mint(address to, uint256 value) external returns (bool);
     function totalSupply() external view returns (uint256);
     function balanceOf(address who) external view returns (uint256);
