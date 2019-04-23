@@ -1,6 +1,6 @@
 pragma solidity >=0.4 <0.6.0; 
 
-contract Management { 
+contract Managed { 
 
     modifier onlyManager() {
         require(isManager(), "Not called from manager contract!");

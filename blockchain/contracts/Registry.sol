@@ -1,14 +1,14 @@
 pragma solidity >=0.4 <0.6.0; 
 
 import "./Ownable.sol";
-import "./Management.sol";
+import "./Managed.sol";
 
 /**
  * TODO: 
  * - decide if removeComponent is wanted
  */
 
-contract Registry is Ownable, Management {
+contract Registry is Ownable, Managed {
 
     event ComponentRegistred(
         uint256 indexed _index,
@@ -29,7 +29,7 @@ contract Registry is Ownable, Management {
     address[] private _registry;
     mapping(address => uint256) private _addressToIndex;
 
-    constructor(address _manager) Management(_manager) Ownable(msg.sender) public {}
+    constructor(address _manager) Managed(_manager) Ownable(msg.sender) public {}
 
     function addComponent(address _componentAddress) onlyManager() external {
         uint256 _index = _registry.push(_componentAddress) - 1;

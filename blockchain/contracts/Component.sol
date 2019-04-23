@@ -1,8 +1,8 @@
 pragma solidity >=0.4 <0.6.0; 
 
-import "./Management.sol";
+import "./Managed.sol";
 
-contract Component is Management { 
+contract Component is Managed { 
 
     enum ComponentState { 
         // An component will be in Editable state only at the beginning 
@@ -169,7 +169,7 @@ contract Component is Management {
         uint128 _price,
         string memory _otherInformation
     ) 
-        Management(manager)
+        Managed(manager)
         public
     {
         _owner = owner;

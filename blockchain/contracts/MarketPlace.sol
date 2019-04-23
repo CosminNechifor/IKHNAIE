@@ -1,9 +1,9 @@
 pragma solidity >=0.4 <0.6.0; 
 
-import "./Management.sol";
+import "./Managed.sol";
 
 // TODO: limit the number of offers to 256
-contract MarketPlace is Management { 
+contract MarketPlace is Managed { 
 
     struct IndexStorage {
         uint256 indexInComponents;
@@ -58,7 +58,7 @@ contract MarketPlace is Management {
         uint256 _amountOfTokens
     );
 
-    constructor(address _manager) Management(_manager) public {}
+    constructor(address _manager) Managed(_manager) public {}
 
     address[] private _components;
     mapping(address => IndexStorage) private _addressToIndex;
