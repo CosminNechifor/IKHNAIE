@@ -96,7 +96,6 @@ contract MarketPlace is Managed {
         return true;
     }
 
-    // TODO: sender != owner in manager
     function addOffer(
         address _sender,
         address _componentAddress,
@@ -134,7 +133,7 @@ contract MarketPlace is Managed {
         return (offer.senderAddress, offer.amountOfTokens);
     }
 
-    // only the owner can calll this function
+    // only the owner can call this function
     function rejectOffer(
         address _componentAddress,
         uint256 _offerIndex
