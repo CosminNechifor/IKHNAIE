@@ -107,6 +107,63 @@ contract Manager is Ownable {
         IComponent childComponent = IComponent(_childComponentAddress);
         childComponent.updateConnection(parentComponent.getOwner());
     }
+
+    // TODO: test
+    function submitComponentToMarket(
+        address _componentAddress
+    )
+        public
+        isOwnerOfComponent(_componentAddress)
+    {
+        IComponent _c = IComponent(_componentAddress);
+        require(_c.submitForSale(), "Component couldn't be submited for sale.");
+        require(
+            marketPlace.submitForSale(msg.sender, _componentAddress), 
+            "Component could not be added to market."
+        );
+    }
+    
+    // TODO: test
+    function removeComponentFromMarket(
+        address _componentAddress
+    )
+        public
+        isOwnerOfComponent(_componentAddress)
+    {
+        IComponent _c = IComponent(_componentAddress);
+        require
+        (
+            _c.removeFromSale(),
+            "Component failed to be removed from market."
+        );
+        require
+        (
+            marketPlace.removeFromSale(msg.sender, _componentAddress), 
+            "Component failed to be removed from market."
+        );
+    }
+    
+    // might have to change it:
+    // when somone makes an offer we should block the tokens in the token contract
+    // and if the seller accepts the offer he could be selling the product 
+    // just by unlocking the founds
+    function addOffer(address _componentAddress, uint256 _amount) public {
+        marketPlace.addOffer(msg.sender, _componentAddress, _amount);
+    }
+    
+    // function acceptMarketOffer(address _componentAddress, address _offerIndex) 
+    //     public
+    //     isOwnerOfComponent(_componentAddress)
+    // {
+    //     (
+    //         address newOwner, 
+    //         uint256 _tokenAmount
+    //     ) = marketPlace.acceptOffer(_componentAddress, _amount);
+    //     IComponent _c = IComponent(_componentAddress);
+    //     require(_c.transferOwnership(_newOwner), "Ownership was not Trasfered");
+    //     // transfer Tokens
+    //     token.
+    // }
     
     // TODO: needs to be incentivized to do so
     function flagComponentAsExpired(

@@ -8,12 +8,14 @@ interface IComponent{
     function updateComponentOtherInformation(string calldata _otherInformation) external;
     function addChild(address _childComponentAddress) external;
     function removeChild(address _childComponentAddress) external returns(address);
+    function submitForSale() external returns (bool);
+    function removeFromSale() external returns (bool);
     function flagAsExpired() external;
     function flagAsBroken() external;
     function repair(address _repairer) external;
     function destroy(address _destroyer) external;
     function recycle(address _recycler) external;
-    function transferOwnership(address _newOwner) external;
+    function transferOwnership(address _newOwner) external returns(bool);
     function getData() external view returns (
         address, 
         string memory, 

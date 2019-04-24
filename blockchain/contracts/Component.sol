@@ -61,6 +61,11 @@ contract Component is Managed {
         uint256 timestamp,
         uint128 price
     );
+
+    event ComponentWasRemovedFromSale(
+        uint256 timestamp,
+        uint128 price
+    );
     
     event ComponentNameUpdated(
         string _oldName,
@@ -111,6 +116,11 @@ contract Component is Managed {
 
     modifier inEditableState() {
         require(state == ComponentState.Editable, "Component is not in Editable state.");
+        _;
+    }
+
+    modifier inOwnedState() {
+        require(state == ComponentState.Owned, "Component is not in Owned state.");
         _;
     }
 
@@ -330,6 +340,35 @@ contract Component is Managed {
         return _childComponentAddress;
     }
 
+    function submitForSale() 
+        external
+        onlyManager
+        inEditableState
+        inOwnedState
+        returns (bool)
+    {
+        state = ComponentState.SubmitedForSale;
+        emit ComponentSubmitedForSale(
+            block.timestamp,
+            price
+        );
+        return true; 
+    }
+
+    function removeFromSale() 
+        external
+        onlyManager
+        inSubmitedForSaleState
+        returns (bool)
+    {
+        state = ComponentState.Owned;
+        emit ComponentWasRemovedFromSale(
+            block.timestamp,
+            price
+        );
+        return true; 
+    }
+
     function flagAsExpired() 
         external 
         onlyManager
@@ -355,10 +394,12 @@ contract Component is Managed {
         external 
         onlyManager
         inSubmitedForSaleState
+        returns (bool)
     {
        state = ComponentState.Owned; 
        _owner = _newOwner;
        emit ComponentOwnershipTransfered(_owner, _newOwner);
+       return true;
     }
 
     function repair(address _repairer)
