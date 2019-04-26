@@ -21,8 +21,14 @@ contract Token is IToken, Managed {
         return true;
     }
 
+    // create a function to undo this.
     function approve(address msg_sender, address spender, uint256 value) external onlyManager returns (bool) {
         _approve(msg_sender, spender, value);
+        return true;
+    }
+
+    function disapprove(address msg_sender, address spender) external onlyManager returns (bool) {
+        _disapprove(msg_sender, spender);
         return true;
     }
 
@@ -63,6 +69,14 @@ contract Token is IToken, Managed {
 
         _allowed[owner][spender] = value;
         emit Approval(owner, spender, value);
+    }
+
+    function _disapprove(address owner, address spender) internal {
+        require(spender != address(0));
+        require(owner != address(0));
+
+        _allowed[owner][spender] = 0;
+        emit Disapproval(owner, spender);
     }
 
     function _mint(address account, uint256 value) internal {

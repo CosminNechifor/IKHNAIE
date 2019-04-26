@@ -149,21 +149,37 @@ contract Manager is Ownable {
     // just by unlocking the founds
     function addOffer(address _componentAddress, uint256 _amount) public {
         marketPlace.addOffer(msg.sender, _componentAddress, _amount);
+        token.approve(msg.sender, getComponentOwner(_componentAddress), _amount);
     }
     
-    // function acceptMarketOffer(address _componentAddress, address _offerIndex) 
-    //     public
-    //     isOwnerOfComponent(_componentAddress)
-    // {
-    //     (
-    //         address newOwner, 
-    //         uint256 _tokenAmount
-    //     ) = marketPlace.acceptOffer(_componentAddress, _amount);
-    //     IComponent _c = IComponent(_componentAddress);
-    //     require(_c.transferOwnership(_newOwner), "Ownership was not Trasfered");
-    //     // transfer Tokens
-    //     token.
-    // }
+    // TODO: Add test, remove the component owner from the approve list
+    function removeOffer(address _componentAddress, uint256 _amount) public {
+        marketPlace.
+        // has to take care of approve in token 
+    }
+    
+    function acceptMarketOffer(address _componentAddress, uint256 _offerIndex) 
+        public
+        isOwnerOfComponent(_componentAddress)
+    {
+        address _newOwner;
+        uint256 _tokenAmount;
+        (
+            _newOwner, 
+            _tokenAmount
+        ) = marketPlace.acceptOffer(msg.sender, _componentAddress, _offerIndex);
+        IComponent _c = IComponent(_componentAddress);
+        require(_c.transferOwnership(_newOwner), "Ownership was not Trasfered");
+        require(
+            token.transferFrom(msg.sender, _newOwner, msg.sender, _tokenAmount),
+            "Token transfer didn't take place." 
+        );
+    }
+
+    // TODO: Add test, remove the component owner from the approve list
+    function rejectComponentOffer(address _componentAddress, uint256 _offerIndex) public {
+        marketPlace.rejectOffer(_componentAddress, _offerIndex);
+    }
     
     // TODO: needs to be incentivized to do so
     function flagComponentAsExpired(
