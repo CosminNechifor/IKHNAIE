@@ -46,6 +46,12 @@ contract MarketPlace is Managed {
         uint256 _amountOfTokens
     );
 
+    event OfferRemoved(
+        address _sender,
+        address _componentAddress,
+        uint256 _amountOfTokens
+    );
+
     event OfferAccepted(
         address _sender,
         address _componentAddress,
@@ -111,6 +117,16 @@ contract MarketPlace is Managed {
             senderAddress: _sender
         }));
         emit NewOffer(_sender, _componentAddress, _amount);
+    }
+
+    function removeOffer(
+        address _sender,
+        address _componentAddress,
+    )
+        external 
+        onlyManager 
+    {
+
     }
 
     function acceptOffer(
