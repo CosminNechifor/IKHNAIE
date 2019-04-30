@@ -122,11 +122,24 @@ contract MarketPlace is Managed {
     function removeOffer(
         address _sender,
         address _componentAddress,
+        uint256 _offerIndex
     )
         external 
         onlyManager 
+        returns(bool)
     {
-
+        Offer memory offer = _componentToOffers[_componentAddress][_offerIndex]; 
+        require(_sender == offer.senderAddress, "Not the offer owner.");
+        uint256 _last = _componentToOffers[_componentAddress].length - 1;
+        _componentToOffers[_componentAddress][_offerIndex] = _componentToOffers[_componentAddress][_last];
+        delete _componentToOffers[_componentAddress][_last]; 
+        _componentToOffers[_componentAddress].length--; 
+        emit OfferRemoved(
+            offer.senderAddress,
+            _componentAddress,
+            offer.amountOfTokens
+        );
+        return true;
     }
 
     function acceptOffer(
@@ -171,6 +184,7 @@ contract MarketPlace is Managed {
             _componentAddress,
             offer.amountOfTokens
         );
+
         return true;
     }
 

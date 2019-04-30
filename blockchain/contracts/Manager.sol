@@ -153,9 +153,21 @@ contract Manager is Ownable {
     }
     
     // TODO: Add test, remove the component owner from the approve list
-    function removeOffer(address _componentAddress, uint256 _amount) public {
-        marketPlace.
-        // has to take care of approve in token 
+    function removeOffer(address _componentAddress, uint256 _offerIndex) public {
+        require
+        (
+            marketPlace.removeOffer(
+                msg.sender,
+                _componentAddress,
+                _offerIndex
+            ),
+            "Failed to remove the offer"
+        );
+        require
+        (
+            token.disapprove(msg.sender, getComponentOwner(_componentAddress)),
+            "Token disapprove failed!"
+        );
     }
     
     function acceptMarketOffer(address _componentAddress, uint256 _offerIndex) 
