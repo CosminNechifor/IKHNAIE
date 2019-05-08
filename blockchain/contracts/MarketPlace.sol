@@ -162,7 +162,6 @@ contract MarketPlace is Managed {
         return (offer.senderAddress, offer.amountOfTokens);
     }
 
-    // only the owner can call this function
     function rejectOffer(
         address _componentAddress,
         uint256 _offerIndex

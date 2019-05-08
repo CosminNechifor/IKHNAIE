@@ -124,6 +124,7 @@ contract Manager is Ownable {
     }
     
     // TODO: test
+    // solution remove oly if no offer else you must reject them first
     function removeComponentFromMarket(
         address _componentAddress
     )
@@ -153,6 +154,8 @@ contract Manager is Ownable {
     }
     
     // TODO: Add test, remove the component owner from the approve list
+    // The one who place the offer wants to remove it
+    // ready for the next stage
     function removeOffer(address _componentAddress, uint256 _offerIndex) public {
         require
         (
@@ -165,12 +168,13 @@ contract Manager is Ownable {
         );
         require
         (
-            token.disapprove(msg.sender, getComponentOwner(_componentAddress)),
-            "Token disapprove failed!"
+            token.approve(msg.sender, getComponentOwner(_componentAddress), 0),
+            "Token allowence failed to be removed!"
         );
     }
-    
-    function acceptMarketOffer(address _componentAddress, uint256 _offerIndex) 
+
+    // remove other offers 
+    function acceptOffer(address _componentAddress, uint256 _offerIndex) 
         public
         isOwnerOfComponent(_componentAddress)
     {
@@ -189,8 +193,17 @@ contract Manager is Ownable {
     }
 
     // TODO: Add test, remove the component owner from the approve list
-    function rejectComponentOffer(address _componentAddress, uint256 _offerIndex) public {
+    function rejectOffer(address _componentAddress, uint256 _offerIndex) 
+        public 
+        isOwnerOfComponent(_componentAddress) 
+    {
         marketPlace.rejectOffer(_componentAddress, _offerIndex);
+    }
+    
+    function modifyAllowance(address _spender, uint256 _value)
+        public
+    {
+       token.approve(msg.sender, _spender, _value);
     }
     
     // TODO: needs to be incentivized to do so
@@ -202,7 +215,6 @@ contract Manager is Ownable {
     {
         IComponent _component = IComponent(_componentAddress);
         _component.flagAsExpired();
-
     }
 
     function flagComponentAsBroken(
@@ -297,11 +309,9 @@ contract Manager is Ownable {
         component.updateComponentOtherInformation(_newOtherInformation);
     }
 
-    // TODO:
-    // must send the tokens to the user when is being bought
-    // Has to be changed when the market contract is implemented
-    // implement test for this function
-    // neets add to market and remove from market to be implemented first
+    // TODO: add test
+    // a root component can be transfered without asking for tokens
+    // in return
     function transferComponentOwnership(
         address _componentAddress,
         address _newOwner
@@ -388,16 +398,24 @@ contract Manager is Ownable {
         return c.getOwner();
     }
 
-    function getRegistrySize() public view returns(uint256) {
+    function getRegistrySize() external view returns(uint256) {
         return registryContract.getRegistrySize();
     }
 
-    function getRegistredComponentAtIndex(uint256 _index) public view returns(address) {
+    function getRegistredComponentAtIndex(uint256 _index) external view returns(address) {
         return registryContract.getRegistredComponentAtIndex(_index);
     }
 
-    function getRegistredComponents() public view returns(address[] memory) {
+    function getRegistredComponents() external view returns(address[] memory) {
         return registryContract.getRegistredComponents();
+    }
+
+    function getComponentsSubmitedForSale() external view returns(address[] memory) {
+        return marketPlace.getComponentsSubmitedForSale();
+    }
+
+    function getAllowance(address _spender) public view returns(uint256) {
+        return token.allowance(msg.sender, _spender);
     }
 
     // O(log n) 

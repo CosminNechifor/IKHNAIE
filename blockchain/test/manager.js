@@ -536,4 +536,31 @@ contract('Manager - testing deployment and creation of components [happy case]',
         assert.equal(stateAfterDestroy[5].toNumber(), 5, "Component state should be recycled!!"); 
     });
 
+    it("Test allowance functions", async () => {
+        const a1 = await managerContract.getAllowance(accounts[1]);
+        assert.equal(a1.toNumber(), 0, "Allowance should be 0"); 
+        await managerContract.modifyAllowance(accounts[1], 100);
+        const a2 = await managerContract.getAllowance(accounts[1]);
+        assert.equal(a2.toNumber(), 100, "Allowance should be 100"); 
+        await managerContract.modifyAllowance(accounts[1], 0);
+        const a3 = await managerContract.getAllowance(accounts[1]);
+        assert.equal(a3.toNumber(), 0, "Allowance should be 0"); 
+    });
+
+    it("Test submitComponentToMarket", async () => {
+        await managerContract.createComponent(
+            "Test Component",
+            100,
+            1000,
+            "Component that will be sent to market"
+        );
+        const components = await managerContract.getRegistredComponents();
+        const c = await Component.at(components[components.length-1]);
+        const stateBeforeSubmited = await c.getData();
+        assert.equal(stateBeforeSubmited[5].toNumber(), 0, "Component state should be Editable!"); 
+        await managerContract.submitComponentToMarket(components[components.length-1]); 
+        const stateAfterSubmited = await c.getData();
+        assert.equal(stateAfterSubmited[5].toNumber(), 1, "Component state should be SubmitedForSale!"); 
+    });
+
 });
