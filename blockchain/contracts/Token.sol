@@ -21,14 +21,8 @@ contract Token is IToken, Managed {
         return true;
     }
 
-    // create a function to undo this.
     function approve(address msg_sender, address spender, uint256 value) external onlyManager returns (bool) {
         _approve(msg_sender, spender, value);
-        return true;
-    }
-
-    function disapprove(address msg_sender, address spender) external onlyManager returns (bool) {
-        _approve(msg_sender, spender, 0);
         return true;
     }
 

@@ -118,7 +118,7 @@ contract Component is Managed {
         require(state == ComponentState.Editable, "Component is not in Editable state.");
         _;
     }
-
+    
     modifier inOwnedState() {
         require(state == ComponentState.Owned, "Component is not in Owned state.");
         _;
@@ -343,8 +343,8 @@ contract Component is Managed {
     function submitForSale() 
         external
         onlyManager
-        inEditableState
-        inOwnedState
+        notInSubmitedForSaleState
+        notInRecycledOrDestoyedState
         returns (bool)
     {
         state = ComponentState.SubmitedForSale;
