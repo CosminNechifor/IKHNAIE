@@ -1,9 +1,9 @@
-pragma solidity >=0.4 <0.6.0; 
+pragma solidity >=0.4 <0.6.0;
 
 import "./Managed.sol";
 
 // TODO: limit the number of offers to 256
-contract MarketPlace is Managed { 
+contract MarketPlace is Managed {
 
     struct IndexStorage {
         uint256 indexInComponents;
@@ -72,7 +72,7 @@ contract MarketPlace is Managed {
 
     mapping(address => Offer[]) _componentToOffers;
 
-    function submitForSale(address _owner, address _componentAddress) 
+    function submitForSale(address _owner, address _componentAddress)
         external
         onlyManager
         isNotSubmited(_componentAddress)
@@ -92,9 +92,9 @@ contract MarketPlace is Managed {
     function removeFromSale(
         address _owner,
         address _componentAddress
-    ) 
-        external 
-        onlyManager 
+    )
+        external
+        onlyManager
         returns (bool)
     {
         require(_performStorageCleanup(_owner, _componentAddress), "Storage cleanup failed!");
@@ -106,9 +106,9 @@ contract MarketPlace is Managed {
         address _sender,
         address _componentAddress,
         uint256 _amount
-    ) 
-        external 
-        onlyManager 
+    )
+        external
+        onlyManager
         inLimits(_componentAddress)
         amountBiggerThen(_amount, 0) // can be changed to bigger then price
     {
@@ -124,16 +124,16 @@ contract MarketPlace is Managed {
         address _componentAddress,
         uint256 _offerIndex
     )
-        external 
-        onlyManager 
+        external
+        onlyManager
         returns(bool)
     {
-        Offer memory offer = _componentToOffers[_componentAddress][_offerIndex]; 
+        Offer memory offer = _componentToOffers[_componentAddress][_offerIndex];
         require(_sender == offer.senderAddress, "Not the offer owner.");
         uint256 _last = _componentToOffers[_componentAddress].length - 1;
         _componentToOffers[_componentAddress][_offerIndex] = _componentToOffers[_componentAddress][_last];
-        delete _componentToOffers[_componentAddress][_last]; 
-        _componentToOffers[_componentAddress].length--; 
+        delete _componentToOffers[_componentAddress][_last];
+        _componentToOffers[_componentAddress].length--;
         emit OfferRemoved(
             offer.senderAddress,
             _componentAddress,
@@ -146,13 +146,13 @@ contract MarketPlace is Managed {
         address _owner,
         address _componentAddress,
         uint256 _offerIndex
-    ) 
-        external 
+    )
+        external
         onlyManager
         validOfferIndex(_componentAddress, _offerIndex)
         returns (address, uint256)
     {
-        Offer memory offer = _componentToOffers[_componentAddress][_offerIndex]; 
+        Offer memory offer = _componentToOffers[_componentAddress][_offerIndex];
         require(_performStorageCleanup(_owner, _componentAddress), "Storage cleanup failed!");
         emit OfferAccepted(
             offer.senderAddress,
@@ -165,8 +165,8 @@ contract MarketPlace is Managed {
     function rejectOffer(
         address _componentAddress,
         uint256 _offerIndex
-    ) 
-        external 
+    )
+        external
         onlyManager
         validOfferIndex(_componentAddress, _offerIndex)
         returns (bool)
@@ -174,7 +174,7 @@ contract MarketPlace is Managed {
         uint256 _indexOfLastOffer = _componentToOffers[_componentAddress].length - 1;
         Offer memory offer = _componentToOffers[_componentAddress][_offerIndex];
 
-        _componentToOffers[_componentAddress][_offerIndex] = _componentToOffers[_componentAddress][_indexOfLastOffer]; 
+        _componentToOffers[_componentAddress][_offerIndex] = _componentToOffers[_componentAddress][_indexOfLastOffer];
         delete _componentToOffers[_componentAddress][_indexOfLastOffer];
         _componentToOffers[_componentAddress].length--;
 
@@ -190,8 +190,8 @@ contract MarketPlace is Managed {
     function _performStorageCleanup(
         address _owner,
         address _componentAddress
-    ) 
-        private 
+    )
+        private
         returns(bool)
     {
         uint256 _indexInComponents = _addressToIndex[_componentAddress].indexInComponents;
@@ -225,15 +225,15 @@ contract MarketPlace is Managed {
     }
 
     function getComponentsSubmitedForSale() external view returns (address[] memory) {
-       return _components; 
+       return _components;
     }
 
     function getOwnerComonentsSubmitedForSale(
         address _owner
-    ) 
-        external 
-        view 
-        returns(address[] memory) 
+    )
+        external
+        view
+        returns(address[] memory)
     {
         return _ownerToComponents[_owner];
     }
@@ -241,11 +241,11 @@ contract MarketPlace is Managed {
     function getComponentOfferByIndex(
         address _componentAddress,
         uint256 _index
-    ) 
-        external 
-        view 
+    )
+        external
+        view
         validOfferIndex(_componentAddress, _index)
-        returns (uint256, address) 
+        returns (uint256, address)
     {
         return (
             _componentToOffers[_componentAddress][_index].amountOfTokens,
@@ -255,10 +255,10 @@ contract MarketPlace is Managed {
 
     function getComponentOfferSize(
         address _componentAddress
-    ) 
+    )
         external
         view
-        returns(uint256) 
+        returns(uint256)
     {
         return _componentToOffers[_componentAddress].length;
     }

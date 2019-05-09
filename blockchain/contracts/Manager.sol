@@ -57,6 +57,18 @@ contract Manager is Ownable {
         return true;
     }
 
+    function deposit() public payable {
+        require(
+            token.mint(msg.sender, msg.value),
+            "Token minting failed!"
+        );
+    }
+    
+    function withdraw(uint256 value) public {
+        token.withdraw(msg.sender, value);
+        require(msg.sender.send(value));
+    } 
+
     function createComponent(
         string memory _entityName,
         uint64 _expirationTime,
@@ -108,7 +120,6 @@ contract Manager is Ownable {
         childComponent.updateConnection(parentComponent.getOwner());
     }
 
-    // TODO: test
     function submitComponentToMarket(
         address _componentAddress
     )
@@ -123,8 +134,6 @@ contract Manager is Ownable {
         );
     }
     
-    // TODO: test
-    // solution remove oly if no offer else you must reject them first
     function removeComponentFromMarket(
         address _componentAddress
     )
@@ -139,20 +148,16 @@ contract Manager is Ownable {
         );
         require
         (
-            marketPlace.removeFromSale(msg.sender, _componentAddress), 
+            marketPlace.removeFromSale(msg.sender, _componentAddress),
             "Component failed to be removed from market."
         );
     }
-    
-    // might have to change it:
-    // when somone makes an offer we should block the tokens in the token contract
-    // and if the seller accepts the offer he could be selling the product 
-    // just by unlocking the founds
+
     function addOffer(address _componentAddress, uint256 _amount) public {
         marketPlace.addOffer(msg.sender, _componentAddress, _amount);
         token.approve(msg.sender, getComponentOwner(_componentAddress), _amount);
     }
-    
+
     // TODO: Add test, remove the component owner from the approve list
     // The one who place the offer wants to remove it
     // ready for the next stage
@@ -412,6 +417,18 @@ contract Manager is Ownable {
 
     function getComponentsSubmitedForSale() external view returns(address[] memory) {
         return marketPlace.getComponentsSubmitedForSale();
+    }
+
+    function getComponentOfferSize(address _componentAddress) external view returns(uint256) {
+        return marketPlace.getComponentOfferSize(_componentAddress);
+    }
+
+    function getComponentOfferByIndex(address _componentAddress, uint256 _index) external view returns(uint256, address) {
+        return marketPlace.getComponentOfferByIndex(_componentAddress, _index);
+    }
+
+    function balance() external view returns (uint256) {
+        return token.balanceOf(msg.sender);
     }
 
     function getAllowance(address _spender) public view returns(uint256) {
