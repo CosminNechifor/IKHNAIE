@@ -1,9 +1,10 @@
 pragma solidity >=0.4 <0.6.0;
 
 import "./Managed.sol";
+import "./IMarketPlace.sol";
 
 // TODO: limit the number of offers to 256
-contract MarketPlace is Managed {
+contract MarketPlace is IMarketPlace, Managed {
 
     struct IndexStorage {
         uint256 indexInComponents;
@@ -35,34 +36,6 @@ contract MarketPlace is Managed {
         require(_amount >= _threshold, "Amount is smaller then the threshold");
         _;
     }
-
-    event ComponentWasSubmitedForSale(address _componentAddress);
-
-    event ComponentWasRemovedFromSale(address _componentAddress);
-
-    event NewOffer(
-        address _sender,
-        address _componentAddress,
-        uint256 _amountOfTokens
-    );
-
-    event OfferRemoved(
-        address _sender,
-        address _componentAddress,
-        uint256 _amountOfTokens
-    );
-
-    event OfferAccepted(
-        address _sender,
-        address _componentAddress,
-        uint256 _amountOfTokens
-    );
-
-    event OfferRejected(
-        address _sender,
-        address _componentAddress,
-        uint256 _amountOfTokens
-    );
 
     constructor(address _manager) Managed(_manager) public {}
 
