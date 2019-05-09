@@ -1,21 +1,21 @@
-pragma solidity >=0.4 <0.6.0; 
+pragma solidity >=0.4 <0.6.0;
 
 import "./Managed.sol";
 
-contract Component is Managed { 
+contract Component is Managed {
 
-    enum ComponentState { 
-        // An component will be in Editable state only at the beginning 
+    enum ComponentState {
+        // An component will be in Editable state only at the beginning
         Editable, // 0
         // When a component is posted for sale it goes into SubmitedForSale state
         SubmitedForSale, // 1
         // Simply means that a component is being used by a user who owns it
         Owned, // 2
         // A Component gets into Broken state if one of the components has been removed without being replaced
-        // if a component gets into broken state must be changed with another one that you are the owner of  
+        // if a component gets into broken state must be changed with another one that you are the owner of
         Broken, // 3
         // When the expiration period is finished then the Component will get into needs recycled
-        // This has to be flagged by another user whoich is gonna get rewarded  
+        // This has to be flagged by another user whoich is gonna get rewarded
         NeedsRecycled, // 4
         // Recycling an component should give the user who recilced it some tokens
         // That can be reused in the ecosystem
@@ -44,8 +44,8 @@ contract Component is Managed {
     }
 
     mapping (address => Presence) private _addressToIndex;
-    
-    event ComponentCreated 
+
+    event ComponentCreated
     (
         address _owner,
         string _componentName,
@@ -55,7 +55,7 @@ contract Component is Managed {
         ComponentState state,
         string _otherInformation,
         address _parentComponentAddress
-    ); 
+    );
 
     event ComponentSubmitedForSale(
         uint256 timestamp,
@@ -66,12 +66,12 @@ contract Component is Managed {
         uint256 timestamp,
         uint128 price
     );
-    
+
     event ComponentNameUpdated(
         string _oldName,
         string _newName
     );
-    
+
     event ComponentParentAddressUpdated(
         address _previousParent,
         address _newParent
@@ -95,12 +95,12 @@ contract Component is Managed {
     event ComponentChildAdded(
         address _newChildComponent,
         address[] _newChildComponentList
-    ); 
+    );
 
     event ComponentChildRemoved(
         address _removedComponent,
         address[] _newChildComponentList
-    ); 
+    );
 
     event ComponentIsBroken();
 
@@ -118,7 +118,7 @@ contract Component is Managed {
         require(state == ComponentState.Editable, "Component is not in Editable state.");
         _;
     }
-    
+
     modifier inOwnedState() {
         require(state == ComponentState.Owned, "Component is not in Owned state.");
         _;
@@ -126,22 +126,22 @@ contract Component is Managed {
 
     modifier notInSubmitedForSaleState() {
         require(state != ComponentState.SubmitedForSale, "Component is in SubmitedForSale state.");
-        _; 
+        _;
     }
 
     modifier inSubmitedForSaleState() {
         require(state == ComponentState.SubmitedForSale, "Component is not in SubmitedForSale state.");
-        _; 
+        _;
     }
 
     modifier inBrokenState() {
         require(state == ComponentState.Broken, "Component is not in Broken state.");
-        _; 
+        _;
     }
 
     modifier inNeedsRecycledState() {
         require(state == ComponentState.NeedsRecycled, "Component is not in NeedsRecycled state.");
-        _; 
+        _;
     }
 
     modifier notInNeedsRecycledState() {
@@ -156,7 +156,7 @@ contract Component is Managed {
     }
 
     modifier isExpired() {
-        // TODO: make it > 
+        // TODO: make it >
         require(block.timestamp >= creationTime + expiration, "Component has not expired yet.");
         _;
     }
@@ -167,7 +167,7 @@ contract Component is Managed {
     }
 
     modifier isPresent(address _componentAddress) {
-        require(_addressToIndex[_componentAddress]._isPresent , "The component is not part of this component.");
+        require(_addressToIndex[_componentAddress]._isPresent, "The component is not part of this component.");
         _;
     }
 
@@ -178,7 +178,7 @@ contract Component is Managed {
         uint64 _expirationTime,
         uint128 _price,
         string memory _otherInformation
-    ) 
+    )
         Managed(manager)
         public
     {
@@ -187,10 +187,10 @@ contract Component is Managed {
         creationTime = block.timestamp;
         expiration = _expirationTime;
         price = _price;
-        state = ComponentState.Editable; 
+        state = ComponentState.Editable;
         otherInformation = _otherInformation;
 
-        parentComponentAddress = address(0); 
+        parentComponentAddress = address(0);
 
         emit ComponentCreated(
             owner,
@@ -200,10 +200,10 @@ contract Component is Managed {
             price,
             state,
             otherInformation,
-            parentComponentAddress 
+            parentComponentAddress
         );
     }
-    
+
     function updateComponentName(
         string calldata _componentName
     )
@@ -215,29 +215,29 @@ contract Component is Managed {
             componentName,
             _componentName
         );
-        componentName = _componentName; 
+        componentName = _componentName;
     }
 
     function updateConnection(
         address _address
-    ) 
+    )
         external
         onlyManager
         notInSubmitedForSaleState
         notInNeedsRecycledState
         notInRecycledOrDestoyedState
     {
-        // if the component has no parent 
+        // if the component has no parent
         if (parentComponentAddress == address(0)) {
             // TODO: events must be emited
-            parentComponentAddress = _address;    
+            parentComponentAddress = _address;
             _owner = address(0);
         } else {
             parentComponentAddress = address(0);
             _owner = _address;
         }
-    }    
-    
+    }
+
     function updateComponentExpiration(
         uint64 _expiration
     )
@@ -283,7 +283,7 @@ contract Component is Managed {
 
     function addChild(
         address _childComponentAddress
-    ) 
+    )
         external
         notInNeedsRecycledState
         notInSubmitedForSaleState
@@ -310,15 +310,15 @@ contract Component is Managed {
         notInNeedsRecycledState
         notInRecycledOrDestoyedState
         isPresent(_childComponentAddress)
-        returns 
+        returns
         (
             address
         )
     {
         uint64 lastElementIndex = uint64(childComponentList.length - 1);
-        address _lastChildComponentAddress = childComponentList[lastElementIndex]; 
+        address _lastChildComponentAddress = childComponentList[lastElementIndex];
 
-        uint64 _index = _addressToIndex[_childComponentAddress]._index; 
+        uint64 _index = _addressToIndex[_childComponentAddress]._index;
         delete _addressToIndex[_childComponentAddress];
         childComponentList[_index] = _lastChildComponentAddress;
 
@@ -326,13 +326,13 @@ contract Component is Managed {
             _isPresent: true,
             _index: _index
         });
-        
+
         _addressToIndex[_lastChildComponentAddress] = p;
-        
+
         // delete the element and ensure there is no empty space
         delete childComponentList[lastElementIndex];
         childComponentList.length--;
-        
+
         emit ComponentChildRemoved(
             _childComponentAddress,
             childComponentList
@@ -340,7 +340,7 @@ contract Component is Managed {
         return _childComponentAddress;
     }
 
-    function submitForSale() 
+    function submitForSale()
         external
         onlyManager
         notInSubmitedForSaleState
@@ -352,10 +352,10 @@ contract Component is Managed {
             block.timestamp,
             price
         );
-        return true; 
+        return true;
     }
 
-    function removeFromSale() 
+    function removeFromSale()
         external
         onlyManager
         inSubmitedForSaleState
@@ -366,37 +366,37 @@ contract Component is Managed {
             block.timestamp,
             price
         );
-        return true; 
+        return true;
     }
 
-    function flagAsExpired() 
-        external 
+    function flagAsExpired()
+        external
         onlyManager
         notInNeedsRecycledState
         notInRecycledOrDestoyedState
         isExpired
     {
-       state = ComponentState.NeedsRecycled; 
+       state = ComponentState.NeedsRecycled;
        emit ComponentIsExpired();
     }
 
-    function flagAsBroken() 
-        external 
+    function flagAsBroken()
+        external
         onlyManager
         notInNeedsRecycledState
         notInRecycledOrDestoyedState
     {
-       state = ComponentState.Broken; 
+       state = ComponentState.Broken;
        emit ComponentIsBroken();
     }
 
-    function transferOwnership(address _newOwner) 
-        external 
+    function transferOwnership(address _newOwner)
+        external
         onlyManager
         inSubmitedForSaleState
         returns (bool)
     {
-       state = ComponentState.Owned; 
+       state = ComponentState.Owned;
        _owner = _newOwner;
        emit ComponentOwnershipTransfered(_owner, _newOwner);
        return true;
@@ -407,7 +407,7 @@ contract Component is Managed {
         onlyManager
         inBrokenState
     {
-        state = ComponentState.Owned; 
+        state = ComponentState.Owned;
         emit ComponentRepaired(_repairer);
     }
 
@@ -416,7 +416,7 @@ contract Component is Managed {
         onlyManager
         inNeedsRecycledState
     {
-        state = ComponentState.Recycled; 
+        state = ComponentState.Recycled;
         emit ComponentRecycled(_recycler);
     }
 
@@ -425,14 +425,14 @@ contract Component is Managed {
         onlyManager
         inNeedsRecycledState
     {
-        state = ComponentState.Destroyed; 
+        state = ComponentState.Destroyed;
         emit ComponentDestroyed(_destroyer);
     }
 
-    function getData() 
-        external 
-        view 
-        returns 
+    function getData()
+        external
+        view
+        returns
         (
             address,
             string memory,
@@ -458,58 +458,58 @@ contract Component is Managed {
         );
     }
 
-    function getParentComponentAddress() 
+    function getParentComponentAddress()
         external
-        view 
-        returns 
+        view
+        returns
         (
             address
-        ) 
+        )
     {
         return parentComponentAddress;
     }
 
-    function getNumberOfChildComponents() 
-        external 
-        view 
+    function getNumberOfChildComponents()
+        external
+        view
         returns
         (
             uint256
-        ) 
+        )
     {
         return childComponentList.length;
     }
 
-    function getChildComponentList() 
-        external 
-        view 
+    function getChildComponentList()
+        external
+        view
         returns
         (
             address[] memory
-        ) 
+        )
     {
         return childComponentList;
     }
 
     function getChildComponentAddressByIndex(
         uint256 _index
-    ) 
-        external 
-        view 
+    )
+        external
+        view
         returns
         (
             address
-        ) 
+        )
     {
         return childComponentList[_index];
     }
 
     // has to be replaced
     // it was added only termporary
-    function getOwner() 
-        external 
-        view 
-        returns 
+    function getOwner()
+        external
+        view
+        returns
         (
             address
         )
@@ -520,19 +520,19 @@ contract Component is Managed {
     // use carefully
     function getChildComponentIndexByAddress(
         address _address
-    ) 
-        external 
-        view 
+    )
+        external
+        view
         returns
         (
             uint256
-        ) 
+        )
     {
         uint256 length = childComponentList.length;
         for (uint256 i = 0; i < length; i++) {
             if(_address == childComponentList[i]) {
                 return i;
             }
-        } 
+        }
     }
 }

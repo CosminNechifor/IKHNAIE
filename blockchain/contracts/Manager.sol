@@ -1,4 +1,4 @@
-pragma solidity >=0.4 <0.6.0; 
+pragma solidity >=0.4 <0.6.0;
 
 import "./Ownable.sol";
 import "./IComponent.sol";
@@ -20,8 +20,8 @@ contract Manager is Ownable {
         require(_notLinked, "Contract can no longer be relinked!");
         _;
     }
-    
-    // TODO: we need a better way to determine this 
+
+    // TODO: we need a better way to determine this
     modifier isOwnerOfComponent(address _componentAddress) {
         require(getComponentOwner(_componentAddress) == msg.sender, "Not the owner of this component!");
         _;
@@ -43,9 +43,9 @@ contract Manager is Ownable {
         address _marketPlaceContractAddress,
         address _tokenContractAddress
     )
+        public
         notLinked
         onlyOwner
-        public
         returns (bool)
     {
         componentFactory = IComponentFactory(_componentFactoryAddress);
@@ -63,23 +63,23 @@ contract Manager is Ownable {
             "Token minting failed!"
         );
     }
-    
+
     function withdraw(uint256 value) public {
         token.withdraw(msg.sender, value);
-        require(msg.sender.send(value));
-    } 
+        msg.sender.transfer(value);
+    }
 
     function createComponent(
         string memory _entityName,
         uint64 _expirationTime,
         uint128 _price,
         string memory _otherInformation
-    ) 
-        public 
+    )
+        public
         returns
         (
             address
-        ) 
+        )
     {
         address componentAddress = componentFactory.createComponent(
             msg.sender,
@@ -91,15 +91,15 @@ contract Manager is Ownable {
         registryContract.addComponent(componentAddress);
         return componentAddress;
     }
-    
+
     function addChildComponentToComponent(
         address _parentComponentAddress,
         address _childComponentAddress
-    ) 
+    )
         public
         isRootComponent(_childComponentAddress)
-        isOwnerOfComponent(_parentComponentAddress) 
-        isOwnerOfComponent(_childComponentAddress) 
+        isOwnerOfComponent(_parentComponentAddress)
+        isOwnerOfComponent(_childComponentAddress)
     {
         IComponent parentComponent = IComponent(_parentComponentAddress);
         parentComponent.addChild(_childComponentAddress);
@@ -108,11 +108,11 @@ contract Manager is Ownable {
     }
 
     function removeChildComponentFromComponent(
-        address _parentComponentAddress, 
+        address _parentComponentAddress,
         address _childComponentAddress
-    ) 
-        public 
-        isOwnerOfComponent(_parentComponentAddress) 
+    )
+        public
+        isOwnerOfComponent(_parentComponentAddress)
     {
         IComponent parentComponent = IComponent(_parentComponentAddress);
         parentComponent.removeChild(_childComponentAddress);
@@ -129,11 +129,11 @@ contract Manager is Ownable {
         IComponent _c = IComponent(_componentAddress);
         require(_c.submitForSale(), "Component couldn't be submited for sale.");
         require(
-            marketPlace.submitForSale(msg.sender, _componentAddress), 
+            marketPlace.submitForSale(msg.sender, _componentAddress),
             "Component could not be added to market."
         );
     }
-    
+
     function removeComponentFromMarket(
         address _componentAddress
     )
@@ -158,9 +158,6 @@ contract Manager is Ownable {
         token.approve(msg.sender, getComponentOwner(_componentAddress), _amount);
     }
 
-    // TODO: Add test, remove the component owner from the approve list
-    // The one who place the offer wants to remove it
-    // ready for the next stage
     function removeOffer(address _componentAddress, uint256 _offerIndex) public {
         require
         (
@@ -178,43 +175,41 @@ contract Manager is Ownable {
         );
     }
 
-    // remove other offers 
-    function acceptOffer(address _componentAddress, uint256 _offerIndex) 
+    function acceptOffer(address _componentAddress, uint256 _offerIndex)
         public
         isOwnerOfComponent(_componentAddress)
     {
         address _newOwner;
         uint256 _tokenAmount;
         (
-            _newOwner, 
+            _newOwner,
             _tokenAmount
         ) = marketPlace.acceptOffer(msg.sender, _componentAddress, _offerIndex);
         IComponent _c = IComponent(_componentAddress);
         require(_c.transferOwnership(_newOwner), "Ownership was not Trasfered");
         require(
             token.transferFrom(msg.sender, _newOwner, msg.sender, _tokenAmount),
-            "Token transfer didn't take place." 
+            "Token transfer didn't take place."
         );
     }
 
-    // TODO: Add test, remove the component owner from the approve list
-    function rejectOffer(address _componentAddress, uint256 _offerIndex) 
-        public 
-        isOwnerOfComponent(_componentAddress) 
+    function rejectOffer(address _componentAddress, uint256 _offerIndex)
+        public
+        isOwnerOfComponent(_componentAddress)
     {
         marketPlace.rejectOffer(_componentAddress, _offerIndex);
     }
-    
+
     function modifyAllowance(address _spender, uint256 _value)
         public
     {
        token.approve(msg.sender, _spender, _value);
     }
-    
+
     // TODO: needs to be incentivized to do so
     function flagComponentAsExpired(
         address _componentAddress
-    ) 
+    )
         public
         isOwnerOfComponent(_componentAddress)
     {
@@ -224,19 +219,19 @@ contract Manager is Ownable {
 
     function flagComponentAsBroken(
         address _componentAddress
-    ) 
+    )
         public
         isOwnerOfComponent(_componentAddress)
     {
         IComponent _component = IComponent(_componentAddress);
         _component.flagAsBroken();
     }
-    
+
     // TODO: find a way to lock till the reparation is confirmed
     // TODO: incentivized actors
     function repair(
         address _componentAddress
-    ) 
+    )
         public
     {
         IComponent _component = IComponent(_componentAddress);
@@ -258,7 +253,7 @@ contract Manager is Ownable {
     }
 
     // TODO: find a way to lock till the destruction is confirmed
-    // TODO: actor must not be incentivized 
+    // TODO: actor must not be incentivized
     function destroy(
         address _componentAddress
     )
@@ -271,10 +266,10 @@ contract Manager is Ownable {
     }
 
     function updateComponentName(
-        address _componentAddress, 
-        string memory _newName 
-    ) 
-        public 
+        address _componentAddress,
+        string memory _newName
+    )
+        public
         isOwnerOfComponent(_componentAddress)
     {
         IComponent component = IComponent(_componentAddress);
@@ -282,10 +277,10 @@ contract Manager is Ownable {
     }
 
     function updateComponentExpiration(
-        address _componentAddress, 
-        uint64 _newExpiration 
-    ) 
-        public 
+        address _componentAddress,
+        uint64 _newExpiration
+    )
+        public
         isOwnerOfComponent(_componentAddress)
     {
         IComponent component = IComponent(_componentAddress);
@@ -307,7 +302,7 @@ contract Manager is Ownable {
         address _componentAddress,
         string memory _newOtherInformation
     )
-        public 
+        public
         isOwnerOfComponent(_componentAddress)
     {
         IComponent component = IComponent(_componentAddress);
@@ -321,7 +316,7 @@ contract Manager is Ownable {
         address _componentAddress,
         address _newOwner
     )
-        public 
+        public
         isOwnerOfComponent(_componentAddress)
         isRootComponent(_componentAddress)
     {
@@ -332,13 +327,13 @@ contract Manager is Ownable {
     function getChildComponentAddressByIndex(
         address _parentComponentAddress,
         uint256 _id
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns
         (
             address
-        ) 
+        )
     {
         IComponent component = IComponent(_parentComponentAddress);
         address childAddress = component.getChildComponentAddressByIndex(_id);
@@ -346,15 +341,15 @@ contract Manager is Ownable {
     }
 
     function getChildComponentIndexByAddress(
-        address _parentComponentAddress, 
+        address _parentComponentAddress,
         address _childComponentAddress
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns
         (
             uint256
-        ) 
+        )
     {
         IComponent component = IComponent(_parentComponentAddress);
         uint256 childComponentIndex = component.getChildComponentIndexByAddress(_childComponentAddress);
@@ -363,9 +358,9 @@ contract Manager is Ownable {
 
     function getChildComponentListOfAddress(
         address _parentComponentAddress
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns
         (
             address[] memory
@@ -378,19 +373,19 @@ contract Manager is Ownable {
 
     function getComponentData(
         address _componentAddress
-    ) 
-        public 
-        view 
+    )
+        public
+        view
         returns
         (
-            address, 
-            string memory, 
-            uint256, 
-            uint64, 
-            uint128, 
-            uint8, 
-            string memory, 
-            address, 
+            address,
+            string memory,
+            uint256,
+            uint64,
+            uint128,
+            uint8,
+            string memory,
+            address,
             address[] memory
         )
     {
@@ -435,7 +430,7 @@ contract Manager is Ownable {
         return token.allowance(msg.sender, _spender);
     }
 
-    // O(log n) 
+    // O(log n)
     function getRootComponent(address componentAddress) private view returns (IComponent) {
         IComponent c = IComponent(componentAddress);
         while(c.getParentComponentAddress() != address(0)) {
