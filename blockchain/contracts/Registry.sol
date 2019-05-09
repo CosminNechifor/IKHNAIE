@@ -5,6 +5,12 @@ import "./Managed.sol";
 
 contract Registry is Ownable, Managed {
 
+    struct Quantities {
+        uint256 glass;
+        uint256 metal;
+        uint256 plastic;
+    }
+
     event ComponentRegistred(
         uint256 indexed _index,
         address indexed _componentAddress
@@ -24,11 +30,20 @@ contract Registry is Ownable, Managed {
     address[] private _registry;
     mapping(address => uint256) private _addressToIndex;
 
+    // for now the quantities are not yet used in determining how much tokens one gets
+    mapping (address => Quantities) private _addressToQuatities;
+
     constructor(address _manager) Managed(_manager) Ownable(msg.sender) public {}
 
-    function addComponent(address _componentAddress) external onlyManager {
+    function addComponent(address _componentAddress, uint256 _glassQ, uint256 _metalQ, uint256 _plasticQ) external onlyManager {
         uint256 _index = _registry.push(_componentAddress) - 1;
         _addressToIndex[_componentAddress] = _index;
+        Quantities memory quantities = Quantities({
+            glass: _glassQ,
+            metal: _metalQ,
+            plastic: _plasticQ
+        });
+        _addressToQuatities[_componentAddress] = quantities;
         emit ComponentRegistred(_index, _componentAddress);
     }
 

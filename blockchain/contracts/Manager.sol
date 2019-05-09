@@ -73,7 +73,11 @@ contract Manager is Ownable {
         string memory _entityName,
         uint64 _expirationTime,
         uint128 _price,
-        string memory _otherInformation
+        string memory _otherInformation,
+        uint256 glassQuantity,
+        uint256 metalQuantity,
+        uint256 plasticQuantity
+
     )
         public
         returns
@@ -88,7 +92,7 @@ contract Manager is Ownable {
             _price,
             _otherInformation
         );
-        registryContract.addComponent(componentAddress);
+        registryContract.addComponent(componentAddress, glassQuantity, metalQuantity, plasticQuantity);
         return componentAddress;
     }
 
