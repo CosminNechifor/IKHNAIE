@@ -1,6 +1,18 @@
 pragma solidity >=0.4 <0.6.0;
 
 interface IMarketPlace {
+
+    struct IndexStorage {
+        uint256 indexInComponents;
+        uint256 indexInOwnerComponents;
+        bool isSubmited;
+    }
+
+    struct Offer {
+        uint256 amountOfTokens;
+        address senderAddress;
+    }
+
     function submitForSale(address _owner, address _componentAddress) external returns (bool);
     function removeFromSale(address _owner, address _componentAddress) external returns (bool);
     function addOffer(address _sender, address _componentAddress, uint256 _amount) external;
