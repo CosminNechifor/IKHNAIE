@@ -1,8 +1,9 @@
 pragma solidity >=0.4.22 <0.6.0;
 
 import "./Component.sol";
+import "./IComponentFactory.sol";
 
-contract ComponentFactory {
+contract ComponentFactory is IComponentFactory {
 
     function createComponent(
         address _owner,
