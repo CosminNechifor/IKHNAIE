@@ -37,6 +37,12 @@ contract Token is IToken, Managed {
         return true;
     }
 
+    function withdraw(address to, uint256 value) external onlyManager returns(bool) {
+        _totalSupply = _totalSupply.sub(value);
+        _balances[to] = _balances[to].sub(value);
+        emit Transfer(to, address(0), value);
+    }
+
     function totalSupply() external onlyManager view returns (uint256) {
         return _totalSupply;
     }
