@@ -16,6 +16,10 @@ contract('Manager - testing deployment and creation of components [happy case]',
     let marketPlaceAddress;
     let tokenAddress;
 
+    const owner = accounts[0];
+    const alice = accounts[1];
+    const bob = accounts[2];
+
     it("Deploy ManagerContract contract", () => {
         return Manager.new().then((instance) => {
             managerContract = instance;
@@ -536,6 +540,25 @@ contract('Manager - testing deployment and creation of components [happy case]',
         assert.equal(stateAfterDestroy[5].toNumber(), 5, "Component state should be recycled!!"); 
     });
 
+    it("Test deposit and withdraw", async () => {
+        await managerContract.deposit({from: owner, value: 10});
+        await managerContract.deposit({from: alice, value: 30});
+
+        let aliceBalance = await managerContract.balance({from: alice});
+        let ownerBalance = await managerContract.balance({from: owner});
+
+        assert.equal(ownerBalance.toNumber(), 10, "Balance should be 10 WETH"); 
+        assert.equal(aliceBalance.toNumber(), 30, "Balance should be 30 WETH"); 
+
+        await managerContract.withdraw(15, {from: alice});
+
+        aliceBalance = await managerContract.balance({from: alice});
+        ownerBalance = await managerContract.balance({from: owner});
+
+        assert.equal(ownerBalance.toNumber(), 10, "Balance should be 10 WETH"); 
+        assert.equal(aliceBalance.toNumber(), 15, "Balance should be 15 WETH"); 
+    });
+
     it("Test allowance functions", async () => {
         const a1 = await managerContract.getAllowance(accounts[1]);
         assert.equal(a1.toNumber(), 0, "Allowance should be 0"); 
@@ -557,10 +580,73 @@ contract('Manager - testing deployment and creation of components [happy case]',
         const components = await managerContract.getRegistredComponents();
         const c = await Component.at(components[components.length-1]);
         const stateBeforeSubmited = await c.getData();
+        const componentsSubmitedForSale1 = await managerContract.getComponentsSubmitedForSale();
         assert.equal(stateBeforeSubmited[5].toNumber(), 0, "Component state should be Editable!"); 
+        assert.equal(componentsSubmitedForSale1.length, 0, "There should be no component submited for sale!"); 
+
         await managerContract.submitComponentToMarket(components[components.length-1]); 
         const stateAfterSubmited = await c.getData();
         assert.equal(stateAfterSubmited[5].toNumber(), 1, "Component state should be SubmitedForSale!"); 
+        const componentsSubmitedForSale2 = await managerContract.getComponentsSubmitedForSale();
+        assert.equal(componentsSubmitedForSale2.length, 1, "There should be exactly one component submited for sale!"); 
+    });
+
+    it("Test addOffer and remove offer", async () => {
+        const components = await managerContract.getComponentsSubmitedForSale();
+        const componentAddress = components[0];
+
+        await managerContract.addOffer(componentAddress, 100, {from: alice});
+        let offerSize = await managerContract.getComponentOfferSize(componentAddress);
+        assert.equal(offerSize.toNumber(), 1, "There should only be one offer!"); 
+
+        const offer = await managerContract.getComponentOfferByIndex(componentAddress, 0);
+        assert.equal(offer[0].toNumber(), 100, "Value should be equal to 100!"); 
+        assert.equal(offer[1], alice, "Alice should be the sender!"); 
+
+        await managerContract.addOffer(componentAddress, 100, {from: bob});
+        offerSize = await managerContract.getComponentOfferSize(componentAddress);
+        assert.equal(offerSize.toNumber(), 2, "There should only be two offers!"); 
+
+        await managerContract.removeOffer(componentAddress, 0, {from: alice});
+        offerSize = await managerContract.getComponentOfferSize(componentAddress);
+        assert.equal(offerSize.toNumber(), 1, "There should only be one offer!"); 
+
+        await managerContract.removeOffer(componentAddress, 0, {from: bob});
+        offerSize = await managerContract.getComponentOfferSize(componentAddress);
+        assert.equal(offerSize.toNumber(), 0, "There should no offer!"); 
+    });
+
+    it("Test acceptOffer", async () => {
+        const components = await managerContract.getComponentsSubmitedForSale();
+        const componentAddress = components[0];
+
+        await managerContract.addOffer(componentAddress, 100, {from: alice});
+        let offerSize = await managerContract.getComponentOfferSize(componentAddress);
+        assert.equal(offerSize.toNumber(), 1, "There should only be one offer!"); 
+
+        const offer = await managerContract.getComponentOfferByIndex(componentAddress, 0);
+        assert.equal(offer[0].toNumber(), 100, "Value should be equal to 100!"); 
+        assert.equal(offer[1], alice, "Alice should be the sender!"); 
+
+        // await managerContract.acceptOffer(componentAddress, 0);
+        // offerSize = await managerContract.getComponentOfferSize(componentAddress);
+        // assert.equal(offerSize.toNumber(), 0, "There should be no offer!"); 
+
+    });
+
+    it("Test removeComponentFromMarket", async () => {
+        const components = await managerContract.getComponentsSubmitedForSale();
+        const componentAddress = components[0];
+        const component = await Component.at(componentAddress);
+        const cData = await component.getData();
+        assert.equal(cData[5].toNumber(), 1, "Component state should be SubmitedForSale!"); 
+
+        await managerContract.removeComponentFromMarket(componentAddress);
+        const submitedForSaleList = await managerContract.getComponentsSubmitedForSale();
+        const componentData = await component.getData();
+
+        assert.equal(submitedForSaleList.length, 0, "There should be no component submited for sale!"); 
+        assert.equal(componentData[5].toNumber(), 2, "Component state should be Owned!"); 
     });
 
 });
