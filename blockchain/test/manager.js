@@ -557,6 +557,15 @@ contract('Manager - testing deployment and creation of components [happy case]',
 
         assert.equal(ownerBalance.toNumber(), 10, "Balance should be 10 WETH"); 
         assert.equal(aliceBalance.toNumber(), 15, "Balance should be 15 WETH"); 
+
+        await managerContract.withdraw(15, {from: alice});
+        await managerContract.withdraw(10, {from: owner});
+
+        aliceBalance = await managerContract.balance({from: alice});
+        ownerBalance = await managerContract.balance({from: owner});
+
+        assert.equal(ownerBalance.toNumber(), 0, "Balance should be 0 WETH"); 
+        assert.equal(aliceBalance.toNumber(), 0, "Balance should be 0 WETH"); 
     });
 
     it("Test allowance functions", async () => {
@@ -619,6 +628,10 @@ contract('Manager - testing deployment and creation of components [happy case]',
     it("Test acceptOffer", async () => {
         const components = await managerContract.getComponentsSubmitedForSale();
         const componentAddress = components[0];
+        
+        await managerContract.deposit({from: alice, value: 100});
+        let aliceBalance = await managerContract.balance({from: alice});
+        assert.equal(aliceBalance.toNumber(), 100, "Balance should be 100 WETH"); 
 
         await managerContract.addOffer(componentAddress, 100, {from: alice});
         let offerSize = await managerContract.getComponentOfferSize(componentAddress);
@@ -628,14 +641,60 @@ contract('Manager - testing deployment and creation of components [happy case]',
         assert.equal(offer[0].toNumber(), 100, "Value should be equal to 100!"); 
         assert.equal(offer[1], alice, "Alice should be the sender!"); 
 
-        // await managerContract.acceptOffer(componentAddress, 0);
-        // offerSize = await managerContract.getComponentOfferSize(componentAddress);
-        // assert.equal(offerSize.toNumber(), 0, "There should be no offer!"); 
+        await managerContract.acceptOffer(componentAddress, 0);
+        offerSize = await managerContract.getComponentOfferSize(componentAddress);
+        assert.equal(offerSize.toNumber(), 0, "There should be no offer!"); 
 
     });
 
+    it("Test rejectOffer", async () => {
+        await managerContract.createComponent(
+            "Test Component",
+            100,
+            1000,
+            "Component that will be removed from market"
+        );
+        let components = await managerContract.getRegistredComponents();
+        const componentAddress = components[components.length-1];
+        await managerContract.submitComponentToMarket(componentAddress); 
+
+        components = await managerContract.getComponentsSubmitedForSale();
+
+        await managerContract.deposit({from: alice, value: 100});
+        await managerContract.deposit({from: bob, value: 110});
+        let aliceBalance = await managerContract.balance({from: alice});
+        let bobBalance = await managerContract.balance({from: bob});
+        assert.equal(aliceBalance.toNumber(), 100, "Balance should be 100 WETH"); 
+        assert.equal(bobBalance.toNumber(), 110, "Balance should be 110 WETH"); 
+
+        await managerContract.addOffer(componentAddress, 100, {from: alice});
+        await managerContract.addOffer(componentAddress, 110, {from: bob});
+        let offerSize = await managerContract.getComponentOfferSize(componentAddress);
+        assert.equal(offerSize.toNumber(), 2, "There should be two offers!"); 
+
+        await managerContract.rejectOffer(componentAddress, 0);
+        await managerContract.rejectOffer(componentAddress, 0);
+
+        offerSize = await managerContract.getComponentOfferSize(componentAddress);
+        assert.equal(offerSize.toNumber(), 0, "There should be no offer!"); 
+
+        await managerContract.removeComponentFromMarket(componentAddress);
+        components = await managerContract.getComponentsSubmitedForSale();
+
+        assert.equal(components.length, 0, "There should be no component submited for sale!"); 
+    });
+
     it("Test removeComponentFromMarket", async () => {
-        const components = await managerContract.getComponentsSubmitedForSale();
+        await managerContract.createComponent(
+            "Test Component",
+            100,
+            1000,
+            "Component that will be removed from market"
+        );
+        let components = await managerContract.getRegistredComponents();
+        await managerContract.submitComponentToMarket(components[components.length-1]); 
+
+        components = await managerContract.getComponentsSubmitedForSale();
         const componentAddress = components[0];
         const component = await Component.at(componentAddress);
         const cData = await component.getData();

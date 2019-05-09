@@ -1,4 +1,4 @@
-pragma solidity >=0.4 <0.6.0; 
+pragma solidity >=0.4 <0.6.0;
 
 interface IComponent{
     function updateComponentName(string calldata _componentName) external;
@@ -17,14 +17,14 @@ interface IComponent{
     function recycle(address _recycler) external;
     function transferOwnership(address _newOwner) external returns(bool);
     function getData() external view returns (
-        address, 
-        string memory, 
-        uint256, 
-        uint64, 
-        uint128, 
-        uint8, 
-        string memory, 
-        address, 
+        address,
+        string memory,
+        uint256,
+        uint64,
+        uint128,
+        uint8,
+        string memory,
+        address,
         address[] memory
     );
     function getParentComponentAddress() external view returns (address);

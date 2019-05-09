@@ -10,7 +10,7 @@ contract Ownable {
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     constructor (address owner) internal {
-        _owner = owner; 
+        _owner = owner;
         emit OwnershipTransferred(address(0), _owner);
     }
 
@@ -32,7 +32,7 @@ contract Ownable {
     }
 
     function _transferOwnership(address newOwner) internal {
-        require(newOwner != address(0));
+        require(newOwner != address(0), "New owner should be different from address(0)");
         emit OwnershipTransferred(_owner, newOwner);
         _owner = newOwner;
     }

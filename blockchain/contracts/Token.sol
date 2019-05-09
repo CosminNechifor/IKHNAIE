@@ -1,10 +1,9 @@
-pragma solidity >=0.4 <0.6.0; 
+pragma solidity >=0.4 <0.6.0;
 
 import "./library/SafeMath.sol";
 import "./IToken.sol";
 import "./Managed.sol";
 
-// Can only be called by the Manager contract
 contract Token is IToken, Managed {
 
     using SafeMath for uint256;
@@ -14,7 +13,7 @@ contract Token is IToken, Managed {
 
     uint256 private _totalSupply;
 
-    constructor (address _manager) Managed(_manager) public {} 
+    constructor (address _manager) Managed(_manager) public {}
 
     function transfer(address msg_sender, address to, uint256 value) external onlyManager returns (bool) {
         _transfer(msg_sender, to, value);
@@ -56,7 +55,7 @@ contract Token is IToken, Managed {
     }
 
     function _transfer(address from, address to, uint256 value) internal {
-        require(to != address(0));
+        require(to != address(0), "Address should not be address(0)");
 
         _balances[from] = _balances[from].sub(value);
         _balances[to] = _balances[to].add(value);
@@ -64,9 +63,9 @@ contract Token is IToken, Managed {
     }
 
     function _approve(address owner, address spender, uint256 value) internal {
-        require(spender != address(0));
-        require(owner != address(0));
-        
+        require(spender != address(0), "Spender should not be address(0)");
+        require(owner != address(0), "Owner should not be address(0)");
+
         _allowed[owner][spender] = value;
 
         if (value == 0) {
@@ -77,7 +76,7 @@ contract Token is IToken, Managed {
     }
 
     function _mint(address account, uint256 value) internal {
-        require(account != address(0));
+        require(account != address(0), "Account should not be address(0)");
 
         _totalSupply = _totalSupply.add(value);
         _balances[account] = _balances[account].add(value);

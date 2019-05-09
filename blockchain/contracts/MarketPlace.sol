@@ -22,7 +22,7 @@ contract MarketPlace is Managed {
     }
 
     modifier isNotSubmited(address _componentAddress) {
-        require( ! _addressToIndex[_componentAddress].isSubmited, "Component was already submited");
+        require(!_addressToIndex[_componentAddress].isSubmited, "Component was already submited");
         _;
     }
 

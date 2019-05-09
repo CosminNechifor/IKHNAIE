@@ -11,8 +11,8 @@ contract ComponentFactory {
         uint64 _expirationTime,
         uint128 _price,
         string calldata _otherInformation
-    ) 
-        external 
+    )
+        external
         returns (address)
     {
 
