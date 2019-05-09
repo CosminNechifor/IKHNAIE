@@ -1,30 +1,15 @@
 pragma solidity >=0.4 <0.6.0;
 
-import "./Ownable.sol";
 import "./Managed.sol";
+import "./IRegistry.sol";
 
-contract Registry is Ownable, Managed {
-
-    event ComponentRegistred(
-        uint256 indexed _index,
-        address indexed _componentAddress
-    );
-
-    event ComponentRecycled(
-        uint256 indexed _index,
-        address indexed _componentAddress
-    );
-
-    event ComponentDestroyed(
-        uint256 indexed _index,
-        address indexed _componentAddress
-    );
+contract Registry is IRegistry, Managed {
 
     // the place where all components in the system are going to be stored
     address[] private _registry;
     mapping(address => uint256) private _addressToIndex;
 
-    constructor(address _manager) Managed(_manager) Ownable(msg.sender) public {}
+    constructor(address _manager) Managed(_manager) public {}
 
     function addComponent(address _componentAddress) external onlyManager {
         uint256 _index = _registry.push(_componentAddress) - 1;
@@ -63,5 +48,4 @@ contract Registry is Ownable, Managed {
     {
         return _registry;
     }
-
 }

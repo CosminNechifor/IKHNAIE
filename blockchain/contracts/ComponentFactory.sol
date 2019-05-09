@@ -4,7 +4,6 @@ import "./Component.sol";
 
 contract ComponentFactory {
 
-    // needs to pass further the manager address
     function createComponent(
         address _owner,
         string calldata _entityName,
