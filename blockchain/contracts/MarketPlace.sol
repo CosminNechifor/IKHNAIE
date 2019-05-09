@@ -6,17 +6,6 @@ import "./IMarketPlace.sol";
 // TODO: limit the number of offers to 256
 contract MarketPlace is IMarketPlace, Managed {
 
-    struct IndexStorage {
-        uint256 indexInComponents;
-        uint256 indexInOwnerComponents;
-        bool isSubmited;
-    }
-
-    struct Offer {
-        uint256 amountOfTokens;
-        address senderAddress;
-    }
-
     modifier inLimits(address _componentAddress) {
         require(_componentToOffers[_componentAddress].length < 256, "Exceded offers size");
         _;
@@ -243,5 +232,4 @@ contract MarketPlace is IMarketPlace, Managed {
             _addressToIndex[_contractAddress].isSubmited
         );
     }
-
 }

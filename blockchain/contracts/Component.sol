@@ -1,28 +1,9 @@
 pragma solidity >=0.4 <0.6.0;
 
 import "./Managed.sol";
+import "./IComponent.sol";
 
-contract Component is Managed {
-
-    enum ComponentState {
-        // An component will be in Editable state only at the beginning
-        Editable, // 0
-        // When a component is posted for sale it goes into SubmitedForSale state
-        SubmitedForSale, // 1
-        // Simply means that a component is being used by a user who owns it
-        Owned, // 2
-        // A Component gets into Broken state if one of the components has been removed without being replaced
-        // if a component gets into broken state must be changed with another one that you are the owner of
-        Broken, // 3
-        // When the expiration period is finished then the Component will get into needs recycled
-        // This has to be flagged by another user whoich is gonna get rewarded
-        NeedsRecycled, // 4
-        // Recycling an component should give the user who recilced it some tokens
-        // That can be reused in the ecosystem
-        Recycled, // 5
-        // When a component is being destroyed
-        Destroyed // 6
-    }
+contract Component is IComponent, Managed {
 
     string componentName;
     uint256 creationTime;
@@ -31,88 +12,11 @@ contract Component is Managed {
     ComponentState state;
     string otherInformation;
 
-    // navigation fields
     address private _owner;
-    // index to know exacty at which position the in the parrent array
-    // this component is
     address private parentComponentAddress;
     address[] private childComponentList;
 
-    struct Presence {
-        bool _isPresent;
-        uint64 _index;
-    }
-
     mapping (address => Presence) private _addressToIndex;
-
-    event ComponentCreated
-    (
-        address _owner,
-        string _componentName,
-        uint256 _creationTime,
-        uint64 _expiration,
-        uint128 _price,
-        ComponentState state,
-        string _otherInformation,
-        address _parentComponentAddress
-    );
-
-    event ComponentSubmitedForSale(
-        uint256 timestamp,
-        uint128 price
-    );
-
-    event ComponentWasRemovedFromSale(
-        uint256 timestamp,
-        uint128 price
-    );
-
-    event ComponentNameUpdated(
-        string _oldName,
-        string _newName
-    );
-
-    event ComponentParentAddressUpdated(
-        address _previousParent,
-        address _newParent
-    );
-
-    event ComponentExpirationUpdated(
-        uint64 _oldExpiration,
-        uint64 _newExpiration
-    );
-
-    event ComponentPriceUpdated(
-        uint128 _oldPrice,
-        uint128 _newPrice
-    );
-
-    event ComponentOtherInformationUpdated(
-        string _oldOtherInformation,
-        string _newOtherInformation
-    );
-
-    event ComponentChildAdded(
-        address _newChildComponent,
-        address[] _newChildComponentList
-    );
-
-    event ComponentChildRemoved(
-        address _removedComponent,
-        address[] _newChildComponentList
-    );
-
-    event ComponentIsBroken();
-
-    event ComponentIsExpired();
-
-    event ComponentRepaired(address _repairer);
-
-    event ComponentRecycled(address _recycler);
-
-    event ComponentDestroyed(address _destroyer);
-
-    event ComponentOwnershipTransfered(address _oldOwner, address _newOwner);
 
     modifier inEditableState() {
         require(state == ComponentState.Editable, "Component is not in Editable state.");
@@ -156,7 +60,6 @@ contract Component is Managed {
     }
 
     modifier isExpired() {
-        // TODO: make it >
         require(block.timestamp >= creationTime + expiration, "Component has not expired yet.");
         _;
     }
@@ -504,8 +407,6 @@ contract Component is Managed {
         return childComponentList[_index];
     }
 
-    // has to be replaced
-    // it was added only termporary
     function getOwner()
         external
         view
