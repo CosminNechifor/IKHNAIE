@@ -312,17 +312,17 @@ contract Manager is Ownable {
     // TODO: add test
     // a root component can be transfered without asking for tokens
     // in return
-    function transferComponentOwnership(
-        address _componentAddress,
-        address _newOwner
-    )
-        public
-        isOwnerOfComponent(_componentAddress)
-        isRootComponent(_componentAddress)
-    {
-        IComponent component = IComponent(_componentAddress);
-        component.transferOwnership(_newOwner);
-    }
+    // function transferComponentOwnership(
+    //     address _componentAddress,
+    //     address _newOwner
+    // )
+    //     public
+    //     isOwnerOfComponent(_componentAddress)
+    //     isRootComponent(_componentAddress)
+    // {
+    //     IComponent component = IComponent(_componentAddress);
+    //     component.transferOwnership(_newOwner);
+    // }
 
     function getChildComponentAddressByIndex(
         address _parentComponentAddress,
