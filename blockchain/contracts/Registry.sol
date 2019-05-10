@@ -60,4 +60,14 @@ contract Registry is IRegistry, Managed {
     {
         return _registry;
     }
+
+    function getComponentReward(
+        address _componentAddress
+    )
+        external
+        view
+        returns(uint256)
+    {
+        return _addressToReward[_componentAddress];
+    }
 }
