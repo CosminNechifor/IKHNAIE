@@ -7,6 +7,8 @@ import "./IRegistry.sol";
 import "./IMarketPlace.sol";
 import "./IToken.sol";
 
+
+// TODO: add safe math for uint256
 contract Manager is Ownable {
 
     IComponentFactory private componentFactory;
@@ -63,14 +65,6 @@ contract Manager is Ownable {
             "Token minting failed!"
         );
     }
-
-    // function test_case() external {
-    //     require(
-    //         token.mint(address(this), 200),
-    //         "Token minting failed!"
-    //     );
-    //     token.transfer(address(this), msg.sender, 100);
-    // }
 
     function withdraw(uint256 value) public {
         token.withdraw(msg.sender, value);
@@ -252,8 +246,6 @@ contract Manager is Ownable {
         // pay with tokens
     }
 
-    // TODO: find a way to lock till the recycle is confirmed
-    // TODO: incentivized actors
     function recycle(
         address _componentAddress
     )
@@ -262,7 +254,22 @@ contract Manager is Ownable {
     {
         IComponent _component = IComponent(_componentAddress);
         _component.recycle(msg.sender);
-        // pay with tokens
+
+        uint256 reward = registryContract.componentRecycled(_componentAddress);
+        if (reward != 0) {
+            uint256 rewardToProducer = reward / 4;
+            uint256 rewardToRecycler = reward - rewardToProducer - 1;
+
+            require(
+                token.transfer(address(this), msg.sender, rewardToRecycler),
+                "Token transfer failed!"
+            );
+
+            // require(
+            //     token.transfer(address(this), msg.sender, rewardToRecycler),
+            //     "Token transfer failed!"
+            // );
+        }
     }
 
     // TODO: find a way to lock till the destruction is confirmed
@@ -399,7 +406,8 @@ contract Manager is Ownable {
             uint8,
             string memory,
             address,
-            address[] memory
+            address[] memory,
+            address
         )
     {
         IComponent component = IComponent(_componentAddress);

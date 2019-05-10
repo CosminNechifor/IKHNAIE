@@ -19,14 +19,24 @@ contract Registry is IRegistry, Managed {
         emit ComponentRegistred(_index, _componentAddress);
     }
 
-    function componentDestroyed(address _componentAddress) external onlyManager {
+    function componentDestroyed(address _componentAddress)
+        external
+        onlyManager
+        returns (uint256)
+    {
         uint256 _index = _addressToIndex[_componentAddress];
         emit ComponentDestroyed(_index, _componentAddress);
+        return _addressToReward[_componentAddress];
     }
 
-    function componentRecycled(address _componentAddress) external onlyManager {
+    function componentRecycled(address _componentAddress)
+        external
+        onlyManager
+        returns (uint256)
+    {
         uint256 _index = _addressToIndex[_componentAddress];
         emit ComponentRecycled(_index, _componentAddress);
+        return _addressToReward[_componentAddress];
     }
 
     function getRegistrySize() external view returns(uint256) {

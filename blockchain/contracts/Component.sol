@@ -5,6 +5,7 @@ import "./IComponent.sol";
 
 contract Component is IComponent, Managed {
 
+    address _producer;
     string componentName;
     uint256 creationTime;
     uint64 expiration;
@@ -76,6 +77,7 @@ contract Component is IComponent, Managed {
 
     constructor(
         address manager,
+        address producer,
         address owner,
         string memory _componentName,
         uint64 _expirationTime,
@@ -85,6 +87,7 @@ contract Component is IComponent, Managed {
         Managed(manager)
         public
     {
+        _producer = producer;
         _owner = owner;
         componentName = _componentName;
         creationTime = block.timestamp;
@@ -96,7 +99,7 @@ contract Component is IComponent, Managed {
         parentComponentAddress = address(0);
 
         emit ComponentCreated(
-            owner,
+            producer,
             componentName,
             creationTime,
             expiration,
@@ -345,7 +348,8 @@ contract Component is IComponent, Managed {
             uint8,
             string memory,
             address,
-            address[] memory
+            address[] memory,
+            address
         )
     {
         return (
@@ -357,7 +361,8 @@ contract Component is IComponent, Managed {
             uint8(state),
             otherInformation,
             parentComponentAddress,
-            childComponentList
+            childComponentList,
+            _producer
         );
     }
 
