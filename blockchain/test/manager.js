@@ -530,14 +530,14 @@ contract('Manager - testing deployment and creation of components [happy case]',
         );
         const components = await managerContract.getRegistredComponents();
         const c = await Component.at(components[components.length-1]);
-        const stateBeforeDestory= await c.getData();
-        assert.equal(stateBeforeDestory[5].toNumber(), 0, "Component state editable!!"); 
+        const stateBeforeRecycle = await c.getData();
+        assert.equal(stateBeforeRecycle[5].toNumber(), 0, "Component state editable!!"); 
         let tx = await managerContract.flagComponentAsExpired(components[components.length-1]);
         await mineTx(tx);
         tx = await managerContract.recycle(components[components.length-1]);
         await mineTx(tx);
-        const stateAfterDestroy = await c.getData();
-        assert.equal(stateAfterDestroy[5].toNumber(), 5, "Component state should be recycled!!"); 
+        const stateAfterRecycle = await c.getData();
+        assert.equal(stateAfterRecycle[5].toNumber(), 5, "Component state should be recycled!!"); 
     });
 
     it("Test deposit and withdraw", async () => {

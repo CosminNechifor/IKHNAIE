@@ -29,7 +29,7 @@ interface IComponent{
 
     event ComponentCreated
     (
-        address _owner,
+        address _producer,
         string _componentName,
         uint256 _creationTime,
         uint64 _expiration,
@@ -120,7 +120,8 @@ interface IComponent{
         uint8,
         string memory,
         address,
-        address[] memory
+        address[] memory,
+        address
     );
     function getParentComponentAddress() external view returns (address);
     function getNumberOfChildComponents() external view returns (uint256);
