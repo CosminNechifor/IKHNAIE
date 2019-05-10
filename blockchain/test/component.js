@@ -37,9 +37,10 @@ contract('Component - testing happy cases', (accounts) => {
             const otherInformation = result[6];
             const parentComponentAddress = result[7];
             const childComponentList = result[8];
+            const producer = result[9];
             const numberOfChildComponents = values[1]; 
 
-            assert.equal(owner, accounts[0], "Wrong number of child components!!"); 
+            assert.equal(owner, accounts[0], "Owner address is wrong!!"); 
             assert.equal(componentName, "ComponentName", "Component name was tampered!!"); 
             assert.equal(expiration.toNumber(), 120, "Component expiration was tampered!!"); 
             assert.equal(price.toNumber(), 20000, "Component price was tampered!!"); 
@@ -48,6 +49,7 @@ contract('Component - testing happy cases', (accounts) => {
             assert.equal(parentComponentAddress, "0x0000000000000000000000000000000000000000", "Parent address is wrong!!"); 
             assert.equal(numberOfChildComponents.toNumber(), 0, "Wrong number child components!!"); 
             assert.equal(childComponentList, 0, "Wrong number of child components!!"); 
+            assert.equal(producer, accounts[0], "Producer address is wrong!!"); 
         });
     });
     
