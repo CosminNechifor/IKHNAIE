@@ -7,7 +7,6 @@ import "./IRegistry.sol";
 import "./IMarketPlace.sol";
 import "./IToken.sol";
 
-
 // TODO: add safe math for uint256
 contract Manager is Ownable {
 
@@ -258,6 +257,7 @@ contract Manager is Ownable {
         ( , , , , , , , , , _producer) = _component.getData();
 
         uint256 reward = registryContract.componentRecycled(_componentAddress);
+
         if (reward != 0) {
             uint256 rewardToProducer = reward / 4;
             uint256 rewardToRecycler = reward - rewardToProducer;
@@ -268,7 +268,7 @@ contract Manager is Ownable {
             );
 
             require(
-                token.transfer(address(this), _producer, rewardToRecycler),
+                token.transfer(address(this), _producer, rewardToProducer),
                 "Token transfer failed!"
             );
         }
@@ -289,10 +289,10 @@ contract Manager is Ownable {
         uint256 reward = registryContract.componentRecycled(_componentAddress);
         if (reward != 0) {
             uint256 rewardToProducer = reward / 8;
-            uint256 rewardToRecycler = reward - rewardToProducer;
+            // uint256 rewardToRecycler = reward - rewardToProducer;
 
             require(
-                token.transfer(address(this), msg.sender, rewardToRecycler),
+                token.transfer(address(this), _producer, rewardToProducer),
                 "Token transfer failed!"
             );
         }
@@ -460,8 +460,12 @@ contract Manager is Ownable {
         return token.balanceOf(msg.sender);
     }
 
-    function getAllowance(address _spender) public view returns(uint256) {
+    function getAllowance(address _spender) external view returns(uint256) {
         return token.allowance(msg.sender, _spender);
+    }
+
+    function getComponentReward(address _componentAddress) external view returns(uint256) {
+        return registryContract.getComponentReward(_componentAddress);
     }
 
     // O(log n)

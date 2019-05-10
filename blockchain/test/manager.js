@@ -526,7 +526,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
             "Testing destroy component",
             0,
             1000,
-            "Component that will be destroyed"
+            "Component that will be recycled"
         );
         const components = await managerContract.getRegistredComponents();
         const c = await Component.at(components[components.length-1]);
@@ -706,5 +706,104 @@ contract('Manager - testing deployment and creation of components [happy case]',
 
         assert.equal(submitedForSaleList.length, 0, "There should be no component submited for sale!"); 
         assert.equal(componentData[5].toNumber(), 2, "Component state should be Owned!"); 
+    });
+
+    it("Test reward mechanism in case component is being recycled", async () => {
+        await managerContract.deposit({from: accounts[7], value: 1000});
+        let a7_balance = await managerContract.balance({from: accounts[7]});
+        let a8_balance = await managerContract.balance({from: accounts[8]});
+
+        assert.equal(a7_balance.toNumber(), 1000, "Balance should be 1000"); 
+        assert.equal(a8_balance.toNumber(), 0, "Balance should be 0"); 
+
+        await managerContract.createComponent(
+            "RewardComponent",
+            0,
+            100,
+            "Component that will be recycled",
+            {
+                from: accounts[7],
+                value: 100
+            }
+        );
+
+        const components = await managerContract.getRegistredComponents();
+        const componentAddress = components[components.length-1];
+        const c = await Component.at(componentAddress);
+        const data = await c.getData();
+        assert.equal(data[5].toNumber(), 0, "Component state editable!!"); 
+
+        const reward = await managerContract.getComponentReward(componentAddress);
+        assert.equal(reward.toNumber(), 100, "Reward value should be 100!!"); 
+
+        let tx = await managerContract.flagComponentAsExpired(
+            componentAddress,
+            {
+                from: accounts[7]
+            }
+        );
+        await mineTx(tx);
+        tx = await managerContract.recycle(
+            componentAddress,
+            {
+                from: accounts[8]
+            }
+        );
+        await mineTx(tx);
+
+        a7_balance = await managerContract.balance({from: accounts[7]});
+        a8_balance = await managerContract.balance({from: accounts[8]});
+
+        assert.equal(a8_balance.toNumber(), 75, "Balance should be 75"); 
+        assert.equal(a7_balance.toNumber(), 1025, "Balance should be 1025"); 
+    });
+
+    it("Test reward mechanism in case component is being destroyed", async () => {
+        let a7_balance = await managerContract.balance({from: accounts[7]});
+        let a8_balance = await managerContract.balance({from: accounts[8]});
+        assert.equal(a7_balance.toNumber(), 1025, "Balance should be 1025"); 
+        assert.equal(a8_balance.toNumber(), 75, "Balance should be 25"); 
+
+        await managerContract.createComponent(
+            "RewardComponent",
+            0,
+            100,
+            "Component that will be destroyed",
+            {
+                from: accounts[7],
+                value: 100
+            }
+        );
+
+        const components = await managerContract.getRegistredComponents();
+        const componentAddress = components[components.length-1];
+        const c = await Component.at(componentAddress);
+        let data = await c.getData();
+        assert.equal(data[5].toNumber(), 0, "Component state editable!!"); 
+
+        const reward = await managerContract.getComponentReward(componentAddress);
+        assert.equal(reward.toNumber(), 100, "Reward value should be 100!!"); 
+
+        let tx = await managerContract.flagComponentAsExpired(
+            componentAddress,
+            {
+                from: accounts[7]
+            }
+        );
+
+        await mineTx(tx);
+        tx = await managerContract.destroy(
+            componentAddress,
+            {
+                from: accounts[8]
+            }
+        );
+        await mineTx(tx);
+
+        a7_balance = await managerContract.balance({from: accounts[7]});
+        a8_balance = await managerContract.balance({from: accounts[8]});
+
+        assert.equal(a8_balance.toNumber(), 75, "Balance should be 75"); 
+        assert.equal(a7_balance.toNumber(), 1037, "Balance should be 1037"); 
     });
 });
