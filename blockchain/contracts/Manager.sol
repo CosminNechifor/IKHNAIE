@@ -64,6 +64,14 @@ contract Manager is Ownable {
         );
     }
 
+    // function test_case() external {
+    //     require(
+    //         token.mint(address(this), 200),
+    //         "Token minting failed!"
+    //     );
+    //     token.transfer(address(this), msg.sender, 100);
+    // }
+
     function withdraw(uint256 value) public {
         token.withdraw(msg.sender, value);
         msg.sender.transfer(value);
@@ -76,6 +84,7 @@ contract Manager is Ownable {
         string memory _otherInformation
     )
         public
+        payable
         returns
         (
             address
@@ -88,7 +97,11 @@ contract Manager is Ownable {
             _price,
             _otherInformation
         );
-        registryContract.addComponent(componentAddress);
+        registryContract.addComponent(componentAddress, msg.value);
+        require(
+            token.mint(address(this), msg.value),
+            "Token minting failed!"
+        );
         return componentAddress;
     }
 

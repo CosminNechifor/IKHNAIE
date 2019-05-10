@@ -1,7 +1,7 @@
 pragma solidity >=0.4 <0.6.0;
 
 interface IRegistry {
-    function addComponent(address _componentAddress) external;
+    function addComponent(address _componentAddress, uint256 _reward) external;
     function componentDestroyed(address _componentAddress) external;
     function componentRecycled(address _componentAddress) external;
     function getRegistrySize() external view returns(uint256);
