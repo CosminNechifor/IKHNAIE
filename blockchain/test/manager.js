@@ -707,5 +707,4 @@ contract('Manager - testing deployment and creation of components [happy case]',
         assert.equal(submitedForSaleList.length, 0, "There should be no component submited for sale!"); 
         assert.equal(componentData[5].toNumber(), 2, "Component state should be Owned!"); 
     });
-
 });
