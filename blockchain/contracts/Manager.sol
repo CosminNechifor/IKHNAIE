@@ -234,8 +234,7 @@ contract Manager is Ownable {
         _component.flagAsBroken();
     }
 
-    // TODO: find a way to lock till the reparation is confirmed
-    // TODO: incentivized actors
+    // TODO: incentivized actors to do so
     function repair(
         address _componentAddress
     )
@@ -255,25 +254,26 @@ contract Manager is Ownable {
         IComponent _component = IComponent(_componentAddress);
         _component.recycle(msg.sender);
 
+        address _producer;
+        ( , , , , , , , , , _producer) = _component.getData();
+
         uint256 reward = registryContract.componentRecycled(_componentAddress);
         if (reward != 0) {
             uint256 rewardToProducer = reward / 4;
-            uint256 rewardToRecycler = reward - rewardToProducer - 1;
+            uint256 rewardToRecycler = reward - rewardToProducer;
 
             require(
                 token.transfer(address(this), msg.sender, rewardToRecycler),
                 "Token transfer failed!"
             );
 
-            // require(
-            //     token.transfer(address(this), msg.sender, rewardToRecycler),
-            //     "Token transfer failed!"
-            // );
+            require(
+                token.transfer(address(this), _producer, rewardToRecycler),
+                "Token transfer failed!"
+            );
         }
     }
 
-    // TODO: find a way to lock till the destruction is confirmed
-    // TODO: actor must not be incentivized
     function destroy(
         address _componentAddress
     )
@@ -282,7 +282,20 @@ contract Manager is Ownable {
     {
         IComponent _component = IComponent(_componentAddress);
         _component.destroy(msg.sender);
-        // pay with tokens
+
+        address _producer;
+        ( , , , , , , , , , _producer) = _component.getData();
+
+        uint256 reward = registryContract.componentRecycled(_componentAddress);
+        if (reward != 0) {
+            uint256 rewardToProducer = reward / 8;
+            uint256 rewardToRecycler = reward - rewardToProducer;
+
+            require(
+                token.transfer(address(this), msg.sender, rewardToRecycler),
+                "Token transfer failed!"
+            );
+        }
     }
 
     function updateComponentName(
