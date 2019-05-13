@@ -9,6 +9,7 @@ contract Registry is IRegistry, Managed {
     address[] private _registry;
     mapping(address => uint256) private _addressToIndex;
     mapping(address => uint256) private _addressToReward;
+    mapping(address => bool) private _producerAuth;
 
     constructor(address _manager) Managed(_manager) public {}
 
@@ -37,6 +38,19 @@ contract Registry is IRegistry, Managed {
         uint256 _index = _addressToIndex[_componentAddress];
         emit ComponentRecycled(_index, _componentAddress);
         return _addressToReward[_componentAddress];
+    }
+
+    function registerProducer(address _producerAddress)
+        external
+        onlyManager
+        returns (bool)
+    {
+        _producerAuth[_producerAddress] = true;
+        return true;
+    }
+
+    function isProducer(address _producerAddress) external view returns (bool) {
+        return _producerAuth[_producerAddress];
     }
 
     function getRegistrySize() external view returns(uint256) {

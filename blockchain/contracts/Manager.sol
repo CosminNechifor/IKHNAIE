@@ -34,6 +34,11 @@ contract Manager is Ownable {
         _;
     }
 
+    modifier onlyProducer(address _producerAddress) {
+        require(isProducer(_producerAddress), "Only producer can use this function!");
+        _;
+    }
+
     constructor() Ownable(msg.sender) public {
         _notLinked = true;
     }
@@ -68,6 +73,12 @@ contract Manager is Ownable {
     function withdraw(uint256 value) public {
         token.withdraw(msg.sender, value);
         msg.sender.transfer(value);
+    }
+
+    function registerProducer(address _producerAddress) external payable {
+        if (msg.value > 5) {
+            registryContract.registerProducer(_producerAddress);
+        }
     }
 
     function createComponent(
@@ -454,6 +465,10 @@ contract Manager is Ownable {
 
     function getComponentOfferByIndex(address _componentAddress, uint256 _index) external view returns(uint256, address) {
         return marketPlace.getComponentOfferByIndex(_componentAddress, _index);
+    }
+
+    function isProducer(address _producerAddress) public view returns (bool) {
+        return registryContract.isProducer(_producerAddress);
     }
 
     function balance() external view returns (uint256) {

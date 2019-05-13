@@ -4,10 +4,12 @@ interface IRegistry {
     function addComponent(address _componentAddress, uint256 _reward) external;
     function componentDestroyed(address _componentAddress) external returns (uint256);
     function componentRecycled(address _componentAddress) external returns (uint256);
+    function registerProducer(address _producerAddress) external returns (bool);
     function getRegistrySize() external view returns(uint256);
     function getRegistredComponentAtIndex(uint256 _index) external view returns(address);
     function getRegistredComponents() external view returns(address[] memory);
     function getComponentReward(address _componentAddress) external view returns(uint256);
+    function isProducer(address _producerAddress) external view returns (bool);
 
     event ComponentRegistred(
         uint256 indexed _index,
