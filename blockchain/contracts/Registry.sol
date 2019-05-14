@@ -49,6 +49,7 @@ contract Registry is IRegistry, Managed {
             isRegistred: true,
             isConfirmed: false
         });
+        emit ProducerRegistred(_producerAddress);
         return true;
     }
 
@@ -57,14 +58,20 @@ contract Registry is IRegistry, Managed {
         onlyManager
         returns (bool)
     {
-        _producerAuth[_producerAddress] = ProducerAuthorization({
-            isRegistred: true,
-            isConfirmed: true 
-        });
-        return true;
+        if (_producerAuth[_producerAddress].isRegistred) {
+            _producerAuth[_producerAddress] = ProducerAuthorization({
+                isRegistred: true,
+                isConfirmed: true 
+            });
+            emit ProducerConfirmed(_producerAddress);
+            return true;
+        }
+
+        return false;
     }
 
     function isProducer(address _producerAddress) external view returns (bool) {
+        // returns true if this is a certified producer
         return _producerAuth[_producerAddress].isConfirmed;
     }
 
@@ -88,6 +95,23 @@ contract Registry is IRegistry, Managed {
         returns(address[] memory)
     {
         return _registry;
+    }
+
+    function getProducerStatus(
+        address _producerAddress
+    ) 
+        external
+        view
+        returns 
+        (
+            bool,
+            bool
+        )
+    {
+        return (
+            _producerAuth[_producerAddress].isRegistred,
+            _producerAuth[_producerAddress].isConfirmed
+        );
     }
 
     function getComponentReward(

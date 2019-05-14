@@ -76,9 +76,17 @@ contract Manager is Ownable {
     }
 
     function registerProducer(address _producerAddress) external payable {
-        if (msg.value > 5) {
+        if (msg.value >= 5) {
             registryContract.registerProducer(_producerAddress);
         }
+    }
+
+    function confirmProducer(address _producerAddress)
+        external
+        payable 
+        onlyOwner
+    {
+        registryContract.confirmProducer(_producerAddress);
     }
 
     function createComponent(
@@ -89,6 +97,7 @@ contract Manager is Ownable {
     )
         public
         payable
+        onlyProducer(msg.sender)
         returns
         (
             address
@@ -481,6 +490,10 @@ contract Manager is Ownable {
 
     function getComponentReward(address _componentAddress) external view returns(uint256) {
         return registryContract.getComponentReward(_componentAddress);
+    }
+
+    function getProducerStatus(address _producerAddress) external view returns(bool, bool) {
+        return registryContract.getProducerStatus(_producerAddress);
     }
 
     // O(log n)
