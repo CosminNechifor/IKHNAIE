@@ -181,7 +181,7 @@ contract Manager is Ownable {
 
     function addOffer(address _componentAddress, uint256 _amount) public {
         marketPlace.addOffer(msg.sender, _componentAddress, _amount);
-        token.approve(msg.sender, getComponentOwner(_componentAddress), _amount);
+        token.approve(getComponentOwner(_componentAddress), _amount);
     }
 
     function removeOffer(address _componentAddress, uint256 _offerIndex) public {
@@ -196,7 +196,7 @@ contract Manager is Ownable {
         );
         require
         (
-            token.approve(msg.sender, getComponentOwner(_componentAddress), 0),
+            token.approve(getComponentOwner(_componentAddress), 0),
             "Token allowence failed to be removed!"
         );
     }
@@ -214,7 +214,7 @@ contract Manager is Ownable {
         IComponent _c = IComponent(_componentAddress);
         require(_c.transferOwnership(_newOwner), "Ownership was not Trasfered");
         require(
-            token.transferFrom(msg.sender, _newOwner, msg.sender, _tokenAmount),
+            token.transferFrom(_newOwner, msg.sender, _tokenAmount),
             "Token transfer didn't take place."
         );
     }
@@ -229,7 +229,7 @@ contract Manager is Ownable {
     function modifyAllowance(address _spender, uint256 _value)
         public
     {
-       token.approve(msg.sender, _spender, _value);
+       token.approve(_spender, _value);
     }
 
     // TODO: needs to be incentivized to do so
@@ -283,12 +283,12 @@ contract Manager is Ownable {
             uint256 rewardToRecycler = reward - rewardToProducer;
 
             require(
-                token.transfer(address(this), msg.sender, rewardToRecycler),
+                token.transfer(msg.sender, rewardToRecycler),
                 "Token transfer failed!"
             );
 
             require(
-                token.transfer(address(this), _producer, rewardToProducer),
+                token.transfer(_producer, rewardToProducer),
                 "Token transfer failed!"
             );
         }
@@ -312,7 +312,7 @@ contract Manager is Ownable {
             // uint256 rewardToRecycler = reward - rewardToProducer;
 
             require(
-                token.transfer(address(this), _producer, rewardToProducer),
+                token.transfer(_producer, rewardToProducer),
                 "Token transfer failed!"
             );
         }

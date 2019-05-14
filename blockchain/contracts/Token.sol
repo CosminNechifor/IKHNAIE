@@ -14,20 +14,21 @@ contract Token is IToken, Managed {
     uint256 private _totalSupply;
 
     constructor (address _manager) Managed(_manager) public {}
-
-    function transfer(address msg_sender, address to, uint256 value) external onlyManager returns (bool) {
-        _transfer(msg_sender, to, value);
+    
+    // mainly used by the manager
+    function transfer(address to, uint256 value) external onlyManager returns (bool) {
+        _transfer(msg.sender, to, value);
         return true;
     }
 
-    function approve(address msg_sender, address spender, uint256 value) external onlyManager returns (bool) {
-        _approve(msg_sender, spender, value);
+    function approve(address spender, uint256 value) external onlyManager returns (bool) {
+        _approve(tx.origin, spender, value);
         return true;
     }
 
-    function transferFrom(address msg_sender, address from, address to, uint256 value) external onlyManager returns (bool) {
+    function transferFrom(address from, address to, uint256 value) external onlyManager returns (bool) {
         _transfer(from, to, value);
-        _approve(from, msg_sender, _allowed[from][msg_sender].sub(value));
+        _approve(from, tx.origin, _allowed[from][tx.origin].sub(value));
         return true;
     }
 
