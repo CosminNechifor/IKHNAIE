@@ -9,7 +9,7 @@ contract Registry is IRegistry, Managed {
     address[] private _registry;
     mapping(address => uint256) private _addressToIndex;
     mapping(address => uint256) private _addressToReward;
-    mapping(address => bool) private _producerAuth;
+    mapping(address => ProducerAuthorization) private _producerAuth;
 
     constructor(address _manager) Managed(_manager) public {}
 
@@ -45,12 +45,27 @@ contract Registry is IRegistry, Managed {
         onlyManager
         returns (bool)
     {
-        _producerAuth[_producerAddress] = true;
+        _producerAuth[_producerAddress] = ProducerAuthorization({
+            isRegistred: true,
+            isConfirmed: false
+        });
+        return true;
+    }
+
+    function confirmProducer(address _producerAddress)
+        external
+        onlyManager
+        returns (bool)
+    {
+        _producerAuth[_producerAddress] = ProducerAuthorization({
+            isRegistred: true,
+            isConfirmed: true 
+        });
         return true;
     }
 
     function isProducer(address _producerAddress) external view returns (bool) {
-        return _producerAuth[_producerAddress];
+        return _producerAuth[_producerAddress].isConfirmed;
     }
 
     function getRegistrySize() external view returns(uint256) {

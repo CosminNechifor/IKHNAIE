@@ -1,6 +1,12 @@
 pragma solidity >=0.4 <0.6.0;
 
 interface IRegistry {
+
+    struct ProducerAuthorization {
+        bool isRegistred;
+        bool isConfirmed;
+    }
+
     function addComponent(address _componentAddress, uint256 _reward) external;
     function componentDestroyed(address _componentAddress) external returns (uint256);
     function componentRecycled(address _componentAddress) external returns (uint256);
