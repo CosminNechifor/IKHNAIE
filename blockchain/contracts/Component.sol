@@ -278,6 +278,7 @@ contract Component is IComponent, Managed {
     function flagAsExpired()
         external
         onlyManager
+        notInSubmitedForSaleState
         notInNeedsRecycledState
         notInRecycledOrDestoyedState
         isExpired
@@ -289,11 +290,23 @@ contract Component is IComponent, Managed {
     function flagAsBroken()
         external
         onlyManager
+        notInSubmitedForSaleState
         notInNeedsRecycledState
         notInRecycledOrDestoyedState
     {
        state = ComponentState.Broken;
        emit ComponentIsBroken();
+    }
+
+    function submitForRecycling()
+        external
+        onlyManager
+        notInSubmitedForSaleState
+        notInNeedsRecycledState
+        notInRecycledOrDestoyedState
+    {
+       state = ComponentState.NeedsRecycled;
+       emit ComponentSubmitedForRecycling(tx.origin);
     }
 
     function transferOwnership(address _newOwner)

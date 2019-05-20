@@ -1,1 +1,1 @@
-cd ./build/contracts && rm * && cd ../.. && truffle compile --all
+cd ./build/contracts && rm *.json && cd ../.. && truffle compile --all
