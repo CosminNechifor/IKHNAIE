@@ -88,6 +88,8 @@ interface IComponent{
 
     event ComponentIsExpired();
 
+    event ComponentSubmitedForRecycling(address submiter);
+
     event ComponentRepaired(address _repairer);
 
     event ComponentRecycled(address _recycler);
@@ -107,6 +109,7 @@ interface IComponent{
     function removeFromSale() external returns (bool);
     function flagAsExpired() external;
     function flagAsBroken() external;
+    function submitForRecycling() external;
     function repair(address _repairer) external;
     function destroy(address _destroyer) external;
     function recycle(address _recycler) external;

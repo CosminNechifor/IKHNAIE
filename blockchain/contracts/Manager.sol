@@ -151,6 +151,7 @@ contract Manager is Ownable {
     )
         public
         isOwnerOfComponent(_componentAddress)
+        isRootComponent(_componentAddress)
     {
         IComponent _c = IComponent(_componentAddress);
         require(_c.submitForSale(), "Component couldn't be submited for sale.");
