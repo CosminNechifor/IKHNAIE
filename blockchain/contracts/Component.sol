@@ -5,13 +5,13 @@ import "./IComponent.sol";
 
 contract Component is IComponent, Managed {
 
-    address _producer;
-    string componentName;
-    uint256 creationTime;
-    uint64 expiration;
-    uint128 price;
-    ComponentState state;
-    string otherInformation;
+    address private _producer;
+    string private componentName;
+    uint256 private creationTime;
+    uint64 private expiration;
+    uint128 private price;
+    ComponentState private state;
+    string private otherInformation;
 
     address private _owner;
     address private parentComponentAddress;
