@@ -310,7 +310,6 @@ contract Manager is Ownable {
         uint256 reward = registryContract.componentRecycled(_componentAddress);
         if (reward != 0) {
             uint256 rewardToProducer = reward / 8;
-            // uint256 rewardToRecycler = reward - rewardToProducer;
 
             require(
                 token.transfer(_producer, rewardToProducer),
