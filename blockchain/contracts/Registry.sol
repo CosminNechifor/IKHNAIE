@@ -10,6 +10,7 @@ contract Registry is IRegistry, Managed {
     mapping(address => uint256) private _addressToIndex;
     mapping(address => uint256) private _addressToReward;
     mapping(address => ProducerAuthorization) private _producerAuth;
+    mapping(address => RecyclerStruct) private _recyclerToData;
 
     constructor(address _manager) Managed(_manager) public {}
 
@@ -68,6 +69,44 @@ contract Registry is IRegistry, Managed {
         }
 
         return false;
+    }
+
+    function registerRecycler(
+        address _recyclerAddress,
+        string calldata _name,
+        string calldata _information
+    ) 
+        external 
+        onlyManager 
+        returns (bool) 
+    {
+        _recyclerToData[_recyclerAddress] = RecyclerStruct({
+            name: _name,
+            information: _information,
+            valueRecycled: 0,
+            isRegistred: true,
+            isConfirmed: false
+        });
+
+        return true;
+    }
+
+    function confirmRecycler(
+        address _recyclerAddress
+    ) 
+        onlyManager
+        returns (bool)
+    {
+        RecyclerStruct memory _recycler = _recyclerToData[_recyclerAddress];
+
+        if (_recycler.isRegistred) {
+            _recycler.isConfirmed = true; 
+            emit ProducerConfirmed(_recyclerAddress);
+            return true;
+        }
+
+        return false;
+
     }
 
     function isProducer(address _producerAddress) external view returns (bool) {

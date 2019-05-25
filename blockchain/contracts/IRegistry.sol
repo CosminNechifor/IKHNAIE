@@ -7,6 +7,14 @@ interface IRegistry {
         bool isConfirmed;
     }
 
+    struct RecyclerStruct {
+        string name;
+        string information;
+        uint256 valueRecycled;
+        bool isRegistred;
+        bool isConfirmed;
+    }
+
     function addComponent(address _componentAddress, uint256 _reward) external;
     function componentDestroyed(address _componentAddress) external returns (uint256);
     function componentRecycled(address _componentAddress) external returns (uint256);
