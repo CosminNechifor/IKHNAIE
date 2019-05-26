@@ -77,10 +77,20 @@ contract Manager is Ownable {
     
     // decide if I sould use the message sender as an argument
     // and add other things to the struct
-    function registerProducer(address _producerAddress) external payable {
+    function registerProducer(
+        string calldata _name,
+        string calldata _information
+    ) 
+        external 
+        payable
+    {
         if (msg.value >= 5) {
             require(
-                registryContract.registerProducer(_producerAddress),
+                registryContract.registerProducer(
+                    msg.sender,
+                    _name,
+                    _information
+                ),
                 "Failed to register Producer!"
             );
         }
@@ -518,8 +528,17 @@ contract Manager is Ownable {
         return registryContract.getComponentReward(_componentAddress);
     }
 
-    function getProducerStatus(address _producerAddress) external view returns(bool, bool) {
-        return registryContract.getProducerStatus(_producerAddress);
+    function getProducerInfo(address _producerAddress)
+        external 
+        view 
+        returns(
+            string memory, 
+            string memory,
+            bool, 
+            bool
+        ) 
+    {
+        return registryContract.getProducerInfo(_producerAddress);
     }
 
     function getRecyclerInfo(

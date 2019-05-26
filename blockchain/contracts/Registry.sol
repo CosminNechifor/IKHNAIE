@@ -9,7 +9,8 @@ contract Registry is IRegistry, Managed {
     address[] private _registry;
     mapping(address => uint256) private _addressToIndex;
     mapping(address => uint256) private _addressToReward;
-    mapping(address => ProducerAuthorization) private _producerAuth;
+
+    mapping(address => ProducerStruct) private _producerToData;
     mapping(address => RecyclerStruct) private _recyclerToData;
 
     constructor(address _manager) Managed(_manager) public {}
@@ -41,12 +42,18 @@ contract Registry is IRegistry, Managed {
         return _addressToReward[_componentAddress];
     }
 
-    function registerProducer(address _producerAddress)
+    function registerProducer(
+        address _producerAddress,
+        string calldata _name,
+        string calldata _information
+    )
         external
         onlyManager
         returns (bool)
     {
-        _producerAuth[_producerAddress] = ProducerAuthorization({
+        _producerToData[_producerAddress] = ProducerStruct({
+            name: _name,
+            information: _information,
             isRegistred: true,
             isConfirmed: false
         });
@@ -59,11 +66,9 @@ contract Registry is IRegistry, Managed {
         onlyManager
         returns (bool)
     {
-        if (_producerAuth[_producerAddress].isRegistred) {
-            _producerAuth[_producerAddress] = ProducerAuthorization({
-                isRegistred: true,
-                isConfirmed: true 
-            });
+        ProducerStruct storage _producer = _producerToData[_producerAddress];
+        if (_producer.isRegistred) {
+            _producer.isConfirmed = true;
             emit ProducerConfirmed(_producerAddress);
             return true;
         }
@@ -88,6 +93,7 @@ contract Registry is IRegistry, Managed {
             isConfirmed: false
         });
 
+        emit RecyclerRegistred(_recyclerAddress);
         return true;
     }
 
@@ -111,7 +117,7 @@ contract Registry is IRegistry, Managed {
 
     function isProducer(address _producerAddress) external view returns (bool) {
         // returns true if this is a certified producer
-        return _producerAuth[_producerAddress].isConfirmed;
+        return _producerToData[_producerAddress].isConfirmed;
     }
 
     function isRecycler(address _recyclerAddress) external view returns (bool) {
@@ -141,20 +147,25 @@ contract Registry is IRegistry, Managed {
         return _registry;
     }
 
-    function getProducerStatus(
+    function getProducerInfo(
         address _producerAddress
     ) 
         external
         view
         returns 
         (
+            string memory,
+            string memory,
             bool,
             bool
         )
     {
+        ProducerStruct memory _producer = _producerToData[_producerAddress];
         return (
-            _producerAuth[_producerAddress].isRegistred,
-            _producerAuth[_producerAddress].isConfirmed
+            _producer.name,
+            _producer.information,
+            _producer.isRegistred,
+            _producer.isConfirmed
         );
     }
 

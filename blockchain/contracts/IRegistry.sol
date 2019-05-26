@@ -2,7 +2,9 @@ pragma solidity >=0.4 <0.6.0;
 
 interface IRegistry {
 
-    struct ProducerAuthorization {
+    struct ProducerStruct {
+        string name;
+        string information;
         bool isRegistred;
         bool isConfirmed;
     }
@@ -18,11 +20,25 @@ interface IRegistry {
     function addComponent(address _componentAddress, uint256 _reward) external;
     function componentDestroyed(address _componentAddress) external returns (uint256);
     function componentRecycled(address _componentAddress) external returns (uint256);
-    function registerProducer(address _producerAddress) external returns (bool);
+    function registerProducer(address _producerAddress, string calldata _name, string calldata _information) external returns (bool);
     function confirmProducer(address _producerAddress) external returns (bool);
     function registerRecycler(address _recyclerAddress, string calldata _name, string calldata _information) external returns (bool);
     function confirmRecycler(address _recyclerAddress) external returns (bool);
     function getRegistrySize() external view returns(uint256);
+    function getRegistredComponentAtIndex(uint256 _index) external view returns(address);
+    function getRegistredComponents() external view returns(address[] memory);
+    function getProducerInfo(
+        address _producerAddress
+    ) 
+        external
+        view
+        returns 
+        (
+            string memory,
+            string memory,
+            bool,
+            bool
+        );
     function getRecyclerInfo(address _recyclerAddress)
         external
         view
@@ -33,9 +49,6 @@ interface IRegistry {
             bool, 
             bool
         );
-    function getRegistredComponentAtIndex(uint256 _index) external view returns(address);
-    function getRegistredComponents() external view returns(address[] memory);
-    function getProducerStatus(address _producerAddress) external view returns (bool, bool);
     function getComponentReward(address _componentAddress) external view returns(uint256);
     function isProducer(address _producerAddress) external view returns (bool);
     function isRecycler(address _recyclerAddress) external view returns (bool);
