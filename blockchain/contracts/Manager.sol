@@ -74,10 +74,24 @@ contract Manager is Ownable {
         token.withdraw(msg.sender, value);
         msg.sender.transfer(value);
     }
-
+    
+    // decide if I sould use the message sender as an argument
+    // and add other things to the struct
     function registerProducer(address _producerAddress) external payable {
         if (msg.value >= 5) {
-            registryContract.registerProducer(_producerAddress);
+            require(
+                registryContract.registerProducer(_producerAddress),
+                "Failed to register Producer!"
+            );
+        }
+    }
+
+    function registerRecycler(string calldata _name, string calldata _information) external payable {
+        if (msg.value >= 1) {
+            require(
+                registryContract.registerRecycler(msg.sender, _name, _information),
+                "Failed to register recycler!"
+            );
         }
     }
 
@@ -87,6 +101,14 @@ contract Manager is Ownable {
         onlyOwner
     {
         registryContract.confirmProducer(_producerAddress);
+    }
+
+    function confirmRecycler(address _recyclerAddress)
+        external
+        payable 
+        onlyOwner
+    {
+        registryContract.confirmRecycler(_recyclerAddress);
     }
 
     function createComponent(
@@ -479,6 +501,10 @@ contract Manager is Ownable {
     function isProducer(address _producerAddress) public view returns (bool) {
         return registryContract.isProducer(_producerAddress);
     }
+    
+    function isRecycler(address _recyclerAddress) public view returns (bool) {
+        return registryContract.isRecycler(_recyclerAddress);
+    }
 
     function balance() external view returns (uint256) {
         return token.balanceOf(msg.sender);
@@ -494,6 +520,22 @@ contract Manager is Ownable {
 
     function getProducerStatus(address _producerAddress) external view returns(bool, bool) {
         return registryContract.getProducerStatus(_producerAddress);
+    }
+
+    function getRecyclerInfo(
+        address _recyclerAddress
+    ) 
+        external
+        view
+        returns(
+            string memory,
+            string memory,
+            uint256,
+            bool, 
+            bool
+        ) 
+    {
+        return registryContract.getRecyclerInfo(_recyclerAddress);
     }
 
     // O(log n)
