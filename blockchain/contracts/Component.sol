@@ -118,6 +118,7 @@ contract Component is IComponent, Managed {
         inEditableState
     {
         emit ComponentNameUpdated(
+            address(this),
             componentName,
             _componentName
         );
@@ -152,6 +153,7 @@ contract Component is IComponent, Managed {
         inEditableState
     {
         emit ComponentExpirationUpdated(
+            address(this),
             expiration,
             _expiration
         );
@@ -167,6 +169,7 @@ contract Component is IComponent, Managed {
         notInRecycledOrDestoyedState
     {
         emit ComponentPriceUpdated(
+            address(this),
             price,
             _price
         );
@@ -181,6 +184,7 @@ contract Component is IComponent, Managed {
         inEditableState
     {
         emit ComponentOtherInformationUpdated(
+            address(this),
             otherInformation,
             _otherInformation
         );
@@ -255,6 +259,7 @@ contract Component is IComponent, Managed {
     {
         state = ComponentState.SubmitedForSale;
         emit ComponentSubmitedForSale(
+            address(this),
             block.timestamp,
             price
         );
@@ -269,6 +274,7 @@ contract Component is IComponent, Managed {
     {
         state = ComponentState.Owned;
         emit ComponentWasRemovedFromSale(
+            address(this),
             block.timestamp,
             price
         );
@@ -284,7 +290,7 @@ contract Component is IComponent, Managed {
         isExpired
     {
        state = ComponentState.NeedsRecycled;
-       emit ComponentIsExpired();
+       emit ComponentIsExpired(address(this));
     }
 
     function flagAsBroken()
@@ -295,7 +301,7 @@ contract Component is IComponent, Managed {
         notInRecycledOrDestoyedState
     {
        state = ComponentState.Broken;
-       emit ComponentIsBroken();
+       emit ComponentIsBroken(address(this));
     }
 
     function submitForRecycling()
@@ -306,7 +312,10 @@ contract Component is IComponent, Managed {
         notInRecycledOrDestoyedState
     {
        state = ComponentState.NeedsRecycled;
-       emit ComponentSubmitedForRecycling(tx.origin);
+       emit ComponentSubmitedForRecycling(
+           address(this),
+           tx.origin
+       );
     }
 
     function transferOwnership(address _newOwner)
@@ -317,7 +326,11 @@ contract Component is IComponent, Managed {
     {
        state = ComponentState.Owned;
        _owner = _newOwner;
-       emit ComponentOwnershipTransfered(_owner, _newOwner);
+       emit ComponentOwnershipTransfered(
+           address(this),
+           _owner,
+           _newOwner
+       );
        return true;
     }
 
@@ -327,7 +340,10 @@ contract Component is IComponent, Managed {
         inBrokenState
     {
         state = ComponentState.Owned;
-        emit ComponentRepaired(_repairer);
+        emit ComponentRepaired(
+            address(this),
+            _repairer
+        );
     }
 
     function recycle(address _recycler)
@@ -336,7 +352,10 @@ contract Component is IComponent, Managed {
         inNeedsRecycledState
     {
         state = ComponentState.Recycled;
-        emit ComponentRecycled(_recycler);
+        emit ComponentRecycled(
+            address(this),
+            _recycler
+        );
     }
 
     function destroy(address _destroyer)
@@ -345,7 +364,10 @@ contract Component is IComponent, Managed {
         inNeedsRecycledState
     {
         state = ComponentState.Destroyed;
-        emit ComponentDestroyed(_destroyer);
+        emit ComponentDestroyed(
+            address(this),
+            _destroyer
+        );
     }
 
     function getData()

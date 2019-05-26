@@ -29,7 +29,7 @@ interface IComponent{
 
     event ComponentCreated
     (
-        address _producer,
+        address indexed _producer,
         string _componentName,
         uint256 _creationTime,
         uint64 _expiration,
@@ -40,63 +40,87 @@ interface IComponent{
     );
 
     event ComponentSubmitedForSale(
+        address indexed _componentAddress,
         uint256 timestamp,
         uint128 price
     );
 
     event ComponentWasRemovedFromSale(
+        address indexed _componentAddress,
         uint256 timestamp,
         uint128 price
     );
 
     event ComponentNameUpdated(
+        address indexed _componentAddress,
         string _oldName,
         string _newName
     );
-
+    
+    // TODO: have to solve this
     event ComponentParentAddressUpdated(
-        address _previousParent,
-        address _newParent
+        address indexed _componentAddress,
+        address indexed _previousParent,
+        address indexed _newParent
     );
 
     event ComponentExpirationUpdated(
+        address indexed _componentAddress,
         uint64 _oldExpiration,
         uint64 _newExpiration
     );
 
     event ComponentPriceUpdated(
+        address indexed _componentAddress,
         uint128 _oldPrice,
         uint128 _newPrice
     );
 
     event ComponentOtherInformationUpdated(
+        address indexed _componentAddress,
         string _oldOtherInformation,
         string _newOtherInformation
     );
 
     event ComponentChildAdded(
-        address _newChildComponent,
+        address indexed _newChildComponent,
         address[] _newChildComponentList
     );
 
     event ComponentChildRemoved(
-        address _removedComponent,
+        address indexed _removedComponent,
         address[] _newChildComponentList
     );
 
-    event ComponentIsBroken();
+    event ComponentIsBroken(address indexed _componentAddress);
 
-    event ComponentIsExpired();
+    event ComponentIsExpired(address indexed _componentAddress);
 
-    event ComponentSubmitedForRecycling(address submiter);
+    event ComponentSubmitedForRecycling(
+        address indexed _componentAddress, 
+        address indexed _submiter
+    );
 
-    event ComponentRepaired(address _repairer);
+    event ComponentRepaired(
+        address indexed _componentAddress,
+        address indexed _repairer
+    );
 
-    event ComponentRecycled(address _recycler);
+    event ComponentRecycled(
+        address indexed _componentAddress,
+        address indexed _recycler
+    );
 
-    event ComponentDestroyed(address _destroyer);
+    event ComponentDestroyed(
+        address indexed _componentAddress,
+        address indexed _destroyer
+    );
 
-    event ComponentOwnershipTransfered(address _oldOwner, address _newOwner);
+    event ComponentOwnershipTransfered(
+        address indexed _componentAddress,
+        address indexed _oldOwner,
+        address indexed _newOwner
+    );
 
     function updateComponentName(string calldata _componentName) external;
     function updateConnection(address _address) external;

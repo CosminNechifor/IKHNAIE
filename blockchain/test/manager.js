@@ -85,7 +85,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             "Producer information"
         );
         let status = await managerContract.getProducerInfo(accounts[0]);
-        console.log(status);
         assert.equal(status[0], "", "Producer name is wrong!");
         assert.equal(status[1], "", "Producer information is wrong!");
         assert.equal(status[2], false, "Status should be false because we didn't send 5 ETH!!");
@@ -99,7 +98,6 @@ contract('Manager - testing deployment and creation of components [happy case]',
             }
         );
         status = await managerContract.getProducerInfo(accounts[0]);
-        console.log(status);
         assert.equal(status[0], "Producer Name", "Producer name is wrong!");
         assert.equal(status[1], "Producer information", "Producer information is wrong!");
         assert.equal(status[2], true, "Status should be true because we did send 5 ETH!!");
