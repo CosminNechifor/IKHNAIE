@@ -81,37 +81,48 @@ contract('Manager - testing deployment and creation of components [happy case]',
 
     it("Register producer, and check status", async () => {
         await managerContract.registerProducer(
-            accounts[0]
+            "Producer Name",
+            "Producer information"
         );
-        let status = await managerContract.getProducerStatus(accounts[0]);
-        assert.equal(status[0], false, "Status should be false because we didn't send 5 ETH!!");
-        assert.equal(status[1], false, "Status should be false because we didn't confirm the Producer!!");
+        let status = await managerContract.getProducerInfo(accounts[0]);
+        console.log(status);
+        assert.equal(status[0], "", "Producer name is wrong!");
+        assert.equal(status[1], "", "Producer information is wrong!");
+        assert.equal(status[2], false, "Status should be false because we didn't send 5 ETH!!");
+        assert.equal(status[3], false, "Status should be false because we didn't confirm the Producer!!");
 
         await managerContract.registerProducer(
-            accounts[0],
+            "Producer Name",
+            "Producer information",
             {
                 value: 5
             }
         );
-        status = await managerContract.getProducerStatus(accounts[0]);
-        assert.equal(status[0], true, "Status should be true because we did send 5 ETH!!");
-        assert.equal(status[1], false, "Status should be false because we didn't confirm the Producer!!");
+        status = await managerContract.getProducerInfo(accounts[0]);
+        console.log(status);
+        assert.equal(status[0], "Producer Name", "Producer name is wrong!");
+        assert.equal(status[1], "Producer information", "Producer information is wrong!");
+        assert.equal(status[2], true, "Status should be true because we did send 5 ETH!!");
+        assert.equal(status[3], false, "Status should be false because we didn't confirm the Producer!!");
 
         await managerContract.confirmProducer(accounts[0]);
-        status = await managerContract.getProducerStatus(accounts[0]);
-        assert.equal(status[0], true, "Status should be true because we did send 5 ETH!!");
-        assert.equal(status[1], true, "Status should be true because we did confirm the Producer!!");
+        status = await managerContract.getProducerInfo(accounts[0]);
+        assert.equal(status[2], true, "Status should be true because we did send 5 ETH!!");
+        assert.equal(status[3], true, "Status should be true because we did confirm the Producer!!");
         await managerContract.registerProducer(
-            accounts[7],
+            "Producer 7",
+            "Producer 7 information",
             {
                 from: accounts[7],
                 value: 5
             }
         );
         await managerContract.confirmProducer(accounts[7]);
-        status = await managerContract.getProducerStatus(accounts[7]);
-        assert.equal(status[0], true, "Status should be true because we did send 5 ETH!!");
-        assert.equal(status[1], true, "Status should be true because we did confirm the Producer!!");
+        status = await managerContract.getProducerInfo(accounts[7]);
+        assert.equal(status[0], "Producer 7", "Producer name is wrong!");
+        assert.equal(status[1], "Producer 7 information", "Producer information is wrong!");
+        assert.equal(status[2], true, "Status should be true because we did send 5 ETH!!");
+        assert.equal(status[3], true, "Status should be true because we did confirm the Producer!!");
 
     });
 
