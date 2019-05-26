@@ -24,31 +24,31 @@ interface IMarketPlace {
     function getComponentOfferByIndex( address _componentAddress, uint256 _index) external view returns (uint256, address);
     function getComponentOfferSize( address _componentAddress) external view returns(uint256);
 
-    event ComponentWasSubmitedForSale(address _componentAddress);
+    event ComponentWasSubmitedForSale(address indexed _componentAddress);
 
-    event ComponentWasRemovedFromSale(address _componentAddress);
+    event ComponentWasRemovedFromSale(address indexed _componentAddress);
 
     event NewOffer(
-        address _sender,
-        address _componentAddress,
+        address indexed _sender,
+        address indexed _componentAddress,
         uint256 _amountOfTokens
     );
 
     event OfferRemoved(
-        address _sender,
-        address _componentAddress,
+        address indexed _sender,
+        address indexed _componentAddress,
         uint256 _amountOfTokens
     );
 
     event OfferAccepted(
-        address _sender,
-        address _componentAddress,
+        address indexed _sender,
+        address indexed _componentAddress,
         uint256 _amountOfTokens
     );
 
     event OfferRejected(
-        address _sender,
-        address _componentAddress,
+        address indexed _sender,
+        address indexed _componentAddress,
         uint256 _amountOfTokens
     );
 }
