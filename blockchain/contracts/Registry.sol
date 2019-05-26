@@ -94,14 +94,14 @@ contract Registry is IRegistry, Managed {
     function confirmRecycler(
         address _recyclerAddress
     ) 
-        onlyManager
+        external
         returns (bool)
     {
-        RecyclerStruct memory _recycler = _recyclerToData[_recyclerAddress];
+        RecyclerStruct storage _recycler = _recyclerToData[_recyclerAddress];
 
         if (_recycler.isRegistred) {
             _recycler.isConfirmed = true; 
-            emit ProducerConfirmed(_recyclerAddress);
+            emit RecyclerConfirmed(_recyclerAddress);
             return true;
         }
 
@@ -112,6 +112,11 @@ contract Registry is IRegistry, Managed {
     function isProducer(address _producerAddress) external view returns (bool) {
         // returns true if this is a certified producer
         return _producerAuth[_producerAddress].isConfirmed;
+    }
+
+    function isRecycler(address _recyclerAddress) external view returns (bool) {
+        // returns true if this is a certified producer
+        return _recyclerToData[_recyclerAddress].isConfirmed;
     }
 
     function getRegistrySize() external view returns(uint256) {
@@ -152,6 +157,31 @@ contract Registry is IRegistry, Managed {
             _producerAuth[_producerAddress].isConfirmed
         );
     }
+
+    function getRecyclerInfo(
+        address _recyclerAddress 
+    ) 
+        external
+        view
+        returns 
+        (
+            string memory,
+            string memory,
+            uint256,
+            bool,
+            bool
+        )
+    {
+        RecyclerStruct memory _recycler = _recyclerToData[_recyclerAddress];
+        return (
+            _recycler.name,
+            _recycler.information,
+            _recycler.valueRecycled,
+            _recycler.isRegistred,
+            _recycler.isConfirmed
+        );
+    }
+
 
     function getComponentReward(
         address _componentAddress
