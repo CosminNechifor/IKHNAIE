@@ -57,7 +57,6 @@ interface IComponent{
         string _newName
     );
     
-    // TODO: have to solve this
     event ComponentParentAddressUpdated(
         address indexed _componentAddress,
         address indexed _previousParent,

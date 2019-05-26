@@ -137,9 +137,19 @@ contract Component is IComponent, Managed {
         // if the component has no parent
         if (parentComponentAddress == address(0)) {
             // TODO: events must be emited
+            emit ComponentParentAddressUpdated(
+                address(this),
+                address(0),
+                _address
+            );
             parentComponentAddress = _address;
             _owner = address(0);
         } else {
+            emit ComponentParentAddressUpdated(
+                address(this),
+                _address,
+                address(0)
+            );
             parentComponentAddress = address(0);
             _owner = _address;
         }
