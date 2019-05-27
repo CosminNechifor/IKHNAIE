@@ -13,6 +13,8 @@ contract Registry is IRegistry, Managed {
     mapping(address => ProducerStruct) private _producerToData;
     mapping(address => RecyclerStruct) private _recyclerToData;
 
+    mapping(address => RecyclerOffer) private _componentToRecyclerOffer;
+
     constructor(address _manager) Managed(_manager) public {}
 
     function addComponent(address _componentAddress, uint256 _reward) external onlyManager {
@@ -115,6 +117,65 @@ contract Registry is IRegistry, Managed {
 
     }
 
+    function addRecylerOffer(
+        address _componentAddress,
+        address _recyclerAddress,
+        uint256 _offerValue
+    )
+        external
+        returns(
+            address,
+            uint256,
+            bool
+        )
+    {
+        RecyclerOffer memory recyclerOffer = _componentToRecyclerOffer[_componentAddress];
+        if (recyclerOffer.offerValue < _offerValue &&
+            recyclerOffer.isAccepted == false
+        ) {
+            _componentToRecyclerOffer[_componentAddress] = RecyclerOffer({
+                recyclerAddress: _recyclerAddress,
+                offerValue: _offerValue,
+                isAccepted: false
+            });
+            emit RecyclerAddedOffer(
+                _componentAddress,
+                _recyclerAddress,
+                _offerValue
+            );
+        }
+        return (
+            recyclerOffer.recyclerAddress,
+            recyclerOffer.offerValue,
+            recyclerOffer.isAccepted
+        );
+    }
+
+    function acceptRecyclerOffer(
+        address _componentAddress
+    )
+        external
+        returns (
+            address,
+            uint256,
+            bool
+        )
+    {
+        RecyclerOffer storage recyclerOffer = _componentToRecyclerOffer[_componentAddress];
+        emit RecyclerOfferAccepted(
+            _componentAddress,
+            recyclerOffer.recyclerAddress,
+            true,
+            recyclerOffer.offerValue
+        ); 
+        recyclerOffer.isAccepted = true;
+        return (
+            recyclerOffer.recyclerAddress,
+            recyclerOffer.offerValue,
+            true
+        );
+    }
+
     function isProducer(address _producerAddress) external view returns (bool) {
         // returns true if this is a certified producer
         return _producerToData[_producerAddress].isConfirmed;
@@ -190,6 +251,23 @@ contract Registry is IRegistry, Managed {
             _recycler.valueRecycled,
             _recycler.isRegistred,
             _recycler.isConfirmed
+        );
+    }
+
+    function getRecyclerOffer(address _componentAddress)
+        external
+        view
+        returns (
+            address,
+            uint256,
+            bool
+        )
+    {
+        RecyclerOffer memory _offer = _componentToRecyclerOffer[_componentAddress];
+        return (
+            _offer.recyclerAddress,
+            _offer.offerValue,
+            _offer.isAccepted
         );
     }
 
