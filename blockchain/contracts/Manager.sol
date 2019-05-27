@@ -296,7 +296,30 @@ contract Manager is Ownable {
         _component.repair(msg.sender);
         // pay with tokens
     }
+    
 
+    // needs modifiers 
+    function addRecyclerOffer(
+        address _componentAddress,
+        uint256 _offerValue
+    )
+        public
+        isRootComponent(_componentAddress)
+    {
+        bool _status;
+        (_status, , , ) = registryContract.addRecyclerOffer(
+                _componentAddress,
+                msg.sender,
+                _offerValue
+        );
+        require(
+            _status,
+            "Offer can't be added, check offer value or offer status"
+        );
+        // transfer tokens to manager contract for later use
+    }
+    
+    // need to change the logic
     function recycle(
         address _componentAddress
     )

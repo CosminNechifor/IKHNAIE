@@ -117,22 +117,31 @@ contract Registry is IRegistry, Managed {
 
     }
 
-    function addRecylerOffer(
+    function addRecyclerOffer(
         address _componentAddress,
         address _recyclerAddress,
         uint256 _offerValue
     )
         external
         returns(
+            bool,
             address,
             uint256,
             bool
         )
     {
         RecyclerOffer memory recyclerOffer = _componentToRecyclerOffer[_componentAddress];
-        if (recyclerOffer.offerValue < _offerValue &&
-            recyclerOffer.isAccepted == false
-        ) {
+
+        if (recyclerOffer.isAccepted) {
+            return (
+                false,
+                recyclerOffer.recyclerAddress,
+                recyclerOffer.offerValue,
+                recyclerOffer.isAccepted
+            );
+        }
+
+        if (recyclerOffer.offerValue < _offerValue) {
             _componentToRecyclerOffer[_componentAddress] = RecyclerOffer({
                 recyclerAddress: _recyclerAddress,
                 offerValue: _offerValue,
@@ -143,8 +152,15 @@ contract Registry is IRegistry, Managed {
                 _recyclerAddress,
                 _offerValue
             );
+            return (
+                true,
+                _recyclerAddress,
+                _offerValue,
+                false
+            );
         }
         return (
+            false,
             recyclerOffer.recyclerAddress,
             recyclerOffer.offerValue,
             recyclerOffer.isAccepted

@@ -27,13 +27,14 @@ interface IRegistry {
     function componentDestroyed(address _componentAddress) external returns (uint256);
     function componentRecycled(address _componentAddress) external returns (uint256);
     function registerProducer(address _producerAddress, string calldata _name, string calldata _information) external returns (bool);
-    function addRecylerOffer(
+    function addRecyclerOffer(
         address _componentAddress,
         address _recyclerAddress,
         uint256 _offerValue
     )
         external
         returns(
+            bool,
             address,
             uint256,
             bool
