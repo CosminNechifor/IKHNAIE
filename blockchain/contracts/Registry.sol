@@ -12,6 +12,7 @@ contract Registry is IRegistry, Managed {
 
     mapping(address => ProducerStruct) private _producerToData;
     mapping(address => RecyclerStruct) private _recyclerToData;
+    mapping(address => RepairerStruct) private _repairerToData;
 
     constructor(address _manager) Managed(_manager) public {}
 
@@ -115,14 +116,56 @@ contract Registry is IRegistry, Managed {
 
     }
 
+    function registerRepairer(
+        address _repairerAddress,
+        string calldata _name,
+        string calldata _information
+    )
+        external
+        onlyManager
+        returns (bool)
+    {
+        _repairerToData[_repairerAddress] = RepairerStruct({
+            name: _name,
+            information: _information,
+            isRegistred: true,
+            isConfirmed: false
+        });
+        emit RepairerRegistred(_repairerAddress);
+        return true;
+    }
+
+    function confirmRepairer(
+        address _repairerAddress
+    ) 
+        external
+        returns (bool)
+    {
+        RepairerStruct storage _repairer = _repairerToData[_repairerAddress];
+
+        if (_repairer.isRegistred) {
+            _repairer.isConfirmed = true; 
+            emit RepairerConfirmed(_repairerAddress);
+            return true;
+        }
+
+        return false;
+
+    }
+
     function isProducer(address _producerAddress) external view returns (bool) {
         // returns true if this is a certified producer
         return _producerToData[_producerAddress].isConfirmed;
     }
 
     function isRecycler(address _recyclerAddress) external view returns (bool) {
-        // returns true if this is a certified producer
+        // returns true if this is a certified recycler 
         return _recyclerToData[_recyclerAddress].isConfirmed;
+    }
+
+    function isRepairer(address _repairerAddress) external view returns (bool) {
+        // returns true if this is a certified repairer 
+        return _repairerToData[_repairerAddress].isConfirmed;
     }
 
     function getRegistrySize() external view returns(uint256) {
@@ -193,6 +236,27 @@ contract Registry is IRegistry, Managed {
         );
     }
 
+    function getRepairerInfo(
+        address _repairerAddress
+    ) 
+        external
+        view
+        returns 
+        (
+            string memory,
+            string memory,
+            bool,
+            bool
+        )
+    {
+        RepairerStruct memory _repairer = _repairerToData[_repairerAddress];
+        return (
+            _repairer.name,
+            _repairer.information,
+            _repairer.isRegistred,
+            _repairer.isConfirmed
+        );
+    }
 
     function getComponentReward(
         address _componentAddress

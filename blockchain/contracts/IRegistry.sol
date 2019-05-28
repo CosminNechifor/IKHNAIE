@@ -17,6 +17,15 @@ interface IRegistry {
         bool isConfirmed;
     }
 
+    struct RepairerStruct {
+        // still have to decide if there is
+        // anything else to add
+        string name;
+        string information;
+        bool isRegistred;
+        bool isConfirmed;
+    }
+
     function addComponent(address _componentAddress, uint256 _reward) external;
     function componentDestroyed(address _componentAddress) external returns (uint256);
     function componentRecycled(address _componentAddress) external returns (uint256);
@@ -24,6 +33,8 @@ interface IRegistry {
     function confirmProducer(address _producerAddress) external returns (bool);
     function registerRecycler(address _recyclerAddress, string calldata _name, string calldata _information) external returns (bool);
     function confirmRecycler(address _recyclerAddress) external returns (bool);
+    function registerRepairer(address _repairerAddress, string calldata _name, string calldata _information) external returns (bool);
+    function confirmRepairer(address _repairerAddress) external returns (bool);
     function getRegistrySize() external view returns(uint256);
     function getRegistredComponentAtIndex(uint256 _index) external view returns(address);
     function getRegistredComponents() external view returns(address[] memory);
@@ -47,6 +58,18 @@ interface IRegistry {
             string memory, 
             uint256, 
             bool, 
+            bool
+        );
+    function getRepairerInfo(
+        address _repairerAddress
+    ) 
+        external
+        view
+        returns 
+        (
+            string memory,
+            string memory,
+            bool,
             bool
         );
     function getComponentReward(address _componentAddress) external view returns(uint256);
@@ -77,10 +100,18 @@ interface IRegistry {
     );
 
     event RecyclerRegistred(
-        address indexed _producerAddress
+        address indexed _recyclerAddress
     );
 
     event RecyclerConfirmed(
-        address indexed _producerAddress
+        address indexed _recyclerAddress
+    );
+
+    event RepairerRegistred(
+        address indexed _repairerAddress
+    );
+
+    event RepairerConfirmed(
+        address indexed _repairerAddress
     );
 }
