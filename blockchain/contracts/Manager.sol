@@ -298,7 +298,7 @@ contract Manager is Ownable {
     }
 
     function submitForRecycling(
-        _componentAddress
+        address _componentAddress
     )
         external
         isRootComponent(_componentAddress)
