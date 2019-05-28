@@ -433,6 +433,52 @@ contract('Statistics', (accounts) => {
             receipt = await managerContract.balance({from: accounts[i]});
             console.log(`Accounts[${i}]:${receipt.toNumber()}`);
         }
+
+
+        receipt = await managerContract.flagComponentAsBroken(
+            rootComponent,
+            {
+                from: accounts[5]
+            }
+        );
+        write_statistics_for_function(`Accounts[5] flags component as broken.`, receipt);
+
+        receipt = await managerContract.registerRepairer(
+            "Repairer Accounts[2]",
+            "info repairer",
+            {
+                from: accounts[2],
+                value: 3
+            }
+        );
+        write_statistics_for_function(`Accounts[2] registred as repairer.`, receipt);
+
+        receipt = await managerContract.confirmRepairer(accounts[2]);
+        write_statistics_for_function(`Accounts[0] confirmed Account[2] as repairer.`, receipt);
+        
+        receipt = await managerContract.repair(
+            rootComponent,
+            {
+                from: accounts[2]
+            }
+        );
+        write_statistics_for_function(`Accounts[2] repairs the component.`, receipt);
+
+        receipt = await managerContract.submitForRecycling(
+            rootComponent,
+            {
+                from: accounts[5]
+            }
+        );
+        write_statistics_for_function(`Accounts[5] decides to submit the rootComponent for recycling.`, receipt);
+
+        receipt = await managerContract.destroy(
+            rootComponent,
+            {
+                from: accounts[5]
+            }
+        );
+        write_statistics_for_function(`Accounts[5] decides to destroy the rootComponent.`, receipt);
     });
 
 });

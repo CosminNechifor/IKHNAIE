@@ -44,6 +44,11 @@ contract Manager is Ownable {
         _;
     }
 
+    modifier onlyRepairer(address _repairerAddress) {
+        require(isRepairer(_repairerAddress), "Only repairer can use this function!");
+        _;
+    }
+
     constructor() Ownable(msg.sender) public {
         _notLinked = true;
     }
@@ -114,6 +119,21 @@ contract Manager is Ownable {
         }
     }
 
+    function registerRepairer(
+        string calldata _name,
+        string calldata _information
+    ) 
+        external 
+        payable
+    {
+        if (msg.value >= 3) {
+            require(
+                registryContract.registerRepairer(msg.sender, _name, _information),
+                "Failed to register repairer!"
+            );
+        }
+    }
+
     function confirmProducer(address _producerAddress)
         external
         payable 
@@ -128,6 +148,14 @@ contract Manager is Ownable {
         onlyOwner
     {
         registryContract.confirmRecycler(_recyclerAddress);
+    }
+
+    function confirmRepairer(address _repairerAddress)
+        external
+        payable 
+        onlyOwner
+    {
+        registryContract.confirmRepairer(_repairerAddress);
     }
 
     function createComponent(
@@ -299,7 +327,8 @@ contract Manager is Ownable {
     function repair(
         address _componentAddress
     )
-        public
+        external
+        onlyRepairer(msg.sender)
     {
         IComponent _component = IComponent(_componentAddress);
         _component.repair(msg.sender);
@@ -537,6 +566,10 @@ contract Manager is Ownable {
         return registryContract.isRecycler(_recyclerAddress);
     }
 
+    function isRepairer(address _repairerAddress) public view returns (bool) {
+        return registryContract.isRepairer(_repairerAddress);
+    }
+
     function balance() external view returns (uint256) {
         return token.balanceOf(msg.sender);
     }
@@ -576,6 +609,21 @@ contract Manager is Ownable {
         ) 
     {
         return registryContract.getRecyclerInfo(_recyclerAddress);
+    }
+
+    function getRepairerInfo(
+        address _repairerAddress
+    ) 
+        external
+        view
+        returns(
+            string memory,
+            string memory,
+            bool, 
+            bool
+        ) 
+    {
+        return registryContract.getRepairerInfo(_repairerAddress);
     }
 
     // O(log n)

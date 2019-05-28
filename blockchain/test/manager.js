@@ -538,7 +538,17 @@ contract('Manager - testing deployment and creation of components [happy case]',
         });
     });
 
-    it("Repair broken component", async () => {
+    it("Register as repairer and repair broken component", async () => {
+        await managerContract.registerRepairer(
+            "Repairer Accounts[0]",
+            "info repairer",
+            {
+                value: 3
+            }
+        );
+        
+        await managerContract.confirmRepairer(accounts[0]);
+
         const components = await managerContract.getRegistredComponents();
         const c = await Component.at(components[4]);
         const stateBeforeRepair = await c.getData();

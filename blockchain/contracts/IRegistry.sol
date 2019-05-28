@@ -75,6 +75,7 @@ interface IRegistry {
     function getComponentReward(address _componentAddress) external view returns(uint256);
     function isProducer(address _producerAddress) external view returns (bool);
     function isRecycler(address _recyclerAddress) external view returns (bool);
+    function isRepairer(address _repairerAddress) external view returns (bool);
 
     event ComponentRegistred(
         uint256 indexed _index,
