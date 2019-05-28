@@ -56,7 +56,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
     it("Deploy MarketPlace contract", async () => {
         const marketContract = await MarketPlace.new(managerContract.address);
         marketPlaceAddress = marketContract.address;
-        assert.notEqual(marketPlaceAddress, undefined, "Failed to deploy RegistryContract");
+        assert.notEqual(marketPlaceAddress, undefined, "Failed to deploy TokenContract");
     });
 
     /**
@@ -67,6 +67,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
         await Token.link("SafeMath", safeMathContract.address); 
         const tokenContract = await Token.new(managerContract.address);
         tokenAddress = tokenContract.address;
+        assert.notEqual(tokenAddress, undefined, "Failed to deploy TokenContract");
     });
 
     it("Linking the contracts together", async () => {

@@ -297,6 +297,17 @@ contract Manager is Ownable {
         // pay with tokens
     }
 
+    function submitForRecycling(
+        _componentAddress
+    )
+        external
+        isRootComponent(_componentAddress)
+        isOwnerOfComponent(_componentAddress)
+    {
+        IComponent component = IComponent(_componentAddress);
+        component.submitForRecycling();
+    }
+
     function recycle(
         address _componentAddress
     )
@@ -383,7 +394,7 @@ contract Manager is Ownable {
         component.updateComponentPrice(_newPrice);
     }
 
-    function updateComponentExpiration(
+    function updateComponentOtherInformation(
         address _componentAddress,
         string memory _newOtherInformation
     )
