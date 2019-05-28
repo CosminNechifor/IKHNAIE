@@ -39,6 +39,11 @@ contract Manager is Ownable {
         _;
     }
 
+    modifier onlyRecycler(address _recyclerAddress) {
+        require(isRecycler(_recyclerAddress), "Only recycler can use this function!");
+        _;
+    }
+
     constructor() Ownable(msg.sender) public {
         _notLinked = true;
     }
@@ -75,8 +80,6 @@ contract Manager is Ownable {
         msg.sender.transfer(value);
     }
     
-    // decide if I sould use the message sender as an argument
-    // and add other things to the struct
     function registerProducer(
         string calldata _name,
         string calldata _information
@@ -96,7 +99,13 @@ contract Manager is Ownable {
         }
     }
 
-    function registerRecycler(string calldata _name, string calldata _information) external payable {
+    function registerRecycler(
+        string calldata _name,
+        string calldata _information
+    ) 
+        external 
+        payable
+    {
         if (msg.value >= 1) {
             require(
                 registryContract.registerRecycler(msg.sender, _name, _information),
@@ -312,6 +321,7 @@ contract Manager is Ownable {
         address _componentAddress
     )
         public
+        onlyRecycler(msg.sender)
         isRootComponent(_componentAddress)
     {
         IComponent _component = IComponent(_componentAddress);
