@@ -549,6 +549,20 @@ contract('Manager - testing deployment and creation of components [happy case]',
         assert.equal(stateAfterRepair[5].toNumber(), 2, "Component state should be owned!!"); 
     });
 
+    it("Make every account a recycler", async () => {
+        for (i = 0; i< accounts.length - 1; i++) {
+            await managerContract.registerRecycler(
+                `Account[${i}] recycler`,
+                "info",
+                {
+                    from: accounts[i],
+                    value: 1
+                }
+            );
+            await managerContract.confirmRecycler(accounts[i]);
+        }
+    });
+
     it("Destroy component", async () => {
         await managerContract.createComponent(
             "Testing destroy component",
