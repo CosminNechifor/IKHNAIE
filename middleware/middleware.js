@@ -1,19 +1,5 @@
 import express from 'express';
-import {
-    createComponent,
-    getRegistredComponents,
-    getRegistrySize,
-    getRegistredComponentAtIndex,
-    getComponentOwner,
-    getComponentData,
-    getChildComponentIndexByAddress,
-    getChildComponentAddressByIndex,
-    updateData,
-    removeChildComponentFromComponent, 
-    addChildComponentToComponent,
-    getChildComponentListOfAddress,
-    getComponentInfo
-} from './access.js';
+import * from './access.js';
 
 const app = express()
 app.use(express.json())

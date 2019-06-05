@@ -241,6 +241,7 @@ const getRegistredComponentAtIndex = (index) => {
         .call({from: account.address});
 } 
 
+// done
 const getRegistredComponents = () => {
     return ManagerContract.methods
         .getRegistredComponents()
