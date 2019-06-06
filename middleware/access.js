@@ -323,6 +323,7 @@ const getRepairerInfo = (repairerAddress) => {
 
 export {
     deposit,
+    withdraw, 
     registerActor,
     confirmActor,
     createComponent,

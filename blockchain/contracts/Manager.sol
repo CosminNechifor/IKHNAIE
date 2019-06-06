@@ -136,7 +136,7 @@ contract Manager is Ownable {
 
     function confirmProducer(address _producerAddress)
         external
-        payable 
+        payable
         onlyOwner
     {
         registryContract.confirmProducer(_producerAddress);
@@ -144,7 +144,7 @@ contract Manager is Ownable {
 
     function confirmRecycler(address _recyclerAddress)
         external
-        payable 
+        payable
         onlyOwner
     {
         registryContract.confirmRecycler(_recyclerAddress);
@@ -152,7 +152,7 @@ contract Manager is Ownable {
 
     function confirmRepairer(address _repairerAddress)
         external
-        payable 
+        payable
         onlyOwner
     {
         registryContract.confirmRepairer(_repairerAddress);
