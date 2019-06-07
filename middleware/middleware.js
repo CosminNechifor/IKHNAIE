@@ -36,11 +36,9 @@ app.post('/api/v1/deposit', (req, res) => {
     access.deposit(
         req.body.amount
     ).then((result) => {
-        console.log(result);
-        return result;
+        res.status(200).send({'balance': result});
     }).catch((error) => {
-        console.log(error);
-        return error;
+        res.status(400).send({'error': e});
     });
 });
 
@@ -50,7 +48,6 @@ app.post('/api/v1/withdraw', (req, res) => {
     ).then(blockdata => {
         res.status(200).send({'blockdata': blockdata}); 
     }).catch(e => {
-        console.log(e);
         res.status(400).send({'error': e});
     });
 });

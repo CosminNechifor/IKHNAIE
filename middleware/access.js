@@ -28,7 +28,23 @@ const account = web3.eth.accounts.privateKeyToAccount(privKey);
 const deposit = (amount) => {
     return ManagerContract.methods
         .deposit()
-        .send({from: account.address, gas: 3900000, value: amount});
+        .send({from: account.address, value: amount})
+        .on('transactionHash', (hash) => {
+            console.log(hash);
+            return hash;
+        })
+        .on('confirmation', (confirmationNumber, receipt) => {
+            console.log(confirmationNumber, receipt);
+            return receipt;
+        })
+        .on('receipt', (receipt) => {
+            console.log(receipt);
+            return receipt;
+        })
+        .on('error', (err)=> {
+            return err;
+        })
+        .catch(err => err);
 } 
 
 // needs to be tested and we need to add
