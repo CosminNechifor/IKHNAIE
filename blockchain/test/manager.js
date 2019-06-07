@@ -23,6 +23,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
     it("Deploy ManagerContract contract", () => {
         return Manager.new().then((instance) => {
             managerContract = instance;
+            console.log(instance.address);
             assert.notEqual(managerContract, undefined, "Failed to deploy Manager contract!");
         });
     });

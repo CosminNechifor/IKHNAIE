@@ -73,16 +73,25 @@ contract Manager is Ownable {
         return true;
     }
 
-    function deposit() public payable {
+    function deposit()
+        external
+        payable
+        returns (bool)
+    {
         require(
             token.mint(msg.sender, msg.value),
             "Token minting failed!"
         );
+        return true;
     }
 
-    function withdraw(uint256 value) public {
+    function withdraw(uint256 value)
+        external
+        returns (bool)
+    {
         token.withdraw(msg.sender, value);
         msg.sender.transfer(value);
+        return true;
     }
     
     function registerProducer(

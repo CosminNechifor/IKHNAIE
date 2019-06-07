@@ -3,8 +3,8 @@ import * as fs from 'fs';
 
 const managerContractPath = '../blockchain/build/contracts/Manager.json';
 const componentContractPath = '../blockchain/build/contracts/Component.json';
-const managerContractAddress = '0xad934659b1e341dE46442E77437655B51aDe3dB3';
-const privKey = '0x876258c7c6c0eecff9c179a76b2f002bc9a35cde23ff4fbc7df17f8f683e1614';
+const managerContractAddress = '0x4D73457De69bE9a0C8524660Ff67f261D2Ff2c7f';
+const privKey = '0x98ad17a11f7ef0344b19e969ebb4e7e8a63fc86f6d6f9d599bfb5262d8f4b678';
 
 const web3 = new Web3(Web3.givenProvider || "ws://localhost:8540");
 
@@ -25,17 +25,17 @@ const account = web3.eth.accounts.privateKeyToAccount(privKey);
 
 // needs to be tested and we need to add
 // an endpoint for it
-const deposit = (data) => {
+const deposit = (amount) => {
     return ManagerContract.methods
-        .deposit(data)
-        .send({from: account.address, gas: 3900000, value:data.value});
+        .deposit()
+        .send({from: account.address, gas: 3900000, value: amount});
 } 
 
 // needs to be tested and we need to add
 // an endpoint for it
-const withdraw = (data) => {
+const withdraw = (amount) => {
     return ManagerContract.methods
-        .withdraw(data)
+        .withdraw(amount)
         .send({from: account.address, gas: 3900000});
 } 
 
@@ -73,10 +73,21 @@ const confirmActor = (data, type) => {
             .send({from: account.address, gas: 3900000});
 }
 
-const createComponent = (data, amount) => {
+const createComponent = (
+    _entityName,
+    _expirationTime,
+    _price,
+    _otherInformation,
+    _amount
+) => {
     return ManagerContract.methods
-        .createComponent(data)
-        .send({from: account.address, gas: 3900000, value: amount});
+        .createComponent(
+            _entityName,
+            _expirationTime,
+            _price,
+            _otherInformation
+        )
+        .send({from: account.address, gas: 3900000, value: _amount});
 } 
 
 const addChildComponentToComponent = (parentAddress, childAddress) => {
@@ -286,6 +297,7 @@ const isRepairer = (actorAddress) => {
 }
 
 const balance = () => {
+	console.log(account.address);
     return ManagerContract.methods
         .balance()
         .call({from: account.address});

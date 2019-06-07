@@ -1,27 +1,69 @@
 import express from 'express';
-import * from './access.js';
+import * as access from './access.js';
+import cors from 'cors';
 
-const app = express()
-app.use(express.json())
+const app = express();
+app.use(express.json());
+app.use(cors());
 
+// Status Confirmed
 app.get('/api/v1/size', (req, res) => {
-    getRegistrySize().then(size => {
+    access.getRegistrySize().then(size => {
         res.status(200).send({'size': size });
     }).catch(e => {
         res.status(400).send({'error': e});
     });
 });
 
+// STATUS: Confirmed
 app.get('/api/v1/component', (req, res) => {
-    getRegistredComponents().then(components => {
+    access.getRegistredComponents().then(components => {
         res.status(200).send({'components': components});
     }).catch(e => {
         res.status(400).send({'error': e});
     });
 });
 
+app.get('/api/v1/balance', (req, res) => {
+    access.balance().then(amount => {
+        res.status(200).send({'balance': amount});
+    }).catch(e => {
+        res.status(400).send({'error': e});
+    });
+});
+
+app.post('/api/v1/deposit', (req, res) => {
+    access.deposit(
+        req.body.amount
+    ).then((amount) => {
+        console.log(amount);
+        res.status(200).send({'blockdata': amount}); 
+    }).catch((e) => {
+        console.log(e);
+        res.status(400).send({'error': e});
+    });
+});
+
+app.post('/api/v1/withdraw', (req, res) => {
+    access.withdraw(
+        req.body.amount
+    ).then(blockdata => {
+        res.status(200).send({'blockdata': blockdata}); 
+    }).catch(e => {
+        console.log(e);
+        res.status(400).send({'error': e});
+    });
+});
+
+
 app.post('/api/v1/component', (req, res) => {
-    createComponent(req.body.data).then(blockdata => {
+    access.createComponent(
+        req.body._entityName,
+        req.body._expirationTime,
+        req.body._price,
+        req.body._otherInformation,
+        req.body._amount
+    ).then(blockdata => {
         res.status(200).send({'blockdata': blockdata}); 
     }).catch(e => {
         res.status(400).send({'error': e});
