@@ -1,6 +1,14 @@
 from web3 import Web3, HTTPProvider
 from flask import Flask, jsonify, request
+from enum import Enum
 import json
+
+
+class ActorType(Enum):
+    PRODUCER = 1
+    RECYCLER = 2
+    REPAIRER = 3
+    USER = 4
 
 
 info_json = None
@@ -35,6 +43,102 @@ def deposit():
     return jsonify({'new_balance': balance})
 
 
-if __name__ == '__main__':
-    app.run()
+@app.route('/api/v1/withdraw', methods=['POST'])
+def withdraw():
+    content = request.json
+    tx_hash = manager.functions.withdraw(
+        content['amount']
+    ).transact(
+        {'from': w3.eth.accounts[0]}
+    )
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    print(receipt)
+    balance = manager.functions.balance().call()
+    return jsonify({'new_balance': balance})
 
+
+@app.route('/api/v1/register_actor', methods=['POST'])
+def register_actor():
+    try:
+        content = request.json
+
+        if len(content.keys()) < 4:
+            return jsonify({'message': 'Missing argument'}), 400
+
+        tx_hash = None
+
+        actor_type = content['type']
+        if actor_type == ActorType.PRODUCER:
+            tx_hash = manager.functions.registerProducer(
+                content['name'],
+                content['information']
+            ).transact(
+                {'from': w3.eth.accounts[0], 'value': content['amount']}
+            )
+        elif actor_type == ActorType.RECYCLER:
+            tx_hash = manager.functions.registerRecycler(
+                content['name'],
+                content['information']
+            ).transact(
+                {'from': w3.eth.accounts[0], 'value': content['amount']}
+            )
+        elif actor_type == ActorType.REPAIRER:
+            tx_hash = manager.functions.registerRepairer(
+                content['name'],
+                content['information']
+            ).transact(
+                {'from': w3.eth.accounts[0], 'value': content['amount']}
+            )
+
+        receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+        return jsonify(
+            {
+                'receipt': str(receipt)
+            }
+        ), 200
+    except KeyError as e:
+        return jsonify({'message': str(e)}), 400
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
+    return jsonify({'message': 'Invalid data'}), 400
+
+
+@app.route('/api/v1/confirm_actor', methods=['POST'])
+def confirm_actor():
+    try:
+        tx_hash = None
+        content = request.json
+        actor_type = content['type']
+        if actor_type == ActorType.PRODUCER:
+            tx_hash = manager.functions.confirmProducer(
+                content['address']
+            ).transact(
+                {'from': w3.eth.accounts[0]}
+            )
+        elif actor_type == ActorType.RECYCLER:
+            tx_hash = manager.functions.confirmRecycler(
+                content['address']
+            ).transact(
+                {'from': w3.eth.accounts[0]}
+            )
+        elif actor_type == ActorType.REPAIRER:
+            tx_hash = manager.functions.confirmRepairer(
+                content['address']
+            ).transact(
+                {'from': w3.eth.accounts[0]}
+            )
+        receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+        return jsonify(
+            {
+                'receipt': str(receipt)
+            }
+        ), 200
+    except KeyError as e:
+        return jsonify({'message': str(e)}), 400
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
+    return jsonify({'message': 'Invalid data'}), 400
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
