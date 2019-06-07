@@ -35,12 +35,12 @@ app.get('/api/v1/balance', (req, res) => {
 app.post('/api/v1/deposit', (req, res) => {
     access.deposit(
         req.body.amount
-    ).then((amount) => {
-        console.log(amount);
-        res.status(200).send({'blockdata': amount}); 
-    }).catch((e) => {
-        console.log(e);
-        res.status(400).send({'error': e});
+    ).then((result) => {
+        console.log(result);
+        return result;
+    }).catch((error) => {
+        console.log(error);
+        return error;
     });
 });
 
