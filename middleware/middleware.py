@@ -203,7 +203,7 @@ def add_child_to_component(parent_component, child_component):
     child_address = to_checksum_address(to_hex(child_component))
     tx_hash = manager.functions.addChildComponentToComponent(
         parent_address,
-        child_address 
+        child_address
     ).transact({
         'from': w3.eth.accounts[0]
     })
@@ -220,7 +220,211 @@ def remove_child_from_component(parent_component, child_component):
     child_address = to_checksum_address(to_hex(child_component))
     tx_hash = manager.functions.removeChildComponentFromComponent(
         parent_address,
-        child_address 
+        child_address
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/market/<hexaddress:component>',
+    methods=['POST']
+)
+def submit_component_to_market(component):
+    component_address = to_checksum_address(to_hex(component))
+    tx_hash = manager.functions.submitComponentToMarket(
+        component_address,
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/market/<hexaddress:component>',
+    methods=['DELETE']
+)
+def remove_component_from_market(component):
+    component_address = to_checksum_address(to_hex(component))
+    tx_hash = manager.functions.removeComponentFromMarket(
+        component_address,
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/market/<hexaddress:component>/offer',
+    methods=['POST']
+)
+def add_offer(component):
+    component_address = to_checksum_address(to_hex(component))
+    content = request.json
+    amount = content['amount']
+    tx_hash = manager.functions.addOffer(
+        component_address,
+        amount
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/market/<hexaddress:component>/offer/<int:index>',
+    methods=['DELETE']
+)
+def remove_offer(component, index):
+    component_address = to_checksum_address(to_hex(component))
+    tx_hash = manager.functions.removeOffer(
+        component_address,
+        index
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/market/<hexaddress:component>/offer/<int:index>/accept',
+    methods=['POST']
+)
+def accept_offer(component, index):
+    component_address = to_checksum_address(to_hex(component))
+    tx_hash = manager.functions.acceptOffer(
+        component_address,
+        index
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/market/<hexaddress:component>/offer/<int:index>/reject',
+    methods=['POST']
+)
+def reject_offer(component, index):
+    component_address = to_checksum_address(to_hex(component))
+    tx_hash = manager.functions.rejectOffer(
+        component_address,
+        index
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/allowance/<hexaddress:spender>',
+    methods=['POST']
+)
+def modify_allowance(spender):
+    spender_address = to_checksum_address(to_hex(spender))
+    content = request.json
+    new_allowance = content['newAllowance']
+    tx_hash = manager.functions.modifyAllowance(
+        spender_address,
+        new_allowance
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/component/<hexaddress:component>/flagAsExpired',
+    methods=['POST']
+)
+def flag_component_as_expired(component):
+    component_address = to_checksum_address(to_hex(component))
+    tx_hash = manager.functions.flagComponentAsExpired(
+        component_address
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/component/<hexaddress:component>/flagAsBroken',
+    methods=['POST']
+)
+def flag_component_as_broken(component):
+    component_address = to_checksum_address(to_hex(component))
+    tx_hash = manager.functions.flagComponentAsBroken(
+        component_address
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/component/<hexaddress:component>/repair',
+    methods=['POST']
+)
+def repair(component):
+    component_address = to_checksum_address(to_hex(component))
+    tx_hash = manager.functions.repair(
+        component_address
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/component/<hexaddress:component>/submitForRecycling',
+    methods=['POST']
+)
+def submit_for_recycling(component):
+    component_address = to_checksum_address(to_hex(component))
+    tx_hash = manager.functions.submitForRecycling(
+        component_address
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/component/<hexaddress:component>/recycle',
+    methods=['POST']
+)
+def recycle(component):
+    component_address = to_checksum_address(to_hex(component))
+    tx_hash = manager.functions.recycle(
+        component_address
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/component/<hexaddress:component>/destroy',
+    methods=['POST']
+)
+def destroy(component):
+    component_address = to_checksum_address(to_hex(component))
+    tx_hash = manager.functions.destroy(
+        component_address
     ).transact({
         'from': w3.eth.accounts[0]
     })
