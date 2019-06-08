@@ -433,6 +433,40 @@ def destroy(component):
 
 
 @app.route(
+    '/api/v1/component/<hexaddress:component>/updateComponentName',
+    methods=['PUT']
+)
+def update_component_name(component):
+    component_address = to_checksum_address(to_hex(component))
+    content = request.json
+    tx_hash = manager.functions.updateComponentName(
+        component_address,
+        content['name']
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/component/<hexaddress:component>/updateComponentExpiration',
+    methods=['PUT']
+)
+def update_component_expiration(component):
+    component_address = to_checksum_address(to_hex(component))
+    content = request.json
+    tx_hash = manager.functions.updateComponentExpiration(
+        component_address,
+        content['expiration']
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
     '/api/v1/component/<hexaddress:parent_component>/child/<int:index>',
     methods=['GET']
 )
@@ -443,6 +477,40 @@ def get_child_by_index(parent_component, index):
        index
     ).call()
     return jsonify({'child_address': child_address})
+
+
+@app.route(
+    '/api/v1/component/<hexaddress:component>/updateComponentPrice',
+    methods=['PUT']
+)
+def update_component_price(component):
+    component_address = to_checksum_address(to_hex(component))
+    content = request.json
+    tx_hash = manager.functions.updateComponentPrice(
+        component_address,
+        content['price']
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
+
+
+@app.route(
+    '/api/v1/component/<hexaddress:component>/updateComponentOtherInformation',
+    methods=['PUT']
+)
+def update_component_otherinfo(component):
+    component_address = to_checksum_address(to_hex(component))
+    content = request.json
+    tx_hash = manager.functions.updateComponentOtherInformation(
+        component_address,
+        content['otherInformation']
+    ).transact({
+        'from': w3.eth.accounts[0]
+    })
+    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    return jsonify({'receipt': str(receipt)})
 
 
 @app.route(
