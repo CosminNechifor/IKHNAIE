@@ -34,10 +34,11 @@ class Tracking extends Component {
   loadApp() {
     axios.get('/api/v1/component').then(res => {
       let requests = res.data.components.map(addr => {
-	return axios.get('/api/v1/_component/' + addr);
+	return axios.get('/api/v1/component/' + addr);
       });
       Promise.all(requests).then(res => {
 	const componentList = res.map(r => {
+	  console.log(r.data);
 	  return {
 	    'data': r.data.data,
 	    'parent': r.data.parentAddress,
@@ -55,7 +56,7 @@ class Tracking extends Component {
   }
 
   updateComponentList(component) {
-    const url = '/api/v1/_component/'+component.address+'/child'
+    const url = '/api/v1/component/'+component.address+'/child'
     axios.get(url).then(res => {
       let requests = res.data.childComponentsAddresses.map(addr => {
 	return axios.get('/api/v1/_component/' + addr);
