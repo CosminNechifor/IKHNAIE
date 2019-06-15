@@ -115,6 +115,7 @@ class Tracking extends Component {
   }
 
   render() {
+    console.log("here!");
     return (
       <Container style={styles.container}>
         <Header style={{backgroundColor: '#808080'}}>

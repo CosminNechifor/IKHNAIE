@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Header, Content, Card, CardItem, Text, Body, Button } from 'native-base';
+import { Card, CardItem, Text, Body, Button } from 'native-base';
 
 const componentElement = (props) => props.components.map(e => {
   return (

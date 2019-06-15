@@ -1,6 +1,6 @@
 export default {
   container: {
-    backgroundColor: "#FFF",
+    backgroundColor: "#FFFFFF",
     marginTop: 24 
   },
   text: {
