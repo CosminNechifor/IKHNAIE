@@ -31,28 +31,10 @@ class Tracking extends Component {
     this.loadApp();
   }
 
-  loadApp() {
-    axios.get('/api/v1/component').then(res => {
-      let requests = res.data.components.map(addr => {
-	return axios.get('/api/v1/component/' + addr);
-      });
-      Promise.all(requests).then(res => {
-	const componentList = res.map(r => {
-	  console.log(r.data);
-	  return {
-	    'data': r.data.data,
-	    'parent': r.data.parentAddress,
-	    'address': r.data.componentAddress
-	  };
-	});
-	this.setState({
-	  componentList: componentList,
-	  currentComponent: '0x0000000000000000000000000000000000000000'
-	});
-      }).catch(e => 
-	console.log(e)
-      );
-    });
+  loadApp = async () => {
+    const response = await axios.get('/api/v1/component');
+    const data = response.data;
+    this.setState({componentList: [...data.components]});
   }
 
   updateComponentList(component) {
@@ -115,7 +97,6 @@ class Tracking extends Component {
   }
 
   render() {
-    console.log("here!");
     return (
       <Container style={styles.container}>
         <Header style={{backgroundColor: '#808080'}}>

@@ -2,6 +2,7 @@ from web3 import Web3, HTTPProvider
 from flask import Flask, jsonify, request
 from werkzeug.exceptions import NotFound
 from werkzeug.routing import BaseConverter
+from flask_cors import CORS
 import json
 from eth_utils import (
     is_0x_prefixed,
@@ -52,13 +53,18 @@ w3 = Web3(HTTPProvider("http://localhost:8540"))
 w3.eth.defaultAccount = w3.eth.accounts[0]
 
 manager = w3.eth.contract(
-    address="0xe078A180215E718b5957C04fB29BC645bFff3f15",
+    address="0x32bb66162d0adaF00C2E8227B40B7274c4D610ce",
     abi=info_json['abi']
 )
 
 app = Flask(__name__)
+CORS(app)
 restapi_setup_type_converters(app, {"hexaddress": HexAddressConverter})
 
+
+@app.route('/api/v1/test', methods=['GET'])
+def pong():
+    return jsonify({'result': 'Pong'})
 
 @app.route('/api/v1/deposit', methods=['POST'])
 def deposit():
@@ -741,4 +747,4 @@ def get_repairer_info(repairer_address):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)

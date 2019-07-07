@@ -4,7 +4,7 @@ import ComponentElement from './component/Component';
 
 class ComponentList extends Component {
   render() {
-    console.log('ComponentList');
+    console.log(this.props.components);
     return (
       <Container>
 	<Content>
