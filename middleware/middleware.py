@@ -568,7 +568,7 @@ def get_component_data(component):
         'state': data[state_index],
         'otherInformation': data[otherinfo_index],
         'parentComponent': data[parent_index],
-        'childComponent': data[childlist_index],
+        'childComponentList': data[childlist_index],
         'producer': data[producer_index]
     })
 

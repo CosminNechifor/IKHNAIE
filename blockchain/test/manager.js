@@ -595,7 +595,7 @@ contract('Manager - testing deployment and creation of components [happy case]',
 
     it("Recycle component", async () => {
         await managerContract.createComponent(
-            "Testing destroy component",
+            "Testing recycle component",
             0,
             1000,
             "Component that will be recycled"
