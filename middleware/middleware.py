@@ -53,7 +53,7 @@ w3 = Web3(HTTPProvider("http://localhost:8540"))
 w3.eth.defaultAccount = w3.eth.accounts[0]
 
 manager = w3.eth.contract(
-    address="0x32bb66162d0adaF00C2E8227B40B7274c4D610ce",
+    address="0xe078A180215E718b5957C04fB29BC645bFff3f15",
     abi=info_json['abi']
 )
 
@@ -463,20 +463,12 @@ def update_component_name(component):
 
 
 @app.route(
-    '/api/v1/component/<hexaddress:component>/updateComponentExpiration',
-    methods=['PUT']
+    '/api/v1/user/component',
+    methods=['GET']
 )
-def update_component_expiration(component):
-    component_address = to_checksum_address(to_hex(component))
-    content = request.json
-    tx_hash = manager.functions.updateComponentExpiration(
-        component_address,
-        content['expiration']
-    ).transact({
-        'from': w3.eth.accounts[0]
-    })
-    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    return jsonify({'receipt': str(receipt)})
+def get_user_component():
+    components = manager.functions.getUserComponents().call()
+    return jsonify({'components': components})
 
 
 @app.route(
