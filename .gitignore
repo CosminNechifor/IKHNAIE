@@ -62,3 +62,4 @@ typings/
 build
 tags
 blockchain/statistics.csv
+.vscode

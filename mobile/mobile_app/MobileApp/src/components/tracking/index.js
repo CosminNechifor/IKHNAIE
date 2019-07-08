@@ -2,17 +2,13 @@ import React, { Component } from "react";
 import {
   Container,
   Header,
-  Title,
-  Content,
   Button,
   Icon,
   Text,
   Left,
   Body,
   Right,
-  Toast,
-  List,
-  ListItem
+  Toast
 } from "native-base";
 import styles from "./styles";
 import ComponentList from '../componentList';
@@ -26,11 +22,11 @@ class Tracking extends Component {
     componentsHistory: [],
     baseComponentURL: '/api/v1/component'
   };
-  
+
   componentWillMount() {
     this.loadApp();
   }
-  
+
   // TODO: Make requests concurrently 
   loadApp = async () => {
     const response = await axios.get(this.state.baseComponentURL);
@@ -40,9 +36,9 @@ class Tracking extends Component {
     let componentList = [];
     for (addr of addresses) {
       component = await axios.get(
-	this.state.baseComponentURL + `/${addr}`
+        this.state.baseComponentURL + `/${addr}`
       );
-      componentList.push({address: addr, ...component.data});
+      componentList.push({ address: addr, ...component.data });
     }
     this.setState({
       componentList: [...componentList],
@@ -50,18 +46,18 @@ class Tracking extends Component {
     });
   }
 
-  updateComponentList = async (component) => { 
+  updateComponentList = async (component) => {
     const url = this.state.baseComponentURL + '/' + component.address + '/child';
     const response = await axios.get(url);
 
     let componentList = [];
-    let child; 
+    let child;
     console.log(response.data);
     for (c of response.data.child_address) {
       child = await axios.get(
         this.state.baseComponentURL + `/${c}`
       );
-      componentList.push({address: c, ...child.data});
+      componentList.push({ address: c, ...child.data });
     }
     console.log(componentList);
     this.setState({
@@ -88,7 +84,7 @@ class Tracking extends Component {
       buttonText: "Okay"
     });
 
-    if (component.parentComponent === '0x0000000000000000000000000000000000000000' || 
+    if (component.parentComponent === '0x0000000000000000000000000000000000000000' ||
       component === '0x0000000000000000000000000000000000000000') {
       console.log('this is called');
       this.loadApp();
@@ -96,7 +92,7 @@ class Tracking extends Component {
     }
 
     const response = await axios.get('/api/v1/component/' + component.parentComponent);
-    
+
     const currentComponent = response.data;
 
     let child;
@@ -104,12 +100,12 @@ class Tracking extends Component {
     console.log(currentComponent);
     for (c of currentComponent.childComponentList) {
       child = await axios.get(
-	this.state.baseComponentURL + `/${c}`
+        this.state.baseComponentURL + `/${c}`
       );
-      componentList.push({address: c, ...child.data});
+      componentList.push({ address: c, ...child.data });
     }
     this.setState({
-      currentComponent: {...currentComponent},
+      currentComponent: { ...currentComponent },
       componentList: [...componentList]
     });
   }
@@ -117,7 +113,7 @@ class Tracking extends Component {
   render() {
     return (
       <Container style={styles.container}>
-        <Header style={{backgroundColor: '#808080'}}>
+        <Header style={{ backgroundColor: '#808080' }}>
           <Left>
             <Button
               transparent
@@ -131,23 +127,23 @@ class Tracking extends Component {
           </Body>
           <Right />
         </Header>
-	{
-	  this.state.currentComponent !== '0x0000000000000000000000000000000000000000' ? 
-	  <Header style={{backgroundColor: '#808080'}}>
-	    <Button transparent success onPress={() => this.showParentComponentHandler(this.state.currentComponent)}>
-	      <Text>{this.state.currentComponent.data} children</Text>
-	    </Button>
-	  </Header>
-	  : <Header style={{backgroundColor: '#808080'}}>
-	    <Button transparent success onPress={() => this.showParentComponentHandler(this.state.currentComponent)}>
-	      <Text>All Components</Text>
-	    </Button>
-	  </Header>
-	}
-	<ComponentList
-	  components={this.state.componentList}
-	  showChildComponents={this.showChildComponentsHandler}	
-	/>
+        {
+          this.state.currentComponent !== '0x0000000000000000000000000000000000000000' ?
+            <Header style={{ backgroundColor: '#808080' }}>
+              <Button transparent success onPress={() => this.showParentComponentHandler(this.state.currentComponent)}>
+                <Text>{this.state.currentComponent.data} children</Text>
+              </Button>
+            </Header>
+            : <Header style={{ backgroundColor: '#808080' }}>
+              <Button transparent success onPress={() => this.showParentComponentHandler(this.state.currentComponent)}>
+                <Text>All Components</Text>
+              </Button>
+            </Header>
+        }
+        <ComponentList
+          components={this.state.componentList}
+          showChildComponents={this.showChildComponentsHandler}
+        />
       </Container>
     );
   }

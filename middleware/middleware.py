@@ -178,6 +178,10 @@ def confirm_actor():
 def create_component():
     try:
         content = request.json
+        content['price'] = int(content['price'])
+        content['expirationTime'] = int(content['expirationTime'])
+        content['value'] = int(content['value'])
+        print(content)
         tx_hash = manager.functions.createComponent(
             content['name'],
             content['expirationTime'],
@@ -194,9 +198,12 @@ def create_component():
             }
         ), 200
     except KeyError as e:
+        print(e)
         return jsonify({'message': str(e)}), 400
     except Exception as e:
+        print(e)
         return jsonify({'message': str(e)}), 400
+    print('Invalid data')
     return jsonify({'message': 'Invalid data'}), 400
 
 

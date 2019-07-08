@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Header, Left, Body, Picker, Input, Right, Button, Icon, Title, Segment, Toast, Content, Text, Label, Item, Form} from 'native-base';
+import { Container, Header, Left, Body, Picker, Input, Right, Button, Icon, Title, Segment, Toast, Content, Text, Label, Item, Form } from 'native-base';
 import styles from "./styles";
 import axios from '../../axios';
 
@@ -11,13 +11,13 @@ export default class UpdateComponent extends Component {
     data: '',
     componentList: []
   }
-  
+
   componentWillMount() {
     this.loadComponents();
   }
 
   dataChangedHandler = (text) => {
-    this.setState({data: text});
+    this.setState({ data: text });
   }
 
   loadComponents() {
@@ -38,12 +38,12 @@ export default class UpdateComponent extends Component {
           selected: componentList[0]
         });
         //console.log(this.state.componentList);
-      }).catch(e => 
+      }).catch(e =>
         console.log(e)
       );
     });
   }
-  
+
   handleUpdate = () => {
     const text = "Component data was updated!";
     // console.log(this.state.selected);
@@ -53,7 +53,7 @@ export default class UpdateComponent extends Component {
       buttonText: "Okay"
     });
     const url = '/api/v1/_component/' + this.state.selected.address;
-    axios.put(url, {'data': this.state.data})
+    axios.put(url, { 'data': this.state.data })
       .then(res => {
         this.loadComponents();
         console.log(res);
@@ -70,13 +70,13 @@ export default class UpdateComponent extends Component {
   render() {
     return (
       <Container style={styles.container}>
-        <Header style={{backgroundColor: '#808080'}}>
+        <Header style={{ backgroundColor: '#808080' }}>
           <Left>
             <Button
               transparent
-              onPress={() =>  {  this.props.navigation.openDrawer(); this.loadComponents()}}
+              onPress={() => { this.props.navigation.openDrawer(); this.loadComponents() }}
             >
-          <Icon name="menu" />
+              <Icon name="menu" />
             </Button>
           </Left>
           <Body>
@@ -86,17 +86,17 @@ export default class UpdateComponent extends Component {
         </Header>
         <Content padder>
           <PickerItems
-              options={this.state.componentList}
-              selectedValue={this.state.selected}
-              onValueChange={this.onValueChange}
+            options={this.state.componentList}
+            selectedValue={this.state.selected}
+            onValueChange={this.onValueChange}
           />
           <Form>
             <Item floatingLabel>
               <Label>Component new data data</Label>
-              <Input onChangeText={(text) => this.dataChangedHandler(text)}/>
+              <Input onChangeText={(text) => this.dataChangedHandler(text)} />
             </Item>
           </Form>
-          <Body style={{flexDirection: "row", justifyContent: "center", marginTop: 15}}>
+          <Body style={{ flexDirection: "row", justifyContent: "center", marginTop: 15 }}>
             <Button primary onPress={this.handleUpdate}><Text> Update </Text></Button>
           </Body>
         </Content>
