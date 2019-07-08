@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Header, Left, Body, Picker, Input, Right, Button, Icon, Title, Segment, Content, Text, Label, Item, Form} from 'native-base';
+import { Picker, Icon, Item } from 'native-base';
 
 export default class PickerItems extends Component {
 
@@ -16,7 +16,7 @@ export default class PickerItems extends Component {
                     selectedValue={this.props.selectedValue}
                     onValueChange={(e) => this.props.onValueChange(e)}
                 >
-                    {this.props.options.map(p => <Picker.Item label={p.data} value={p} key={p.address}/>)}
+                    {this.props.options.map(p => <Picker.Item label={p.componentName} value={p} key={p.address} />)}
                 </Picker>
             </Item>
         );

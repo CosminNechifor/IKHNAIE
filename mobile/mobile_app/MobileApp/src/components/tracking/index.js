@@ -52,14 +52,12 @@ class Tracking extends Component {
 
     let componentList = [];
     let child;
-    console.log(response.data);
     for (c of response.data.child_address) {
       child = await axios.get(
         this.state.baseComponentURL + `/${c}`
       );
       componentList.push({ address: c, ...child.data });
     }
-    console.log(componentList);
     this.setState({
       componentList: [...componentList],
       currentComponent: component
@@ -86,7 +84,6 @@ class Tracking extends Component {
 
     if (component.parentComponent === '0x0000000000000000000000000000000000000000' ||
       component === '0x0000000000000000000000000000000000000000') {
-      console.log('this is called');
       this.loadApp();
       return;
     }
@@ -97,7 +94,6 @@ class Tracking extends Component {
 
     let child;
     let componentList = [];
-    console.log(currentComponent);
     for (c of currentComponent.childComponentList) {
       child = await axios.get(
         this.state.baseComponentURL + `/${c}`

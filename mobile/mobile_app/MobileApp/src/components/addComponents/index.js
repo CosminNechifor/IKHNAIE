@@ -46,8 +46,6 @@ export default class AddComponents extends Component {
   }
 
   handleChangeOtherInformation = (otherInformation) => {
-    console.log('HandleChangeOtherInformation:');
-    console.log(otherInformation);
     this.setState({ otherInformation: otherInformation });
   }
 
@@ -75,8 +73,6 @@ export default class AddComponents extends Component {
         'value': this.state.lockValue
       }
     );
-    console.log('RESPONSE:');
-    console.log(response);
   }
 
   render() {
