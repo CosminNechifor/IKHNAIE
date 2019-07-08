@@ -905,4 +905,12 @@ contract('Manager - testing deployment and creation of components [happy case]',
         assert.equal(status[4], true, "Recycler should be confirmed!"); 
 
     });
+
+    it("Test getUserComponents", async () => {
+        const account7Components = await managerContract.getUserComponents({from: accounts[7]});
+        assert.equal(account7Components.length, 2, "It should have 2 components created!"); 
+        const account0Components = await managerContract.getUserComponents();
+        assert.equal(account0Components.length, 11, "It should have 11 components created!"); 
+    });
+
 });

@@ -14,12 +14,15 @@ contract Registry is IRegistry, Managed {
     mapping(address => RecyclerStruct) private _recyclerToData;
     mapping(address => RepairerStruct) private _repairerToData;
 
+    mapping(address => address[]) private _ownerToComponents;
+
     constructor(address _manager) Managed(_manager) public {}
 
     function addComponent(address _componentAddress, uint256 _reward) external onlyManager {
         uint256 _index = _registry.push(_componentAddress) - 1;
         _addressToIndex[_componentAddress] = _index;
         _addressToReward[_componentAddress] = _reward;
+        _ownerToComponents[tx.origin].push(_componentAddress);
         emit ComponentRegistred(_index, _componentAddress);
     }
 
@@ -81,10 +84,10 @@ contract Registry is IRegistry, Managed {
         address _recyclerAddress,
         string calldata _name,
         string calldata _information
-    ) 
-        external 
-        onlyManager 
-        returns (bool) 
+    )
+        external
+        onlyManager
+        returns (bool)
     {
         _recyclerToData[_recyclerAddress] = RecyclerStruct({
             name: _name,
@@ -100,14 +103,14 @@ contract Registry is IRegistry, Managed {
 
     function confirmRecycler(
         address _recyclerAddress
-    ) 
+    )
         external
         returns (bool)
     {
         RecyclerStruct storage _recycler = _recyclerToData[_recyclerAddress];
 
         if (_recycler.isRegistred) {
-            _recycler.isConfirmed = true; 
+            _recycler.isConfirmed = true;
             emit RecyclerConfirmed(_recyclerAddress);
             return true;
         }
@@ -137,14 +140,14 @@ contract Registry is IRegistry, Managed {
 
     function confirmRepairer(
         address _repairerAddress
-    ) 
+    )
         external
         returns (bool)
     {
         RepairerStruct storage _repairer = _repairerToData[_repairerAddress];
 
         if (_repairer.isRegistred) {
-            _repairer.isConfirmed = true; 
+            _repairer.isConfirmed = true;
             emit RepairerConfirmed(_repairerAddress);
             return true;
         }
@@ -159,12 +162,12 @@ contract Registry is IRegistry, Managed {
     }
 
     function isRecycler(address _recyclerAddress) external view returns (bool) {
-        // returns true if this is a certified recycler 
+        // returns true if this is a certified recycler
         return _recyclerToData[_recyclerAddress].isConfirmed;
     }
 
     function isRepairer(address _repairerAddress) external view returns (bool) {
-        // returns true if this is a certified repairer 
+        // returns true if this is a certified repairer
         return _repairerToData[_repairerAddress].isConfirmed;
     }
 
@@ -192,10 +195,10 @@ contract Registry is IRegistry, Managed {
 
     function getProducerInfo(
         address _producerAddress
-    ) 
+    )
         external
         view
-        returns 
+        returns
         (
             string memory,
             string memory,
@@ -213,11 +216,11 @@ contract Registry is IRegistry, Managed {
     }
 
     function getRecyclerInfo(
-        address _recyclerAddress 
-    ) 
+        address _recyclerAddress
+    )
         external
         view
-        returns 
+        returns
         (
             string memory,
             string memory,
@@ -238,10 +241,10 @@ contract Registry is IRegistry, Managed {
 
     function getRepairerInfo(
         address _repairerAddress
-    ) 
+    )
         external
         view
-        returns 
+        returns
         (
             string memory,
             string memory,
@@ -266,5 +269,9 @@ contract Registry is IRegistry, Managed {
         returns(uint256)
     {
         return _addressToReward[_componentAddress];
+    }
+
+    function getUserComponents() external view returns (address[] memory) {
+        return _ownerToComponents[tx.origin];
     }
 }

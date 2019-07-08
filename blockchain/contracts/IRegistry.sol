@@ -40,10 +40,10 @@ interface IRegistry {
     function getRegistredComponents() external view returns(address[] memory);
     function getProducerInfo(
         address _producerAddress
-    ) 
+    )
         external
         view
-        returns 
+        returns
         (
             string memory,
             string memory,
@@ -54,18 +54,18 @@ interface IRegistry {
         external
         view
         returns (
-            string memory, 
-            string memory, 
-            uint256, 
-            bool, 
+            string memory,
+            string memory,
+            uint256,
+            bool,
             bool
         );
     function getRepairerInfo(
         address _repairerAddress
-    ) 
+    )
         external
         view
-        returns 
+        returns
         (
             string memory,
             string memory,
@@ -76,6 +76,7 @@ interface IRegistry {
     function isProducer(address _producerAddress) external view returns (bool);
     function isRecycler(address _recyclerAddress) external view returns (bool);
     function isRepairer(address _repairerAddress) external view returns (bool);
+    function getUserComponents() external view returns (address[] memory);
 
     event ComponentRegistred(
         uint256 indexed _index,

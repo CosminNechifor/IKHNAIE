@@ -8,7 +8,10 @@ import PickerItems from './pickerItems';
 export default class UpdateComponent extends Component {
   state = {
     selected: undefined,
-    data: '',
+    name: '',
+    expirationTime: 0,
+    price: 0,
+    otherInformation: '',
     componentList: []
   }
 

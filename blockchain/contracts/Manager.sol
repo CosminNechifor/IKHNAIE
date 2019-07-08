@@ -52,7 +52,7 @@ contract Manager is Ownable {
     constructor() Ownable(msg.sender) public {
         _notLinked = true;
     }
-    
+
     function link(
         address _registryContractAddress,
         address _componentFactoryAddress,
@@ -93,12 +93,12 @@ contract Manager is Ownable {
         msg.sender.transfer(value);
         return true;
     }
-    
+
     function registerProducer(
         string calldata _name,
         string calldata _information
-    ) 
-        external 
+    )
+        external
         payable
     {
         if (msg.value >= 5) {
@@ -116,8 +116,8 @@ contract Manager is Ownable {
     function registerRecycler(
         string calldata _name,
         string calldata _information
-    ) 
-        external 
+    )
+        external
         payable
     {
         if (msg.value >= 1) {
@@ -131,8 +131,8 @@ contract Manager is Ownable {
     function registerRepairer(
         string calldata _name,
         string calldata _information
-    ) 
-        external 
+    )
+        external
         payable
     {
         if (msg.value >= 3) {
@@ -570,7 +570,7 @@ contract Manager is Ownable {
     function isProducer(address _producerAddress) public view returns (bool) {
         return registryContract.isProducer(_producerAddress);
     }
-    
+
     function isRecycler(address _recyclerAddress) public view returns (bool) {
         return registryContract.isRecycler(_recyclerAddress);
     }
@@ -592,47 +592,51 @@ contract Manager is Ownable {
     }
 
     function getProducerInfo(address _producerAddress)
-        external 
-        view 
+        external
+        view
         returns(
-            string memory, 
             string memory,
-            bool, 
+            string memory,
+            bool,
             bool
-        ) 
+        )
     {
         return registryContract.getProducerInfo(_producerAddress);
     }
 
     function getRecyclerInfo(
         address _recyclerAddress
-    ) 
+    )
         external
         view
         returns(
             string memory,
             string memory,
             uint256,
-            bool, 
+            bool,
             bool
-        ) 
+        )
     {
         return registryContract.getRecyclerInfo(_recyclerAddress);
     }
 
     function getRepairerInfo(
         address _repairerAddress
-    ) 
+    )
         external
         view
         returns(
             string memory,
             string memory,
-            bool, 
+            bool,
             bool
-        ) 
+        )
     {
         return registryContract.getRepairerInfo(_repairerAddress);
+    }
+
+    function getUserComponents() external view returns (address[] memory) {
+        return registryContract.getUserComponents();
     }
 
     // O(log n)
